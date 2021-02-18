@@ -1,0 +1,102 @@
+// IMPORTS
+
+@forward '../../../styles/config/config';
+@use '../../../styles/config/config' as *;
+
+
+// VARIABLES
+
+$size: 200px;
+
+
+// KEYFRAMES
+
+@keyframes gaugeAnimation {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(270deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+
+// STYLES
+
+.gauge-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  position: relative;
+  width: $size;
+  height: $size;
+  overflow: hidden;
+  box-sizing: content-box;
+  margin: 20px;
+  border-radius: 50%;
+  background: $purple-color;
+
+  &:before {
+    content: '';
+    display: block;
+    width: $size / 2 + $size / 100;
+    height: $size / 2 + $size / 100;
+    position: absolute;
+    bottom: -11%;
+    z-index: 2;
+    transform: rotate(45deg);
+    background: $purple-color;
+  }
+
+  &__bar {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    width: $size;
+    height: $size;
+    border: $size / 7 solid;
+    border-color: $gauge-empty $gauge-empty $gauge-full $gauge-empty;
+    border-radius: 50%;
+    // test animation
+      animation-name: gaugeAnimation;
+      animation-timing-function: ease;
+      animation-duration: 5s;
+      animation-fill-mode: forwards;
+      animation-iteration-count: infinite;
+    // end
+  }
+
+  &__text {
+    position: absolute;
+    z-index: 3;
+    top: $size / 7;
+    margin-top: $size / 25;
+    & > * {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: $size / 25;
+    }
+    &__amount {
+      font-size: $size / 5;
+      color: $white-color;
+      padding-bottom: 0;
+    }
+    &__name {
+      font-size: $size / 14;
+      color: $white-color;
+      padding-bottom: $size / 10;
+    }
+    &__percent {
+      font-size: $size / 14;
+      color: $gauge-full;
+    }
+    &__left {
+      font-size: $size / 10;
+      color: $white-color;
+    }
+  }
+}

@@ -1,1 +1,1 @@
-{"version":3,"sources":[],"names":[],"mappings":"","file":"main.css"}
+{"version":3,"sources":["../../../styles/config/config.scss","main.css"],"names":[],"mappings":"AAeA;EACE,SAAA;EACA,UAAA;EACA,8BAAA;UAAA,sBAAA;EACA,8BAAA;EACA,qBAAA;UAAA,aAAA;EACA,YAAA;ACdF","file":"main.css"}

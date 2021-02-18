@@ -1,0 +1,15 @@
+@import url("https://fonts.googleapis.com/css2?family=Fredoka+One&family=Secular+One&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  -webkit-box-shadow: 0;
+          box-shadow: 0;
+  border: none;
+  font-family: "Noto Sans", sans-serif;
+  font-weight: normal;
+  text-decoration: none;
+}
+/*# sourceMappingURL=config.css.map */

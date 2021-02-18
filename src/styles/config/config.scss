@@ -1,0 +1,32 @@
+// IMPORTS
+
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Secular+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap');
+
+
+// VARIABLES
+
+$background: linear-gradient(to bottom, #B4E8FF, #74BEFF);
+
+$black-color: #000000;
+$white-color: #FFFFFF;
+$gray-color: #707070;
+$purple-color: #7500AF;
+
+$gauge-empty: rgba(255, 255, 255, 0.25);
+$gauge-full: rgba(255, 255, 255, 0.5);
+$menu-button: $gauge-full;
+
+
+// RESET
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  box-shadow: 0;
+  border: none;
+  font-family: 'Noto Sans', sans-serif;
+  font-weight: normal;
+  text-decoration: none;
+}

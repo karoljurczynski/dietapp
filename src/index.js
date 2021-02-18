@@ -2,8 +2,7 @@
 
 import React from 'react';
 import ReactDOM, { render } from 'react-dom';
-import './styles/index.css';
-
+import './styles/index/index.css';
 import { LeftSection, CenterSection, RightSection } from './components/main/main';
 
 
