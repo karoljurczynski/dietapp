@@ -1,0 +1,117 @@
+$size: 200px;
+$strong-red-color: #a30000;
+$empty-gauge-color: #fff5b5;
+$full-gauge-color: #ffe01c;
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Secular+One&display=swap');
+@keyframes fullingGauge {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(270deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.main-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #181b26c4;
+  width: 80vw;
+  border-radius: 20px;
+  &__left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background-color:#14151a ;
+  }
+  &__right {
+    width: 70%;
+    &__date-interface {
+      width: 100%;
+
+    }
+    &__dashboard {
+      width: 100%;
+
+    }
+  }
+}
+.graph__container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  position: relative;
+  width: $size;
+  height: $size;
+  overflow: hidden;
+  box-sizing: content-box;
+  margin: 20px;
+  background-color: #14151a;
+  border-radius: 50%;
+  &:before {
+    content: '';
+    display: block;
+    width: $size / 2 + $size / 100;
+    height: $size / 2 + $size / 100;
+    position: absolute;
+    bottom: -11%;
+    z-index: 2;
+    transform: rotate(45deg);
+    background-color: #14151a; 
+  }
+  &__background {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    width: $size;
+    height: $size;
+    border: $size / 7 solid;
+    border-color: $empty-gauge-color $empty-gauge-color $full-gauge-color $empty-gauge-color;
+    border-radius: 50%;
+  }
+  &__data {
+    position: absolute;
+    z-index: 3;
+    top: $size / 7;
+    font-family: 'Secular One', sans-serif;
+    margin-top: $size / 25;
+    & > * {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: $size / 25;
+    }
+    &__value {
+      font-size: $size / 5;
+      color: black;
+      padding-bottom: 0;
+    }
+    &__type {
+      font-size: $size / 14;
+      color: black;
+      padding-bottom: $size / 10;
+    }
+    &__percent {
+      font-size: $size / 14;
+      color: gray;
+    }
+    &__left {
+      font-size: $size / 10;
+      color: gray;
+    }
+  }
+}
