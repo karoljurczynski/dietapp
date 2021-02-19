@@ -26,23 +26,33 @@
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
 }
 
 .left-section {
-  width: 25%;
+  width: 24%;
+  height: 100%;
   background: rgba(255, 255, 255, 0.3);
   border-radius: 50px 0 0 50px;
   border: 2px 0 0 2px solid white;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
 }
 
 .center-section {
   width: 55%;
+  height: 100%;
   background: rgba(255, 255, 255, 0.6);
   border: 2px 0 2px 0 solid white;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 .right-section {
-  width: 20%;
+  width: 21%;
+  height: 100%;
   background: #7500AF;
   border-radius: 0 50px 50px 0;
   border: 2px 0 solid white;

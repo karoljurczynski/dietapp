@@ -9,7 +9,7 @@
 .logo-container {
   @include flexSetup(column, center, center);
   width: 55%;
-  margin: 15% 0;
+  margin: 10% 0;
   &__logo {
     width: 80%;
   }
@@ -58,8 +58,8 @@
 }
 
 .quotation {
-  @include flexSetup(column, flex-end, flex-start);
-  margin: 25% 0 15% 0;
+  @include flexSetup(column, flex-end, flex-end);
+  margin-bottom: 10%;
   &__top, &__bottom {
     color: $purple-color;
     font-family: 'Cookie', cursive;

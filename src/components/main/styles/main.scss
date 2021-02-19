@@ -1,24 +1,33 @@
+// IMPORTS
+
 @forward '../../../styles/config/config';
 @use '../../../styles/config/config' as *;
 
+
+// STYLES
+
 .left-section, .center-section, .right-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  @include flexSetup(column, center, space-between);
 }
 .left-section {
-  width: 25%;
+  width: 24%;
+  height: 100%;
   background: $left-section-background;
   border-radius: 50px 0 0 50px;
   border: 2px 0 0 2px solid white;
+  justify-content: space-around;
 }
 .center-section {
   width: 55%;
+  height: 100%;
   background: $center-section-background;
   border: 2px 0 2px 0 solid white;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 .right-section {
-  width: 20%;
+  width: 21%;
+  height: 100%;
   background: $right-section-background;
   border-radius: 0 50px 50px 0;
   border: 2px 0 solid white;

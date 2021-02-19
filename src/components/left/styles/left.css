@@ -33,7 +33,7 @@
       -ms-flex-pack: center;
           justify-content: center;
   width: 55%;
-  margin: 15% 0;
+  margin: 10% 0;
 }
 .logo-container__logo {
   width: 80%;
@@ -130,10 +130,10 @@
   -webkit-box-align: end;
       -ms-flex-align: end;
           align-items: flex-end;
-  -webkit-box-pack: start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
-  margin: 25% 0 15% 0;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  margin-bottom: 10%;
 }
 .quotation__top, .quotation__bottom {
   color: #7500AF;
