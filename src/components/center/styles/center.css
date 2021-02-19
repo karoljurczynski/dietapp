@@ -1,11 +1,26 @@
+@import url("https://fonts.googleapis.com/css2?family=Fredoka+One&family=Secular+One&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bad+Script&display=swap");
 * {
   margin: 0;
   padding: 0;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
-  font-family: Arial, sans-serif;
   -webkit-box-shadow: 0;
           box-shadow: 0;
   border: none;
+  font-family: "Noto Sans", sans-serif;
+  font-weight: normal;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.top__date-changer__previous-button,
+.top__date-changer__next-button {
+  width: 10px;
+}
+.top__date-changer__previous-button > *,
+.top__date-changer__next-button > * {
+  width: 10px;
 }
 /*# sourceMappingURL=center.css.map */

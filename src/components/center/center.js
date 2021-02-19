@@ -16,7 +16,7 @@ class TopCenterSection extends React.Component {
   render() {
     return (
 
-      <section className="center-section__top">
+      <section className="top">
         <SectionTitle />
         <DateChanger currentDay="Today"/>
       </section>
@@ -32,7 +32,7 @@ class MainContent extends React.Component {
   render() {
     return (
 
-      <section className="center-section__main">
+      <section className="main">
         <Meal title="Posiłek 1" />
         <Meal title="Posiłek 2" />
         <Meal title="Posiłek 3" />
@@ -54,7 +54,7 @@ class SectionTitle extends React.Component {
   render() {
     return (
 
-      <h3 className="center-section__top__title">Dashboard</h3>
+      <h3 className="top__title">Dashboard</h3>
 
     );
   }
@@ -67,10 +67,10 @@ class DateChanger extends React.Component {
   render() {
     return (
 
-      <div className="center-section__top__date-changer">
-        <DateButton className="center-section__top__date-changer__previous-button" iconSrc={previousIcon}/>
+      <div className="op__date-changer">
+        <DateButton className="top__date-changer__previous-button" iconSrc={previousIcon}/>
         <h4>{this.props.currentDay}</h4>
-        <DateButton className="center-section__top__date-changer__next-button" iconSrc={nextIcon}/>
+        <DateButton className="top__date-changer__next-button" iconSrc={nextIcon}/>
       </div>
 
     );

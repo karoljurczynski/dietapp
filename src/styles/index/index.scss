@@ -7,8 +7,11 @@
 // STYLES
 
 body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   background: $background;
+  backdrop-filter: blur(20px);
+}
+.wrapper {
+  @include flexSetup(row, flex-start, center);
+  width: 80%;
+  height: 100vh;
 }

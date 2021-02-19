@@ -13,7 +13,7 @@ class LogoContainer extends React.Component {
   render() {
     return (
 
-      <header className="left-section__logo-container">
+      <header className="logo-container">
         <Logo />
         <Title />
       </header>
@@ -29,7 +29,7 @@ class MenuContainer extends React.Component {
   render() {
     return (
 
-      <ul className="left-section__menu-container">
+      <ul className="menu-container">
         <ListItem value="Log in" href="#" isActive={true} />
         <ListItem value="Settings" href="#" isActive={false} />
         <ListItem value="Training" href="#" isActive={false} />
@@ -47,9 +47,9 @@ class Quotation extends React.Component {
   render() {
     return (
 
-      <h2 className="left-section__quotation">
-        <span className="left-section__quotation__top">Be healthy,</span>
-        <span className="left-section__quotation__bottom">be happy!</span>
+      <h2 className="quotation">
+        <span className="quotation__top">Be healthy,</span>
+        <span className="quotation__bottom">be happy!</span>
       </h2>
 
     );
@@ -65,7 +65,7 @@ class Logo extends React.Component {
   render() {
     return (
 
-      <img className="left-section__logo-container__logo" src={logo} alt="Dietapp logo" />
+      <img className="logo-container__logo" src={logo} alt="Dietapp logo" />
 
     );
   }
@@ -78,8 +78,8 @@ class Title extends React.Component {
   render() {
     return (
 
-      <h1 className="left-section__logo-container__title">Diet
-        <span className="left-section__logo-container__title left-section__logo-container__title--right">app</span>
+      <h1 className="logo-container__title">Diet
+        <span className="logo-container__title__right">app</span>
       </h1>
 
     );
@@ -92,14 +92,14 @@ class ListItem extends React.Component {
   }
   isActive() {
     if (this.props.active === true)
-      return "left-section__menu-container__list-item__content left-section__menu-container__list-item__content--active";
+      return "menu-container__list-item__content left-section__menu-container__list-item__content--active";
     else
-      return "left-section__menu-container__list-item__content";
+      return "menu-container__list-item__content";
   }
   render() {
     return (
 
-      <li className="left-section__menu-container__list-item">
+      <li className="menu-container__list-item">
           <a 
             className={this.isActive()}
             href={this.props.href}

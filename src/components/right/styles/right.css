@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Fredoka+One&family=Secular+One&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Courgette&display=swap");
 * {
   margin: 0;
   padding: 0;
@@ -11,6 +12,7 @@
   font-family: "Noto Sans", sans-serif;
   font-weight: normal;
   text-decoration: none;
+  font-size: 16px;
 }
 
 @-webkit-keyframes gaugeAnimation {

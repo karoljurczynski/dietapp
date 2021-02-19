@@ -1,0 +1,78 @@
+@import url("https://fonts.googleapis.com/css2?family=Fredoka+One&family=Secular+One&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cookie&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  -webkit-box-shadow: 0;
+          box-shadow: 0;
+  border: none;
+  font-family: "Noto Sans", sans-serif;
+  font-weight: normal;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+@media (max-width: 1600px) {
+  .logo-container__title {
+    font-size: 2.6rem;
+  }
+  .logo-container__title__right {
+    font-size: 2.6rem;
+  }
+
+  .menu-container__list-item {
+    margin-bottom: 1.1rem;
+  }
+  .menu-container__list-item__content {
+    padding: 0.7rem;
+    font-size: 1.2rem;
+  }
+
+  .quotation__top, .quotation__bottom {
+    font-size: 3rem;
+  }
+}
+@media (max-width: 1400px) {
+  .logo-container__title {
+    font-size: 2.2rem;
+  }
+  .logo-container__title__right {
+    font-size: 2.2rem;
+  }
+
+  .menu-container__list-item {
+    margin-bottom: 0.9rem;
+  }
+  .menu-container__list-item__content {
+    padding: 0.6rem;
+    font-size: 1rem;
+  }
+
+  .quotation__top, .quotation__bottom {
+    font-size: 2.4rem;
+  }
+}
+@media (max-width: 1200px) {
+  .logo-container__title {
+    font-size: 1.8rem;
+  }
+  .logo-container__title__right {
+    font-size: 1.8rem;
+  }
+
+  .menu-container__list-item {
+    margin-bottom: 0.7rem;
+  }
+  .menu-container__list-item__content {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .quotation__top, .quotation__bottom {
+    font-size: 2rem;
+  }
+}
+/*# sourceMappingURL=media.css.map */

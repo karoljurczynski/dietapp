@@ -1,2 +1,12 @@
 @forward '../../../styles/config/config';
+@forward '../styles/media_queries/media';
 @use '../../../styles/config/config' as *;
+
+
+.top__date-changer__previous-button,
+.top__date-changer__next-button {
+  width: 10px;
+  & > * {
+    width: 10px;
+  }
+}

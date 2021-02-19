@@ -1,2 +1,74 @@
+// IMPORTS
+
 @forward '../../../styles/config/config';
 @use '../../../styles/config/config' as *;
+
+
+// STYLES
+
+.logo-container {
+  @include flexSetup(column, center, center);
+  width: 55%;
+  margin: 15% 0;
+  &__logo {
+    width: 80%;
+  }
+  &__title {
+    width: 100%;
+    text-align: center;
+    font-size: 3rem;
+    color: $purple-color;
+    &__right {
+      font-size: 3rem;
+      color: $black-color;
+    }
+  }
+}
+
+.menu-container {
+  @include flexSetup(column, center, center);
+  width: 54%;
+  &__list-item {
+    @include flexSetup(column, center, center);
+    width: 100%;
+    margin-bottom: 1.3rem;
+    border-radius: 2rem;
+    text-align: center;
+    list-style-type: none;
+    background: $menu-button;
+    box-shadow: 0px 0px 2px white;
+    &__content {
+      @include flexSetup(column, center, center);
+      width: 100%;
+      height: 100%;
+      padding: 0.8rem;
+      font-size: 1.3rem;
+      color: $purple-color;
+      &:visited {
+        color: $purple-color;
+      }
+      &:hover, &:active {
+        border-radius: 2rem;
+        background: $purple-color;
+        box-shadow: 0px 0px 2px $purple-color;
+        color: white;
+      }
+    }
+  }
+}
+
+.quotation {
+  @include flexSetup(column, flex-end, flex-start);
+  margin: 25% 0 15% 0;
+  &__top, &__bottom {
+    color: $purple-color;
+    font-family: 'Cookie', cursive;
+    display: block;
+    font-size: 3.2rem;
+  }
+}
+
+
+// IMPORTING MEDIA QUERIES
+
+@import './media_queries/media';

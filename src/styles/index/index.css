@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Fredoka+One&family=Secular+One&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cookie&display=swap");
 * {
   margin: 0;
   padding: 0;
@@ -11,19 +12,31 @@
   font-family: "Noto Sans", sans-serif;
   font-weight: normal;
   text-decoration: none;
+  font-size: 16px;
 }
 
 body {
+  background: -webkit-gradient(linear, left top, left bottom, from(#95dfff), to(#60b5ff));
+  background: linear-gradient(to bottom, #95dfff, #60b5ff);
+  -webkit-backdrop-filter: blur(20px);
+          backdrop-filter: blur(20px);
+}
+
+.wrapper {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  background: -webkit-gradient(linear, left top, left bottom, from(#B4E8FF), to(#74BEFF));
-  background: linear-gradient(to bottom, #B4E8FF, #74BEFF);
+  width: 80%;
+  height: 100vh;
 }
 /*# sourceMappingURL=index.css.map */

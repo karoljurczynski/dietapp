@@ -2,11 +2,12 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Secular+One&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cookie&display=swap');
 
 
 // VARIABLES
 
-$background: linear-gradient(to bottom, #B4E8FF, #74BEFF);
+$background: linear-gradient(to bottom, #95dfff, #60b5ff);
 
 $black-color: #000000;
 $white-color: #FFFFFF;
@@ -16,9 +17,19 @@ $purple-color: #7500AF;
 $gauge-empty: rgba(255, 255, 255, 0.25);
 $gauge-full: rgba(255, 255, 255, 0.5);
 $menu-button: $gauge-full;
+$left-section-background: rgba(255, 255, 255, 0.3);
+$center-section-background: rgba(255, 255, 255, 0.6);
+$right-section-background: $purple-color;
 
+@mixin flexSetup($direction, $align, $justify) {
+  display: flex;
+  flex-direction: $direction;
+  align-items: $align;
+  justify-content: $justify;
+}
 
 // RESET
+
 
 * {
   margin: 0;
@@ -29,4 +40,5 @@ $menu-button: $gauge-full;
   font-family: 'Noto Sans', sans-serif;
   font-weight: normal;
   text-decoration: none;
+  font-size: 16px;
 }
