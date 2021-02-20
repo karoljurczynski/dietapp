@@ -7,7 +7,7 @@
 
 // VARIABLES
 
-$size: 200px;
+$size: 150px;
 
 
 // KEYFRAMES
@@ -29,14 +29,12 @@ $size: 200px;
 
 .gauge-container {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
   position: relative;
   width: $size;
   height: $size;
   overflow: hidden;
-  box-sizing: content-box;
-  margin: 20px;
   border-radius: 50%;
   background: $purple-color;
 
@@ -51,53 +49,70 @@ $size: 200px;
     transform: rotate(45deg);
     background: $purple-color;
   }
-
   &__bar {
     position: absolute;
     z-index: 1;
     top: 0;
-    width: $size;
-    height: $size;
-    border: $size / 7 solid;
+    width: 100%;
+    height: 100%;
+    border: 15px solid;
     border-color: $gauge-empty $gauge-empty $gauge-full $gauge-empty;
     border-radius: 50%;
-    // test animation
-      animation-name: gaugeAnimation;
-      animation-timing-function: ease;
-      animation-duration: 5s;
-      animation-fill-mode: forwards;
-      animation-iteration-count: infinite;
-    // end
+    &--kcal {
+      border: 18px solid;
+      border-color: $gauge-empty $gauge-empty $gauge-full $gauge-empty;
+    }
   }
 
   &__text {
     position: absolute;
     z-index: 3;
-    top: $size / 7;
-    margin-top: $size / 25;
+    top: 30px;
     & > * {
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding-bottom: $size / 25;
+      padding-bottom: 10px;
     }
     &__amount {
-      font-size: $size / 5;
+      font-size: 1.6rem;
       color: $white-color;
       padding-bottom: 0;
+      &--kcal {
+        font-size: 2rem;
+      }
     }
     &__name {
-      font-size: $size / 14;
+      font-size: 0.6rem;
       color: $white-color;
-      padding-bottom: $size / 10;
+      padding-bottom: 15px;
+      &--kcal {
+        font-size: 0.8rem;
+        padding-bottom: 20px;
+      }
     }
     &__percent {
-      font-size: $size / 14;
+      font-size: 0.8rem;
       color: $gauge-full;
+      &--kcal {
+        font-size: 0.9rem;
+      }
     }
     &__left {
-      font-size: $size / 10;
+      font-size: 0.9rem;
       color: $white-color;
+      &--kcal {
+        font-size: 1rem;
+      }
+    }
+  }
+  &--kcal {
+    width: $size + $size / 8;
+    height: $size + $size / 8;
+    margin-bottom: 10px;
+    &:before {
+      width: $size / 2 + $size / 100 + $size / 8;
+      height: $size / 2 + $size / 100 + $size / 8;
     }
   }
 }

@@ -50,10 +50,10 @@ class RightSection extends React.Component {
     return (
 
       <aside className="right-section">
-        <Gauge />
-        <Gauge />
-        <Gauge />
-        <Gauge />
+        <Gauge amount="500" type="kcal" percent="25" left="1500" isKcal={true} />
+        <Gauge amount="100" type="proteins" percent="75" left="50"/>
+        <Gauge amount="20" type="fats" percent="40" left="30"/>
+        <Gauge amount="150" type="carbohydrates" percent="50" left="150"/>
       </aside>
 
     );

@@ -33,7 +33,6 @@
       -ms-flex-pack: center;
           justify-content: center;
   width: 55%;
-  margin: 10% 0;
 }
 .logo-container__logo {
   width: 80%;
@@ -133,7 +132,6 @@
   -webkit-box-pack: end;
       -ms-flex-pack: end;
           justify-content: flex-end;
-  margin-bottom: 10%;
 }
 .quotation__top, .quotation__bottom {
   color: #7500AF;
