@@ -49,6 +49,7 @@ $size: 150px;
     transform: rotate(45deg);
     background: $purple-color;
   }
+
   &__bar {
     position: absolute;
     z-index: 1;
@@ -58,6 +59,7 @@ $size: 150px;
     border: 15px solid;
     border-color: $gauge-empty $gauge-empty $gauge-full $gauge-empty;
     border-radius: 50%;
+
     &--kcal {
       border: 18px solid;
       border-color: $gauge-empty $gauge-empty $gauge-full $gauge-empty;
@@ -68,39 +70,48 @@ $size: 150px;
     position: absolute;
     z-index: 3;
     top: 30px;
+
     & > * {
       display: flex;
       flex-direction: column;
       align-items: center;
       padding-bottom: 10px;
     }
+
     &__amount {
       font-size: 1.6rem;
       color: $white-color;
       padding-bottom: 0;
+
       &--kcal {
         font-size: 2rem;
       }
     }
+
     &__name {
       font-size: 0.6rem;
       color: $white-color;
       padding-bottom: 15px;
+
       &--kcal {
         font-size: 0.8rem;
         padding-bottom: 20px;
       }
     }
+
     &__percent {
       font-size: 0.8rem;
       color: $gauge-full;
+
       &--kcal {
         font-size: 0.9rem;
       }
     }
+
     &__left {
       font-size: 0.9rem;
       color: $white-color;
+
       &--kcal {
         font-size: 1rem;
       }
@@ -110,9 +121,14 @@ $size: 150px;
     width: $size + $size / 8;
     height: $size + $size / 8;
     margin-bottom: 10px;
+
     &:before {
       width: $size / 2 + $size / 100 + $size / 8;
       height: $size / 2 + $size / 100 + $size / 8;
     }
   }
 }
+
+// IMPORTING MEDIA QUERIES
+
+@import './media_queries/media';

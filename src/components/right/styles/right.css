@@ -1,6 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Fredoka+One&family=Secular+One&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Cookie&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fredoka+One&family=Secular+One&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cookie&display=swap");
 * {
   margin: 0;
   padding: 0;
@@ -15,6 +18,135 @@
   font-size: 16px;
 }
 
+@media (max-width: 1600px) {
+  .gauge-container {
+    width: 130px;
+    height: 130px;
+  }
+  .gauge-container:before {
+    z-index: 2;
+    width: 56.5px;
+    height: 56.5px;
+  }
+  .gauge-container__bar {
+    z-index: 1;
+    border: 15px solid;
+    border-color: rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.5) rgba(255, 255, 255, 0.25);
+  }
+  .gauge-container__bar--kcal {
+    border: 18px solid;
+    border-color: rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.5) rgba(255, 255, 255, 0.25);
+  }
+  .gauge-container__text {
+    top: 30px;
+    z-index: 3;
+  }
+  .gauge-container__text > * {
+    padding-bottom: 5px;
+  }
+  .gauge-container__text__amount {
+    font-size: 1.5rem;
+    padding-bottom: 0;
+  }
+  .gauge-container__text__amount--kcal {
+    font-size: 1.9rem;
+  }
+  .gauge-container__text__name {
+    font-size: 0.5rem;
+    padding-bottom: 15px;
+  }
+  .gauge-container__text__name--kcal {
+    font-size: 0.7rem;
+    padding-bottom: 20px;
+  }
+  .gauge-container__text__percent {
+    font-size: 0.7rem;
+  }
+  .gauge-container__text__percent--kcal {
+    font-size: 0.8rem;
+  }
+  .gauge-container__text__left {
+    font-size: 0.8rem;
+  }
+  .gauge-container__text__left--kcal {
+    font-size: 0.9rem;
+  }
+  .gauge-container--kcal {
+    width: 148.75px;
+    height: 148.75px;
+    margin-bottom: 10px;
+  }
+  .gauge-container--kcal:before {
+    width: 75.25px;
+    height: 75.25px;
+  }
+}
+@media (max-width: 1400px) {
+  .gauge-container {
+    width: 120px;
+    height: 120px;
+  }
+  .gauge-container:before {
+    z-index: 2;
+    width: 46.5px;
+    height: 46.5px;
+  }
+  .gauge-container__bar {
+    z-index: 1;
+    border: 12px solid;
+    border-color: rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.5) rgba(255, 255, 255, 0.25);
+  }
+  .gauge-container__bar--kcal {
+    border: 15px solid;
+    border-color: rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.5) rgba(255, 255, 255, 0.25);
+  }
+  .gauge-container__text {
+    top: 25px;
+    z-index: 3;
+  }
+  .gauge-container__text > * {
+    padding-bottom: 5px;
+  }
+  .gauge-container__text__amount {
+    font-size: 1.4rem;
+    padding-bottom: 0;
+  }
+  .gauge-container__text__amount--kcal {
+    font-size: 1.8rem;
+  }
+  .gauge-container__text__name {
+    font-size: 0.6rem;
+    padding-bottom: 10px;
+  }
+  .gauge-container__text__name--kcal {
+    font-size: 0.6rem;
+    padding-bottom: 10px;
+  }
+  .gauge-container__text__percent {
+    display: none;
+  }
+  .gauge-container__text__percent--kcal {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    font-size: 0.7rem;
+  }
+  .gauge-container__text__left {
+    font-size: 0.7rem;
+  }
+  .gauge-container__text__left--kcal {
+    font-size: 0.8rem;
+  }
+  .gauge-container--kcal {
+    width: 128.75px;
+    height: 128.75px;
+    margin-bottom: 10px;
+  }
+  .gauge-container--kcal:before {
+    width: 55.25px;
+    height: 55.25px;
+  }
+}
 @-webkit-keyframes gaugeAnimation {
   0% {
     -webkit-transform: rotate(0deg);
@@ -29,7 +161,6 @@
             transform: rotate(0deg);
   }
 }
-
 @keyframes gaugeAnimation {
   0% {
     -webkit-transform: rotate(0deg);
@@ -144,5 +275,149 @@
 .gauge-container--kcal:before {
   width: 95.25px;
   height: 95.25px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  -webkit-box-shadow: 0;
+          box-shadow: 0;
+  border: none;
+  font-family: "Noto Sans", sans-serif;
+  font-weight: normal;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+@media (max-width: 1600px) {
+  .gauge-container {
+    width: 130px;
+    height: 130px;
+  }
+  .gauge-container:before {
+    z-index: 2;
+    width: 56.5px;
+    height: 56.5px;
+  }
+  .gauge-container__bar {
+    z-index: 1;
+    border: 15px solid;
+    border-color: rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.5) rgba(255, 255, 255, 0.25);
+  }
+  .gauge-container__bar--kcal {
+    border: 18px solid;
+    border-color: rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.5) rgba(255, 255, 255, 0.25);
+  }
+  .gauge-container__text {
+    top: 30px;
+    z-index: 3;
+  }
+  .gauge-container__text > * {
+    padding-bottom: 5px;
+  }
+  .gauge-container__text__amount {
+    font-size: 1.5rem;
+    padding-bottom: 0;
+  }
+  .gauge-container__text__amount--kcal {
+    font-size: 1.9rem;
+  }
+  .gauge-container__text__name {
+    font-size: 0.5rem;
+    padding-bottom: 15px;
+  }
+  .gauge-container__text__name--kcal {
+    font-size: 0.7rem;
+    padding-bottom: 20px;
+  }
+  .gauge-container__text__percent {
+    font-size: 0.7rem;
+  }
+  .gauge-container__text__percent--kcal {
+    font-size: 0.8rem;
+  }
+  .gauge-container__text__left {
+    font-size: 0.8rem;
+  }
+  .gauge-container__text__left--kcal {
+    font-size: 0.9rem;
+  }
+  .gauge-container--kcal {
+    width: 148.75px;
+    height: 148.75px;
+    margin-bottom: 10px;
+  }
+  .gauge-container--kcal:before {
+    width: 75.25px;
+    height: 75.25px;
+  }
+}
+@media (max-width: 1400px) {
+  .gauge-container {
+    width: 120px;
+    height: 120px;
+  }
+  .gauge-container:before {
+    z-index: 2;
+    width: 46.5px;
+    height: 46.5px;
+  }
+  .gauge-container__bar {
+    z-index: 1;
+    border: 12px solid;
+    border-color: rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.5) rgba(255, 255, 255, 0.25);
+  }
+  .gauge-container__bar--kcal {
+    border: 15px solid;
+    border-color: rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.5) rgba(255, 255, 255, 0.25);
+  }
+  .gauge-container__text {
+    top: 25px;
+    z-index: 3;
+  }
+  .gauge-container__text > * {
+    padding-bottom: 5px;
+  }
+  .gauge-container__text__amount {
+    font-size: 1.4rem;
+    padding-bottom: 0;
+  }
+  .gauge-container__text__amount--kcal {
+    font-size: 1.8rem;
+  }
+  .gauge-container__text__name {
+    font-size: 0.6rem;
+    padding-bottom: 10px;
+  }
+  .gauge-container__text__name--kcal {
+    font-size: 0.6rem;
+    padding-bottom: 10px;
+  }
+  .gauge-container__text__percent {
+    display: none;
+  }
+  .gauge-container__text__percent--kcal {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    font-size: 0.7rem;
+  }
+  .gauge-container__text__left {
+    font-size: 0.7rem;
+  }
+  .gauge-container__text__left--kcal {
+    font-size: 0.8rem;
+  }
+  .gauge-container--kcal {
+    width: 128.75px;
+    height: 128.75px;
+    margin-bottom: 10px;
+  }
+  .gauge-container--kcal:before {
+    width: 55.25px;
+    height: 55.25px;
+  }
 }
 /*# sourceMappingURL=right.css.map */
