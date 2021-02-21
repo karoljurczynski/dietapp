@@ -67,9 +67,9 @@ class DateChanger extends React.Component {
   render() {
     return (
 
-      <div className="op__date-changer">
+      <div className="top__date-changer">
         <DateButton className="top__date-changer__previous-button" iconSrc={previousIcon}/>
-        <h4>{this.props.currentDay}</h4>
+        <h4 className="top__date-changer__day">{this.props.currentDay}</h4>
         <DateButton className="top__date-changer__next-button" iconSrc={nextIcon}/>
       </div>
 

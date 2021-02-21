@@ -29,9 +29,9 @@
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
   width: 55%;
 }
 .logo-container__logo {
@@ -62,7 +62,7 @@
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  width: 54%;
+  width: 50%;
 }
 .menu-container__list-item {
   display: -webkit-box;
@@ -103,8 +103,8 @@
           justify-content: center;
   width: 100%;
   height: 100%;
-  padding: 0.8rem;
-  font-size: 1.3rem;
+  padding: 0.6rem;
+  font-size: 1.1rem;
   color: #7500AF;
 }
 .menu-container__list-item__content:visited {
@@ -163,11 +163,11 @@
   }
 
   .menu-container__list-item {
-    margin-bottom: 1.1rem;
+    margin-bottom: 0.8rem;
   }
   .menu-container__list-item__content {
-    padding: 0.7rem;
-    font-size: 1.2rem;
+    padding: 0.5rem;
+    font-size: 0.9rem;
   }
 
   .quotation__top, .quotation__bottom {
@@ -183,11 +183,11 @@
   }
 
   .menu-container__list-item {
-    margin-bottom: 0.9rem;
+    margin-bottom: 0.8rem;
   }
   .menu-container__list-item__content {
-    padding: 0.6rem;
-    font-size: 1rem;
+    padding: 0.5rem;
+    font-size: 0.8rem;
   }
 
   .quotation__top, .quotation__bottom {
@@ -206,7 +206,7 @@
     margin-bottom: 0.7rem;
   }
   .menu-container__list-item__content {
-    padding: 0.5rem;
+    padding: 0.6rem;
     font-size: 0.8rem;
   }
 

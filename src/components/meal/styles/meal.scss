@@ -1,2 +1,77 @@
 @forward '../../../styles/config/config';
 @use '../../../styles/config/config' as *;
+
+.main__meal {
+  @include flexSetup(column, flex-start, center);
+  border: 2px solid black;
+  width: 100%;
+
+  &__top {
+    @include flexSetup(row, center, space-between);
+    width: 100%;
+
+    &__title {
+      @include flexSetup(row, center, flex-start);
+      width: 30%;
+    }
+
+    &__nutrition-stats {
+      @include flexSetup(row, center, flex-end);
+      width: 70%;
+    }
+  }
+
+  &__center {
+    @include flexSetup(column, center, center);
+    width: 100%;
+
+    &__product {
+      @include flexSetup(row, flex-start, space-between);
+      width: 100%;
+
+      &__info {
+        @include flexSetup(column, flex-start, flex-start);
+        width: 30%;
+
+        &__name {
+          
+
+        }
+
+        &__weight {
+
+        }
+      }
+
+      &__stats {
+        @include flexSetup(row, flex-start, flex-end);
+        width: 70%;
+
+        &__ingredient {
+
+          &--kcal {
+
+          }
+        }
+      }
+    }
+  }
+
+  &__bottom {
+    @include flexSetup(column, center, center);
+    width: 100%;
+
+    &__buttons-section {
+      width: 100%;
+      @include flexSetup(row, center, flex-end);
+
+      &__remove-button {
+
+      }
+
+      &__add-button {
+
+      }
+    }
+  }
+}
