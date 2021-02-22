@@ -10,8 +10,9 @@
   &__title {
     display: block;
     width: 50%;
-    font-size: 1.9rem;
-    font-weight: bold;
+    font-size: 2rem;
+    @extend %robotoBold;
+    letter-spacing: -1px;
   }
   &__date-changer {
     @include flexSetup(row, center, flex-end);
@@ -19,7 +20,8 @@
     &__day {
       display: block;
       font-size: 1.6rem;
-      font-weight: 900;
+      @extend %robotoBold;
+      letter-spacing: -1px;
       margin: 0 20px;
     }
     &__previous-button {

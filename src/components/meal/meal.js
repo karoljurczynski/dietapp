@@ -29,7 +29,9 @@ class Meal extends React.Component {
 class TopMealSection extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {isOpened: false};
   }
+
   render() {
     return (
 
@@ -146,27 +148,32 @@ class Ingredient extends React.Component {
     this.unit = '';
   }
   isKcal() {
-    if (this.props.type === "kcal")
+    if (this.props.type === "kcal") {
       this.unit = "kcal";
+      return true;
+    } 
     else {
       this.unit = "g";
+      return false;
     }
   }
   isSmall() {
     if (this.props.size === "small") {
       this.isKcal() 
-      ? this.className = "main__meal__center__product__stats_ingredient center-section__main__meal__center__product__stats_ingredient--kcal"
-      : this.className = "main__meal__center__product__stats_ingredient";
+      ? this.className = "main__meal__center__product__stats__ingredient main__meal__center__product__stats__ingredient--kcal"
+      : this.className = "main__meal__center__product__stats__ingredient";
     }
     else {
       this.isKcal() 
-      ? this.className = "main__meal__top__nutrition-stats__ingredient center-section__main__meal__top__nutrition-stats__ingredient--kcal"
+      ? this.className = "main__meal__top__nutrition-stats__ingredient main__meal__top__nutrition-stats__ingredient--kcal"
       : this.className = "main__meal__top__nutrition-stats__ingredient";
     }
   }
   render() {
     this.isKcal();
     this.isSmall();
+    console.log(this.className);
+    console.log(this.unit);
     return (
 
       <h4 className={this.className}>{`${this.props.value} ${this.unit}`}</h4>

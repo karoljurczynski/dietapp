@@ -3,8 +3,15 @@
 
 .main__meal {
   @include flexSetup(column, flex-start, center);
-  border: 2px solid black;
   width: 100%;
+  background: $white-color;
+  margin-bottom: 20px;
+  padding: 20px;
+  border-radius: 40px;
+  box-shadow: 1px 1px 5px $gray-color;
+  &:last-of-type {
+    margin-bottom: 0;
+  }
 
   &__top {
     @include flexSetup(row, center, space-between);
@@ -12,33 +19,58 @@
 
     &__title {
       @include flexSetup(row, center, flex-start);
+      color: $purple-color;
+      @extend %robotoBold;
+      font-size: 1.5rem;
       width: 30%;
     }
 
     &__nutrition-stats {
       @include flexSetup(row, center, flex-end);
       width: 70%;
+
+      &__ingredient {
+        margin-left: 15px;
+        font-size: 1.5rem;
+        @extend %robotoNormal;
+
+
+        &--kcal {
+          margin-left: 30px;
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: $purple-color;
+        }
+      }
     }
   }
 
   &__center {
     @include flexSetup(column, center, center);
     width: 100%;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    margin: 20px 0;
+    padding: 20px 0 10px 0;
 
     &__product {
       @include flexSetup(row, flex-start, space-between);
       width: 100%;
+      padding-bottom: 10px;
 
       &__info {
         @include flexSetup(column, flex-start, flex-start);
         width: 30%;
 
         &__name {
-          
-
+          @extend %robotoBold;
+          font-size: 1.2rem;
+          letter-spacing: 0;
         }
 
         &__weight {
+          @extend %robotoNormal;
+          font-size: 0.9rem;
 
         }
       }
@@ -48,9 +80,13 @@
         width: 70%;
 
         &__ingredient {
-
+          margin-left: 10px;
+          @extend %robotoNormal;
+          font-size: 1.2rem;
+        
           &--kcal {
-
+            margin-left: 15px;
+            font-weight: 700;
           }
         }
       }
@@ -66,10 +102,25 @@
       @include flexSetup(row, center, flex-end);
 
       &__remove-button {
+        background: $white-color;
+        color: $purple-color;
+        padding: 8px;
+        border-radius: 15px;
+        @extend %robotoNormal;
+        font-size: 1.2rem;
+        box-shadow: 0 0 3px $gray-color;
 
       }
 
       &__add-button {
+        background: $purple-color;
+        color: $white-color;
+        margin-left: 10px;
+        padding: 8px 15px;
+        @extend %robotoNormal;
+        font-size: 1.2rem;
+
+        border-radius: 15px;
 
       }
     }

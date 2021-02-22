@@ -1,6 +1,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Fredoka+One&family=Secular+One&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Cookie&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap");
+.top__title, .top__date-changer__day {
+  font-family: "Roboto", sans-serif;
+  font-weight: 700;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -35,8 +41,8 @@
 .top__title {
   display: block;
   width: 50%;
-  font-size: 1.9rem;
-  font-weight: bold;
+  font-size: 2rem;
+  letter-spacing: -1px;
 }
 .top__date-changer {
   display: -webkit-box;
@@ -57,7 +63,7 @@
 .top__date-changer__day {
   display: block;
   font-size: 1.6rem;
-  font-weight: 900;
+  letter-spacing: -1px;
   margin: 0 20px;
 }
 .top__date-changer__previous-button {

@@ -3,7 +3,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Secular+One&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Cookie&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap');
 
 // VARIABLES
 
@@ -26,6 +26,16 @@ $right-section-background: $purple-color;
   flex-direction: $direction;
   align-items: $align;
   justify-content: $justify;
+}
+
+%robotoBold {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
+}
+
+%robotoNormal {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
 }
 
 // RESET
