@@ -1,6 +1,7 @@
 // IMPORTS
 
-import React from 'react';
+import React, { useImperativeHandle } from 'react';
+import ReactDOM from 'react-dom';
 import './styles/meal.css';
 
 
@@ -9,14 +10,44 @@ import './styles/meal.css';
 class Meal extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      isClicked: true,
+      style: {
+        left: '0px',
+        height: ''
+      }};
+    this.isOpened = this.isOpened.bind(this);
+  }
+  isOpened() {
+    if(this.state.isClicked === false)
+      this.setState({isClicked: true, style: {left: '0px', height: ''}});
+    else
+      this.setState({isClicked: false, style: {left: '-10px', height: ''}});
   }
   render() {
     return (
 
-      <div className="main__meal">
-        <TopMealSection title={this.props.title}/>
-        <CenterMealSection />
-        <BottomMealSection />
+      <div className="main__meal" style={this.state.style}>
+        <TopMealSection 
+          title={this.props.title}
+          proteins={this.props.proteins}
+          fats={this.props.fats}
+          carbs={this.props.carbs}
+          kcal={this.props.kcal}
+          isClicked={this.isOpened}
+          />
+        <CenterMealSection 
+          productName={this.props.productName}
+          productWeight={this.props.productWeight}
+          proteins={this.props.proteins}
+          fats={this.props.fats}
+          carbs={this.props.carbs}
+          kcal={this.props.kcal}
+          isOpened={this.state.isClicked}
+        />
+        <BottomMealSection 
+          isOpened={this.state.isClicked}
+        />
       </div>
 
     );
@@ -29,13 +60,22 @@ class Meal extends React.Component {
 class TopMealSection extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {isOpened: false};
+    this.handleOnClick = this.handleOnClick.bind(this);
   }
-
+  handleOnClick() {
+    if(this.props.isClicked === true) {
+      this.props.isClicked(false);
+    }
+    else {
+      this.props.isClicked(true);
+    }
+  }
   render() {
     return (
 
-      <section className="main__meal__top">
+      <section 
+        className="main__meal__top" 
+        onClick={this.handleOnClick}>
         <MealTitle title={this.props.title}/>
         <NutritionStats />
       </section>
@@ -47,11 +87,19 @@ class TopMealSection extends React.Component {
 class CenterMealSection extends React.Component {
   constructor(props) {
     super(props);
+    this.changeDisplay = this.changeDisplay.bind(this);
   }
+  changeDisplay() {
+    if(this.props.isOpened === true)
+      return {display: "none"};
+    else
+      return {display: "flex"};
+  }
+  
   render() {
     return (
 
-      <section className="main__meal__center">
+      <section className="main__meal__center" style={this.changeDisplay()}>
         <Product />
         <Product />
       </section>
@@ -64,10 +112,16 @@ class BottomMealSection extends React.Component {
   constructor(props) {
     super(props);
   }
+  changeDisplay() {
+    if(this.props.isOpened === true)
+      return {display: "none"};
+    else
+      return {display: "flex"};
+  }
   render() {
     return (
 
-      <section className="main__meal__bottom">
+      <section className="main__meal__bottom" style={this.changeDisplay()}>
         <ButtonsSection />
       </section>
 
@@ -172,8 +226,6 @@ class Ingredient extends React.Component {
   render() {
     this.isKcal();
     this.isSmall();
-    console.log(this.className);
-    console.log(this.unit);
     return (
 
       <h4 className={this.className}>{`${this.props.value} ${this.unit}`}</h4>
@@ -257,7 +309,7 @@ class ProductWeight extends React.Component {
   render() {
     return (
 
-      <p className="main__meal__center__product__info__weight">{80}g</p>
+      <p className="main__meal__center__product__info__weight">{80} g</p>
       
     );
   }

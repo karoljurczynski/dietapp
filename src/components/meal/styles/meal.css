@@ -2,12 +2,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Cookie&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap");
-.main__meal__top__title, .main__meal__center__product__info__name {
+.main__meal__top__title, .main__meal__center__product__info__name, .main__meal__center__product__info__weight {
   font-family: "Roboto", sans-serif;
   font-weight: 700;
 }
 
-.main__meal__top__nutrition-stats__ingredient, .main__meal__center__product__info__weight, .main__meal__center__product__stats__ingredient, .main__meal__bottom__buttons-section__remove-button, .main__meal__bottom__buttons-section__add-button {
+.main__meal__top__nutrition-stats__ingredient, .main__meal__center__product__stats__ingredient, .main__meal__bottom__buttons-section__remove-button, .main__meal__bottom__buttons-section__add-button {
   font-family: "Roboto", sans-serif;
   font-weight: 400;
 }
@@ -41,12 +41,15 @@
       -ms-flex-pack: center;
           justify-content: center;
   width: 100%;
+  position: relative;
   background: #FFFFFF;
   margin-bottom: 20px;
-  padding: 20px;
   border-radius: 40px;
   -webkit-box-shadow: 1px 1px 5px #707070;
           box-shadow: 1px 1px 5px #707070;
+  -webkit-transition: 0.2s linear;
+  transition: 0.2s linear;
+  cursor: pointer;
 }
 .main__meal:last-of-type {
   margin-bottom: 0;
@@ -66,6 +69,7 @@
       -ms-flex-pack: justify;
           justify-content: space-between;
   width: 100%;
+  padding: 20px;
 }
 .main__meal__top__title {
   display: -webkit-box;
@@ -125,11 +129,11 @@
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  width: 100%;
+  width: calc(100% - 40px);
   border-top: 1px solid black;
   border-bottom: 1px solid black;
-  margin: 20px 0;
-  padding: 20px 0 10px 0;
+  margin: 0 20px;
+  padding: 10px 0;
 }
 .main__meal__center__product {
   display: -webkit-box;
@@ -148,6 +152,9 @@
   width: 100%;
   padding-bottom: 10px;
 }
+.main__meal__center__product:last-of-type {
+  padding-bottom: 0;
+}
 .main__meal__center__product__info {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -165,10 +172,12 @@
   width: 30%;
 }
 .main__meal__center__product__info__name {
-  font-size: 1.2rem;
-  letter-spacing: 0;
+  font-size: 1.1rem;
+  color: #707070;
 }
 .main__meal__center__product__info__weight {
+  letter-spacing: -1px;
+  color: #707070;
   font-size: 0.9rem;
 }
 .main__meal__center__product__stats {
@@ -209,7 +218,8 @@
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  width: 100%;
+  width: calc(100% - 40px);
+  margin: 20px;
 }
 .main__meal__bottom__buttons-section {
   width: 100%;
