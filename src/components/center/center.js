@@ -2,8 +2,8 @@
 
 import React from 'react';
 import './styles/center.css'
-import previousIcon from './styles/previousIcon.png';
-import nextIcon from './styles/nextIcon.png';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowCircleLeft, faArrowCircleRight } from '@fortawesome/free-solid-svg-icons';
 import { Meal } from '../meal/meal';
 
 
@@ -33,11 +33,17 @@ class MainContent extends React.Component {
     return (
 
       <section className="main">
-        <Meal title="Posiłek 1" />
-        <Meal title="Posiłek 2" />
-        <Meal title="Posiłek 3" />
-        <Meal title="Posiłek 4" />
-        <Meal title="Posiłek 5" />
+        <Meal 
+          title="Breakfast" 
+          proteins={this.props.proteinsSummary}
+          fats={this.props.fatsSummary}
+          carbs={this.props.carbsSummary}
+          kcal={this.props.kcalSummary}
+          />
+        <Meal title="Snack" />
+        <Meal title="Lunch" />
+        <Meal title="Snack II" />
+        <Meal title="Dinner" />
       </section>
 
     );
@@ -68,9 +74,9 @@ class DateChanger extends React.Component {
     return (
 
       <div className="top__date-changer">
-        <DateButton className="top__date-changer__previous-button" iconSrc={previousIcon}/>
+        <DateButton className="top__date-changer__previous-button" icon={<FontAwesomeIcon icon={faArrowCircleLeft} />}/>
         <h4 className="top__date-changer__day">{this.props.currentDay}</h4>
-        <DateButton className="top__date-changer__next-button" iconSrc={nextIcon}/>
+        <DateButton className="top__date-changer__next-button" icon={<FontAwesomeIcon icon={faArrowCircleRight} />}/>
       </div>
 
     );
@@ -87,7 +93,7 @@ class DateButton extends React.Component {
   render() {
     return (
 
-      <button className={this.props.className}><img src={this.props.iconSrc} /></button>
+      <button className={this.props.className}>{this.props.icon}</button>
 
     );
   }

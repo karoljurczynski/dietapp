@@ -40,15 +40,15 @@
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  width: 100%;
   position: relative;
-  background: #FFFFFF;
+  width: 100%;
   margin-bottom: 20px;
-  border-radius: 40px;
-  -webkit-box-shadow: 1px 1px 5px #707070;
-          box-shadow: 1px 1px 5px #707070;
+  border-radius: 30px;
   -webkit-transition: 0.2s linear;
   transition: 0.2s linear;
+  background: #FFFFFF;
+  -webkit-box-shadow: 1px 1px 5px #707070;
+          box-shadow: 1px 1px 5px #707070;
   cursor: pointer;
 }
 .main__meal:last-of-type {

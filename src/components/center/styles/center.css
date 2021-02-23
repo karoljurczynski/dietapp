@@ -69,12 +69,16 @@
 .top__date-changer__previous-button {
   display: block;
   width: 20px;
+  font-size: 1.4rem;
+  background: none;
 }
 .top__date-changer__previous-button > * {
   width: 100%;
 }
 .top__date-changer__next-button {
   display: block;
+  background: none;
+  font-size: 1.4rem;
   width: 20px;
 }
 .top__date-changer__next-button > * {

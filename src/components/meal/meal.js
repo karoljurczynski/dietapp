@@ -1,7 +1,6 @@
 // IMPORTS
 
-import React, { useImperativeHandle } from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react';
 import './styles/meal.css';
 
 
@@ -12,38 +11,39 @@ class Meal extends React.Component {
     super(props);
     this.state = {
       isClicked: true,
+      proteinsSummary: 0,
+      fatsSummary: 0,
+      carbsSummary: 0,
+      kcalSummary: 0,
       style: {
         left: '0px',
-        height: ''
       }};
     this.isOpened = this.isOpened.bind(this);
+    this.fromCenterMealSection = this.fromCenterMealSection.bind(this);
   }
   isOpened() {
     if(this.state.isClicked === false)
-      this.setState({isClicked: true, style: {left: '0px', height: ''}});
+      this.setState({isClicked: true, style: {left: '0px'}});
     else
-      this.setState({isClicked: false, style: {left: '-10px', height: ''}});
+      this.setState({isClicked: false, style: {left: '-10px'}});
+  }
+  fromCenterMealSection(arg) {
+    return arg;
   }
   render() {
     return (
-
       <div className="main__meal" style={this.state.style}>
         <TopMealSection 
           title={this.props.title}
-          proteins={this.props.proteins}
-          fats={this.props.fats}
-          carbs={this.props.carbs}
-          kcal={this.props.kcal}
+          proteins={this.state.proteinsSummary}
+          fats={this.state.fatsSummary}
+          carbs={this.state.carbsSummary}
+          kcal={this.state.kcalSummary}
           isClicked={this.isOpened}
           />
         <CenterMealSection 
-          productName={this.props.productName}
-          productWeight={this.props.productWeight}
-          proteins={this.props.proteins}
-          fats={this.props.fats}
-          carbs={this.props.carbs}
-          kcal={this.props.kcal}
           isOpened={this.state.isClicked}
+          toMealSection={this.fromCenterMealSection}
         />
         <BottomMealSection 
           isOpened={this.state.isClicked}
@@ -76,8 +76,15 @@ class TopMealSection extends React.Component {
       <section 
         className="main__meal__top" 
         onClick={this.handleOnClick}>
-        <MealTitle title={this.props.title}/>
-        <NutritionStats />
+        <MealTitle 
+          title={this.props.title}
+        />
+        <NutritionStats 
+          proteins={this.props.proteins}
+          fats={this.props.fats}
+          carbs={this.props.carbs}
+          kcal={this.props.kcal}
+        />
       </section>
 
     );
@@ -88,6 +95,7 @@ class CenterMealSection extends React.Component {
   constructor(props) {
     super(props);
     this.changeDisplay = this.changeDisplay.bind(this);
+    this.sendToMealSection = this.sendToMealSection.bind(this);
   }
   changeDisplay() {
     if(this.props.isOpened === true)
@@ -95,13 +103,26 @@ class CenterMealSection extends React.Component {
     else
       return {display: "flex"};
   }
-  
+  // SENDING DATA
+  sendToMealSection(arg) {
+    this.props.toMealSection(arg);
+  }
+  // SENDING DATA
   render() {
     return (
 
       <section className="main__meal__center" style={this.changeDisplay()}>
-        <Product />
-        <Product />
+        <Product 
+          productName={"Cottage cheese"}
+          productWeight={200}
+          proteins={40}
+          fats={10}
+          carbs={60}
+          kcal={450}
+          // SENDING DATA
+          toCenterMealSection={this.sendToMealSection}
+          // SENDING DATA
+        />
       </section>
 
     );
@@ -153,10 +174,10 @@ class NutritionStats extends React.Component {
     return (
 
       <section className="main__meal__top__nutrition-stats">
-        <Ingredient type="proteins" value="80" size="large"/>
-        <Ingredient type="fats" value="26" size="large"/>
-        <Ingredient type="carbs" value="12" size="large"/>
-        <Ingredient type="kcal" value="252" size="large"/>
+        <Ingredient type="proteins" value={this.props.proteins} size="large"/>
+        <Ingredient type="fats" value={this.props.fats} size="large"/>
+        <Ingredient type="carbs" value={this.props.carbs} size="large"/>
+        <Ingredient type="kcal" value={this.props.kcal} size="large"/>
       </section>
 
     );
@@ -166,13 +187,30 @@ class NutritionStats extends React.Component {
 class Product extends React.Component {
   constructor(props) {
     super(props);
+    this.sendToCenterSection = this.sendToCenterSection.bind(this);
   }
+  // SENDING DATA
+  sendToCenterSection() {
+    this.props.toCenterMealSection(this.props);
+  }
+  // SENDING DATA
   render() {
+    // SENDING DATA
+    this.sendToCenterSection();
+    // SENDING DATA
     return (
 
       <section className="main__meal__center__product">
-        <ProductInfo />
-        <ProductStats />
+        <ProductInfo 
+          productName={this.props.productName}
+          productWeight={this.props.productWeight}
+        />
+        <ProductStats 
+          proteins={this.props.proteins}
+          fats={this.props.fats}
+          carbs={this.props.carbs}
+          kcal={this.props.kcal}
+        />
       </section>
 
     );
@@ -242,8 +280,12 @@ class ProductInfo extends React.Component {
     return (
 
       <section className="main__meal__center__product__info">
-        <ProductName />
-        <ProductWeight />
+        <ProductName 
+          productName={this.props.productName}
+        />
+        <ProductWeight 
+          productWeight={this.props.productWeight}  
+        />
       </section>
 
     );
@@ -258,10 +300,10 @@ class ProductStats extends React.Component {
     return (
 
       <section className="main__meal__center__product__stats">
-        <Ingredient type="proteins" value="80" size="small"/>
-        <Ingredient type="fats" value="26" size="small"/>
-        <Ingredient type="carbs" value="12" size="small"/>
-        <Ingredient type="kcal" value="252" size="small"/>
+        <Ingredient type="proteins" value={this.props.proteins} size="small"/>
+        <Ingredient type="fats" value={this.props.fats} size="small"/>
+        <Ingredient type="carbs" value={this.props.carbs} size="small"/>
+        <Ingredient type="kcal" value={this.props.kcal} size="small"/>
       </section>
 
     );
@@ -296,7 +338,7 @@ class ProductName extends React.Component {
   render() {
     return (
 
-      <h4 className="main__meal__center__product__info__name">Jaja kurze</h4>
+      <h4 className="main__meal__center__product__info__name">{this.props.productName}</h4>
 
     );
   }
@@ -309,7 +351,7 @@ class ProductWeight extends React.Component {
   render() {
     return (
 
-      <p className="main__meal__center__product__info__weight">{80} g</p>
+      <p className="main__meal__center__product__info__weight">{this.props.productWeight} g</p>
       
     );
   }
