@@ -1,21 +1,63 @@
 // IMPORTS
 
-import React, { useState } from 'react';
+import React from 'react';
+import { useReducer } from 'react';
 import './styles/meal.css';
+
+const ACTIONS = {
+  NEGATE_BOOLEAN: 'negate-boolean',
+  ADD_PRODUCT: 'add-product',
+  REMOVE_PRODUCT: 'remove-product'
+}
 
 
 // COMPONENTS
 
 export default function Meal(props) {
 
-  const [mealOpened, setMealOpened] = useState(false);
+  // REDUCER STUFF
+  const initialState = {
+    isMealOpened: false, 
+    isAddingWindowOpened: false,
+    isRemovingWindowOpened: false 
+  };
 
-  const handleMealOpening = () => {
-    setMealOpened(!mealOpened);
+  const reducer = (state, action) => {
+    switch(action.type) {
+
+      case ACTIONS.NEGATE_BOOLEAN:
+        return {...state, isMealOpened: !state.isMealOpened};
+      
+      case ACTIONS.ADD_PRODUCT:
+        return {...state, isAddingWindowOpened: !state.isAddingWindowOpened};
+
+      case ACTIONS.REMOVE_PRODUCT:
+        return {...state, isRemovingWindowOpened: !state.isRemovingWindowOpened};
+
+      default:
+        break;
+    }
   }
 
+  const [state, dispatch] = useReducer(reducer, initialState);
+  // END OF REDUCER STUFF
+
+  const handleMealOpening = () => {
+    dispatch( {type: ACTIONS.NEGATE_BOOLEAN} );
+  }
+
+  const handleProductAdding = () => {
+    dispatch( {type: ACTIONS.ADD_PRODUCT} );
+  }
+
+  const handleProductRemoving = () => {
+    dispatch( {type: ACTIONS.REMOVE_PRODUCT} );
+  }
+
+
+
   return (
-    <div className="meal" style={ mealOpened ? {left: '-10px'} : {left: '0px'} }>
+    <div className="meal" style={ state.isMealOpened ? {marginLeft: '-10px'} : {marginLeft: '0px'} }>
       <section className="meal__top-section" onClick={ handleMealOpening }>
         
         <h2 className="meal__top-section__meal-title">{props.name}</h2>        
@@ -30,7 +72,7 @@ export default function Meal(props) {
       </section>
 
 
-      <section className="meal__products-section" style={ mealOpened ? {display: "flex"} : {display: "none"} }>
+      <section className="meal__products-section" style={ state.isMealOpened ? {display: "flex"} : {display: "none"} }>
        
         <Product 
           name="Jaja kurze"
@@ -53,12 +95,31 @@ export default function Meal(props) {
       </section>
 
 
-      <section className="meal__buttons-section" style={ mealOpened ? {display: "flex"} : {display: "none"} }>
+      <section className="meal__buttons-section" style={ state.isMealOpened ? {display: "flex"} : {display: "none"} }>
 
-        <button className="meal__buttons-section__remove-button">Remove</button> 
-        <button className="meal__buttons-section__add-button">Add</button>       
+        <button 
+          className="meal__buttons-section__remove-button" 
+          onClick={handleProductRemoving} 
+          disabled={ state.isAddingWindowOpened || state.isRemovingWindowOpened ? true : false }>
+          Remove</button> 
+
+        <button 
+          className="meal__buttons-section__add-button" 
+          onClick={handleProductAdding} 
+          disabled={ state.isAddingWindowOpened || state.isRemovingWindowOpened ? true : false }>
+          Add</button>       
       
       </section>
+
+      <div 
+        className="meal__adding-window" 
+        style={ state.isAddingWindowOpened ? {display: "flex"} : {display: "none"}}
+        onClick={ handleProductAdding }></div>
+      <div 
+        className="meal__removing-window" 
+        style={ state.isRemovingWindowOpened ? {display: "flex"} : {display: "none"}}
+        onClick={ handleProductRemoving }></div>
+    
     </div>
   )
 }

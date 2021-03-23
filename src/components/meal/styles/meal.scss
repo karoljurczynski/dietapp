@@ -3,7 +3,6 @@
 
 .meal {
   @include flexSetup(column, flex-start, center);
-  position: relative;
   width: 100%;
   margin-bottom: 20px;
   border-radius: 30px;
@@ -11,6 +10,18 @@
   background: $white-color;
   box-shadow: 1px 1px 5px $gray-color;
   cursor: pointer;
+
+  &__adding-window, &__removing-window {
+    z-index: 5;
+    width: 500px;
+    height: 500px;
+    position: absolute;
+    top: 0;
+    background-color: black;
+  }
+  &__removing-window {
+    background: blue;
+  }
 
   &:last-of-type {
     margin-bottom: 0;

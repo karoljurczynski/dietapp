@@ -40,7 +40,6 @@
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  position: relative;
   width: 100%;
   margin-bottom: 20px;
   border-radius: 30px;
@@ -50,6 +49,17 @@
   -webkit-box-shadow: 1px 1px 5px #707070;
           box-shadow: 1px 1px 5px #707070;
   cursor: pointer;
+}
+.meal__adding-window, .meal__removing-window {
+  z-index: 5;
+  width: 500px;
+  height: 500px;
+  position: absolute;
+  top: 0;
+  background-color: black;
+}
+.meal__removing-window {
+  background: blue;
 }
 .meal:last-of-type {
   margin-bottom: 0;
