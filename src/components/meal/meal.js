@@ -1,6 +1,7 @@
 // IMPORTS
 
 import React from 'react';
+import { useState } from 'react';
 import { useReducer } from 'react';
 import './styles/meal.css';
 
@@ -9,6 +10,8 @@ const ACTIONS = {
   NEGATE_ADDING_WINDOW_STATE: 'negate-adding-window-state',
   NEGATE_REMOVING_WINDOW_STATE: 'negate-removing-window-state',
   ADD_PRODUCT: 'add-product',
+  ENABLE_PLACEHOLDER: 'enable-placeholder',
+  DISABLE_PLACEHOLDER: 'disable-placeholder',
   REMOVE_PRODUCT: 'remove-product'
 }
 
@@ -44,11 +47,11 @@ export default function Meal(props) {
       case ACTIONS.CHANGE_NEW_PRODUCT_DATA: {
         switch(action.payload.key) {
           case 'name':      return {...state, newProduct: {...state.newProduct, name:     action.payload.value}};
-          case 'weight':    return {...state, newProduct: {...state.newProduct, weight:   Number(action.payload.value)}};
-          case 'proteins':  return {...state, newProduct: {...state.newProduct, proteins: Number(action.payload.value)}};
-          case 'fats':      return {...state, newProduct: {...state.newProduct, fats:     Number(action.payload.value)}};
-          case 'carbs':     return {...state, newProduct: {...state.newProduct, carbs:    Number(action.payload.value)}};
-          case 'kcal':      return {...state, newProduct: {...state.newProduct, kcal:     Number(action.payload.value)}};
+          case 'weight':    return {...state, newProduct: {...state.newProduct, weight:   action.payload.value}};
+          case 'proteins':  return {...state, newProduct: {...state.newProduct, proteins: action.payload.value}};
+          case 'fats':      return {...state, newProduct: {...state.newProduct, fats:     action.payload.value}};
+          case 'carbs':     return {...state, newProduct: {...state.newProduct, carbs:    action.payload.value}};
+          case 'kcal':      return {...state, newProduct: {...state.newProduct, kcal:     action.payload.value}};
         }
       }
 
@@ -64,6 +67,7 @@ export default function Meal(props) {
   }
 
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [isPlaceholderEnabled, setPlaceholderState] = useState(false);
   // END OF REDUCER STUFF
 
   const handleMealOpening = () => {
@@ -72,20 +76,16 @@ export default function Meal(props) {
 
   const handleAddingWindow = () => {
     dispatch( {type: ACTIONS.NEGATE_ADDING_WINDOW_STATE} );
-    console.log(state.newProduct);
   }
 
   const handleProductAdding = e => {
     e.preventDefault();
-    dispatch( {type:ACTIONS.ADD_PRODUCT});
-    dispatch( {type:ACTIONS.NEGATE_ADDING_WINDOW_STATE});
-    console.log(state.newProduct);
-    console.log(state.productList);
+    dispatch( {type: ACTIONS.ADD_PRODUCT} );
+    dispatch( {type: ACTIONS.NEGATE_ADDING_WINDOW_STATE} );
   }
 
   const handleProductRemoving = e => {
-    console.log(state.newProduct);
-    console.log(state.productList);
+    e.preventDefault();
   }
 
   const handleRemovingWindow = () => {
@@ -93,10 +93,15 @@ export default function Meal(props) {
   }
 
   const handleOnChange = e => {
-    dispatch({ type: ACTIONS.CHANGE_NEW_PRODUCT_DATA, payload: { key: e.target.id, value:e.target.value } });
+    if ((e.target.id !== 'name') && !(Number(e.target.value))) {
+      setPlaceholderState(true);
+      dispatch({ type: ACTIONS.CHANGE_NEW_PRODUCT_DATA, payload: { key: e.target.id, value: "" } });
+    }
+    else {
+      dispatch({ type: ACTIONS.CHANGE_NEW_PRODUCT_DATA, payload: { key: e.target.id, value: e.target.value }}); 
+      setPlaceholderState(false);
+    }
   }
-
-
 
   return (
     <div className="meal" style={ state.isMealOpened ? {marginLeft: '-10px'} : {marginLeft: '0px'} }>
@@ -105,10 +110,10 @@ export default function Meal(props) {
         <h2 className="meal__top-section__meal-title">{props.name}</h2>        
         
         <ul className="meal__top-section__meal-stats-list">                   
-          <li className="meal__top-section__meal-stats-list__item">20g</li>
-          <li className="meal__top-section__meal-stats-list__item">10g</li>
-          <li className="meal__top-section__meal-stats-list__item">174g</li>
-          <li className="meal__top-section__meal-stats-list__item">262kcal</li>
+          <li className="meal__top-section__meal-stats-list__item">20 g</li>
+          <li className="meal__top-section__meal-stats-list__item">10 g</li>
+          <li className="meal__top-section__meal-stats-list__item">174 g</li>
+          <li className="meal__top-section__meal-stats-list__item">262 kcal</li>
         </ul> 
 
       </section>
@@ -168,6 +173,7 @@ export default function Meal(props) {
             id="weight"
             value={ state.newProduct.weight } 
             onChange={ handleOnChange }
+            placeholder={ isPlaceholderEnabled ? "Enter a number!" : null }
             required />
 
           <label htmlFor="proteins">Proteins: </label>
@@ -176,6 +182,7 @@ export default function Meal(props) {
             id="proteins"
             value={ state.newProduct.proteins } 
             onChange={ handleOnChange }
+            placeholder={ isPlaceholderEnabled ? "Enter a number!" : null }
             required />
 
           <label htmlFor="fats">Fats: </label>
@@ -184,6 +191,7 @@ export default function Meal(props) {
             id="fats"
             value={ state.newProduct.fats } 
             onChange={ handleOnChange }
+            placeholder={ isPlaceholderEnabled ? "Enter a number!" : null }
             required />
 
           <label htmlFor="carbs">Carbs: </label>
@@ -192,6 +200,7 @@ export default function Meal(props) {
             id="carbs"
             value={ state.newProduct.carbs } 
             onChange={ handleOnChange }
+            placeholder={ isPlaceholderEnabled ? "Enter a number!" : null }
             required />
 
           <label htmlFor="kcal">Calories: </label>
@@ -200,6 +209,7 @@ export default function Meal(props) {
             id="kcal"
             value={ state.newProduct.kcal }
             onChange={ handleOnChange }
+            placeholder={ isPlaceholderEnabled ? "Enter a number!" : null }
             required />
 
           <input 
@@ -225,14 +235,14 @@ function Product(props) {
     <div className="meal__products-section__product">
       <div className="meal__products-section__product__info">
         <h2 className="meal__products-section__product__title">{props.name}</h2>          
-        <p className="meal__products-section__product__weight">{props.weight}g</p>           
+        <p className="meal__products-section__product__weight">{props.weight} g</p>           
       </div>
         
       <ul className="meal__products-section__product__stats-list">             
-        <li className="meal__products-section__product__stats-list__item">{props.proteins}g</li>
-        <li className="meal__products-section__product__stats-list__item">{props.fats}g</li>
-        <li className="meal__products-section__product__stats-list__item">{props.carbs}g</li>
-        <li className="meal__products-section__product__stats-list__item">{props.kcal}kcal</li>
+        <li className="meal__products-section__product__stats-list__item">{props.proteins} g</li>
+        <li className="meal__products-section__product__stats-list__item">{props.fats} g</li>
+        <li className="meal__products-section__product__stats-list__item">{props.carbs} g</li>
+        <li className="meal__products-section__product__stats-list__item">{props.kcal} kcal</li>
       </ul>
     </div>
   )
