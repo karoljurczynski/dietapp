@@ -1,7 +1,7 @@
 @forward '../../../styles/config/config';
 @use '../../../styles/config/config' as *;
 
-.main__meal {
+.meal {
   @include flexSetup(column, flex-start, center);
   position: relative;
   width: 100%;
@@ -16,12 +16,12 @@
     margin-bottom: 0;
   }
 
-  &__top {
+  &__top-section {
     @include flexSetup(row, center, space-between);
     width: 100%;
     padding: 20px;
 
-    &__title {
+    &__meal-title {
       @include flexSetup(row, center, flex-start);
       color: $purple-color;
       @extend %robotoBold;
@@ -29,15 +29,15 @@
       width: 30%;
     }
 
-    &__nutrition-stats {
+    &__meal-stats-list {
       @include flexSetup(row, center, flex-end);
+      list-style-type: none;
       width: 70%;
 
-      &__ingredient {
+      &__item {
         margin-left: 15px;
         font-size: 1.5rem;
         @extend %robotoNormal;
-
 
         &--kcal {
           margin-left: 30px;
@@ -49,8 +49,8 @@
     }
   }
 
-  &__center {
-    @include flexSetup(column, center, center);
+  &__products-section {
+    @include flexSetup(column, flex-start, flex-start);
     width: calc(100% - 40px);
     border-top: 1px solid black;
     border-bottom: 1px solid black;
@@ -58,23 +58,19 @@
     padding: 10px 0;
 
     &__product {
-      @include flexSetup(row, flex-start, space-between);
       width: 100%;
-      padding-bottom: 10px;
-      &:last-of-type {
-        padding-bottom: 0;
-      }
+      @include flexSetup(row, flex-start, space-between);
+      margin-bottom: 10px;
 
       &__info {
         @include flexSetup(column, flex-start, flex-start);
-        width: 30%;
-
-        &__name {
+  
+        &__title {
           @extend %robotoBold;
           font-size: 1.1rem;
           color: $gray-color;
         }
-
+  
         &__weight {
           @extend %robotoBold;
           letter-spacing: -1px;
@@ -82,12 +78,12 @@
           font-size: 0.9rem;
         }
       }
-
-      &__stats {
-        @include flexSetup(row, flex-start, flex-end);
-        width: 70%;
-
-        &__ingredient {
+  
+      &__stats-list {
+        @include flexSetup(row, flex-start, flex-start);
+        list-style-type: none;
+  
+        &__item {
           margin-left: 10px;
           @extend %robotoNormal;
           font-size: 1.2rem;
@@ -101,36 +97,29 @@
     }
   }
 
-  &__bottom {
-    @include flexSetup(column, center, center);
+  &__buttons-section {
+    @include flexSetup(row, center, flex-end);
     width: calc(100% - 40px);
     margin: 20px;
 
-    &__buttons-section {
-      width: 100%;
-      @include flexSetup(row, center, flex-end);
+    &__remove-button {
+      background: $white-color;
+      color: $purple-color;
+      padding: 8px;
+      border-radius: 15px;
+      @extend %robotoNormal;
+      font-size: 1.2rem;
+      box-shadow: 0 0 3px $gray-color;
+    }
 
-      &__remove-button {
-        background: $white-color;
-        color: $purple-color;
-        padding: 8px;
-        border-radius: 15px;
-        @extend %robotoNormal;
-        font-size: 1.2rem;
-        box-shadow: 0 0 3px $gray-color;
-
-      }
-
-      &__add-button {
-        background: $purple-color;
-        color: $white-color;
-        margin-left: 10px;
-        padding: 8px 15px;
-        @extend %robotoNormal;
-        font-size: 1.2rem;
-        border-radius: 15px;
-
-      }
+    &__add-button {
+      background: $purple-color;
+      color: $white-color;
+      margin-left: 10px;
+      padding: 8px 15px;
+      @extend %robotoNormal;
+      font-size: 1.2rem;
+      border-radius: 15px;
     }
   }
 }

@@ -2,52 +2,67 @@
 @forward '../styles/media_queries/media';
 @use '../../../styles/config/config' as *;
 
-.top {
-  @include flexSetup(row, center, space-between);
-  width: 100%;
-  padding: 0 40px 20px;
+.center-section {
+  @include flexSetup(column, center, flex-start);
+  width: 55%;
+  height: 100%;
+  background: $center-section-background;
+  border: 2px 0 2px 0 solid white;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding: 50px 0;
 
-  &__title {
-    display: block;
-    width: 50%;
-    font-size: 2rem;
-    @extend %robotoBold;
-    letter-spacing: -1px;
-  }
-  &__date-changer {
-    @include flexSetup(row, center, flex-end);
-    width: 50%;
-    &__day {
+  &__top {
+    @include flexSetup(row, center, space-between);
+    width: 100%;
+    padding: 0 40px 20px;
+  
+    &__title {
       display: block;
-      font-size: 1.6rem;
+      width: 50%;
+      font-size: 2rem;
       @extend %robotoBold;
       letter-spacing: -1px;
-      margin: 0 20px;
     }
-    &__previous-button {
-      display: block;
-      width: 20px;
-      font-size: 1.4rem;
-      background: none;
-      & > * {
-        width: 100%;
+
+    &__date-changer {
+      @include flexSetup(row, center, flex-end);
+      width: 50%;
+
+      &__previous-button {
+        display: block;
+        width: 20px;
+        font-size: 1.4rem;
+        background: none;
+        & > * {
+          width: 100%;
+        }
       }
-    }
-    &__next-button {
-      display: block;
-      background: none;
-      font-size: 1.4rem;
-      width: 20px;
-      & > * {
-        width: 100%;
+
+      &__current-date {
+        display: block;
+        font-size: 1.6rem;
+        @extend %robotoBold;
+        letter-spacing: -1px;
+        margin: 0 20px;
+      }
+
+      &__next-button {
+        display: block;
+        background: none;
+        font-size: 1.4rem;
+        width: 20px;
+        & > * {
+          width: 100%;
+        }
       }
     }
   }
 
-}
-.main {
-  @include flexSetup(column, flex-start, flex-start);
-  width: 100%;
-  padding: 0 40px;
-
+  &__meals {
+    @include flexSetup(column, flex-start, flex-start);
+    width: 100%;
+    padding: 0 40px;
+  
+  }
 }

@@ -6,66 +6,83 @@
 
 // STYLES
 
-.logo-container {
+.left-section {
   @include flexSetup(column, center, space-between);
-  width: 55%;
-  &__logo {
-    width: 80%;
-  }
-  &__title {
-    width: 100%;
-    text-align: center;
-    font-size: 3rem;
-    color: $purple-color;
-    &__right {
+  width: 24%;
+  height: 100%;
+  background: $left-section-background;
+  border-radius: 50px 0 0 50px;
+  border: 2px 0 0 2px solid white;
+  padding: 50px 0;
+
+  &__logo-container {
+    @include flexSetup(column, center, space-between);
+    width: 55%;
+
+    &__logo {
+      width: 80%;
+    }
+
+    &__title {
+      width: 100%;
+      text-align: center;
       font-size: 3rem;
-      color: $black-color;
+      color: $purple-color;
+
+      &__right {
+        font-size: 3rem;
+        color: $black-color;
+      }
     }
   }
-}
 
-.menu-container {
-  @include flexSetup(column, center, center);
-  width: 50%;
-  &__list-item {
+  &__menu-container {
     @include flexSetup(column, center, center);
-    width: 100%;
-    margin-bottom: 1.3rem;
-    border-radius: 2rem;
-    text-align: center;
-    list-style-type: none;
-    background: $menu-button;
-    box-shadow: 0px 0px 2px white;
-    &__content {
+    width: 50%;
+
+    &__list-item {
       @include flexSetup(column, center, center);
       width: 100%;
-      height: 100%;
-      padding: 0.6rem;
-      font-size: 1.1rem;
-      color: $purple-color;
-      &:visited {
+      margin-bottom: 1.3rem;
+      border-radius: 2rem;
+      text-align: center;
+      list-style-type: none;
+      background: $menu-button;
+      box-shadow: 0px 0px 2px white;
+
+      &__content {
+        @include flexSetup(column, center, center);
+        width: 100%;
+        height: 100%;
+        padding: 0.6rem;
+        font-size: 1.1rem;
         color: $purple-color;
-      }
-      &:hover, &:active {
-        border-radius: 2rem;
-        background: $purple-color;
-        box-shadow: 0px 0px 2px $purple-color;
-        color: white;
+
+        &:visited {
+          color: $purple-color;
+        }
+
+        &:hover, &:active {
+          border-radius: 2rem;
+          background: $purple-color;
+          box-shadow: 0px 0px 2px $purple-color;
+          color: white;
+        }
       }
     }
   }
-}
 
-.quotation {
-  @include flexSetup(column, flex-end, flex-end);
-  &__top, &__bottom {
-    color: $purple-color;
-    font-family: 'Cookie', cursive;
-    display: block;
-    font-size: 3.2rem;
+  &__quotation-container {
+    @include flexSetup(column, flex-end, flex-end);
+    
+    &__top, &__bottom {
+      color: $purple-color;
+      font-family: 'Cookie', cursive;
+      display: block;
+      font-size: 3.2rem;
+    }
   }
 }
-
 
 // IMPORTING MEDIA QUERIES
 

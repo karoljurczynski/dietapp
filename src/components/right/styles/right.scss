@@ -27,107 +27,119 @@ $size: 150px;
 
 // STYLES
 
-.gauge-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  width: $size;
-  height: $size;
-  overflow: hidden;
-  border-radius: 50%;
-  background: $purple-color;
+.right-section {
+  @include flexSetup(column, center, space-around);
+  width: 21%;
+  height: 100%;
+  background: $right-section-background;
+  border-radius: 0 50px 50px 0;
+  border: 2px 0 solid white;
+  padding: 50px 0;
 
-  &:before {
-    content: '';
-    display: block;
-    width: $size / 2 + $size / 100;
-    height: $size / 2 + $size / 100;
-    position: absolute;
-    bottom: -11%;
-    z-index: 2;
-    transform: rotate(45deg);
-    background: $purple-color;
-  }
-
-  &__bar {
-    position: absolute;
-    z-index: 1;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    border: 15px solid;
-    border-color: $gauge-empty $gauge-empty $gauge-full $gauge-empty;
+  &__gauge-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: $size;
+    height: $size;
+    overflow: hidden;
     border-radius: 50%;
+    background: $purple-color;
+  
+    &:before {
+      content: '';
+      display: block;
+      width: $size / 2 + $size / 100;
+      height: $size / 2 + $size / 100;
+      position: absolute;
+      bottom: -11%;
+      z-index: 2;
+      transform: rotate(45deg);
+      background: $purple-color;
+    }
+  
+    &__bar {
+      position: absolute;
+      z-index: 1;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      border: 15px solid;
+      border-color: $gauge-empty $gauge-empty $gauge-full $gauge-empty;
+      border-radius: 50%;
+  
+      &--kcal {
+        border: 18px solid;
+        border-color: $gauge-empty $gauge-empty $gauge-full $gauge-empty;
+      }
+    }
+  
+    &__text {
+      position: absolute;
+      z-index: 3;
+      top: 30px;
+  
+      & > * {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-bottom: 10px;
+      }
+  
+      &__amount {
+        font-size: 1.6rem;
+        color: $white-color;
+        padding-bottom: 0;
+  
+        &--kcal {
+          font-size: 2rem;
+        }
+      }
+  
+      &__name {
+        font-size: 0.6rem;
+        color: $white-color;
+        padding-bottom: 15px;
+  
+        &--kcal {
+          font-size: 0.8rem;
+          padding-bottom: 20px;
+        }
+      }
+  
+      &__percent {
+        font-size: 0.8rem;
+        color: $gauge-full;
+  
+        &--kcal {
+          font-size: 0.9rem;
+        }
+      }
+  
+      &__left {
+        font-size: 0.9rem;
+        color: $white-color;
+  
+        &--kcal {
+          font-size: 1rem;
+        }
+      }
+    }
 
     &--kcal {
-      border: 18px solid;
-      border-color: $gauge-empty $gauge-empty $gauge-full $gauge-empty;
-    }
-  }
-
-  &__text {
-    position: absolute;
-    z-index: 3;
-    top: 30px;
-
-    & > * {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding-bottom: 10px;
-    }
-
-    &__amount {
-      font-size: 1.6rem;
-      color: $white-color;
-      padding-bottom: 0;
-
-      &--kcal {
-        font-size: 2rem;
+      width: $size + $size / 8;
+      height: $size + $size / 8;
+      margin-bottom: 10px;
+  
+      &:before {
+        width: $size / 2 + $size / 100 + $size / 8;
+        height: $size / 2 + $size / 100 + $size / 8;
       }
-    }
-
-    &__name {
-      font-size: 0.6rem;
-      color: $white-color;
-      padding-bottom: 15px;
-
-      &--kcal {
-        font-size: 0.8rem;
-        padding-bottom: 20px;
-      }
-    }
-
-    &__percent {
-      font-size: 0.8rem;
-      color: $gauge-full;
-
-      &--kcal {
-        font-size: 0.9rem;
-      }
-    }
-
-    &__left {
-      font-size: 0.9rem;
-      color: $white-color;
-
-      &--kcal {
-        font-size: 1rem;
-      }
-    }
-  }
-  &--kcal {
-    width: $size + $size / 8;
-    height: $size + $size / 8;
-    margin-bottom: 10px;
-
-    &:before {
-      width: $size / 2 + $size / 100 + $size / 8;
-      height: $size / 2 + $size / 100 + $size / 8;
     }
   }
 }
+
 
 // IMPORTING MEDIA QUERIES
 

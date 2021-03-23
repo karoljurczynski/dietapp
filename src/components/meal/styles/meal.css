@@ -2,12 +2,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Cookie&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap");
-.main__meal__top__title, .main__meal__center__product__info__name, .main__meal__center__product__info__weight {
+.meal__top-section__meal-title, .meal__products-section__product__info__title, .meal__products-section__product__info__weight {
   font-family: "Roboto", sans-serif;
   font-weight: 700;
 }
 
-.main__meal__top__nutrition-stats__ingredient, .main__meal__center__product__stats__ingredient, .main__meal__bottom__buttons-section__remove-button, .main__meal__bottom__buttons-section__add-button {
+.meal__top-section__meal-stats-list__item, .meal__products-section__product__stats-list__item, .meal__buttons-section__remove-button, .meal__buttons-section__add-button {
   font-family: "Roboto", sans-serif;
   font-weight: 400;
 }
@@ -26,7 +26,7 @@
   font-size: 16px;
 }
 
-.main__meal {
+.meal {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -51,10 +51,10 @@
           box-shadow: 1px 1px 5px #707070;
   cursor: pointer;
 }
-.main__meal:last-of-type {
+.meal:last-of-type {
   margin-bottom: 0;
 }
-.main__meal__top {
+.meal__top-section {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -71,7 +71,7 @@
   width: 100%;
   padding: 20px;
 }
-.main__meal__top__title {
+.meal__top-section__meal-title {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -89,7 +89,7 @@
   font-size: 1.5rem;
   width: 30%;
 }
-.main__meal__top__nutrition-stats {
+.meal__top-section__meal-stats-list {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -103,19 +103,20 @@
   -webkit-box-pack: end;
       -ms-flex-pack: end;
           justify-content: flex-end;
+  list-style-type: none;
   width: 70%;
 }
-.main__meal__top__nutrition-stats__ingredient {
+.meal__top-section__meal-stats-list__item {
   margin-left: 15px;
   font-size: 1.5rem;
 }
-.main__meal__top__nutrition-stats__ingredient--kcal {
+.meal__top-section__meal-stats-list__item--kcal {
   margin-left: 30px;
   font-size: 1.5rem;
   font-weight: 700;
   color: #7500AF;
 }
-.main__meal__center {
+.meal__products-section {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -123,19 +124,20 @@
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
   width: calc(100% - 40px);
   border-top: 1px solid black;
   border-bottom: 1px solid black;
   margin: 0 20px;
   padding: 10px 0;
 }
-.main__meal__center__product {
+.meal__products-section__product {
+  width: 100%;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -149,13 +151,9 @@
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
-  width: 100%;
-  padding-bottom: 10px;
+  margin-bottom: 10px;
 }
-.main__meal__center__product:last-of-type {
-  padding-bottom: 0;
-}
-.main__meal__center__product__info {
+.meal__products-section__product__info {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -169,18 +167,17 @@
   -webkit-box-pack: start;
       -ms-flex-pack: start;
           justify-content: flex-start;
-  width: 30%;
 }
-.main__meal__center__product__info__name {
+.meal__products-section__product__info__title {
   font-size: 1.1rem;
   color: #707070;
 }
-.main__meal__center__product__info__weight {
+.meal__products-section__product__info__weight {
   letter-spacing: -1px;
   color: #707070;
   font-size: 0.9rem;
 }
-.main__meal__center__product__stats {
+.meal__products-section__product__stats-list {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -191,38 +188,20 @@
   -webkit-box-align: start;
       -ms-flex-align: start;
           align-items: flex-start;
-  -webkit-box-pack: end;
-      -ms-flex-pack: end;
-          justify-content: flex-end;
-  width: 70%;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  list-style-type: none;
 }
-.main__meal__center__product__stats__ingredient {
+.meal__products-section__product__stats-list__item {
   margin-left: 10px;
   font-size: 1.2rem;
 }
-.main__meal__center__product__stats__ingredient--kcal {
+.meal__products-section__product__stats-list__item--kcal {
   margin-left: 15px;
   font-weight: 700;
 }
-.main__meal__bottom {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  width: calc(100% - 40px);
-  margin: 20px;
-}
-.main__meal__bottom__buttons-section {
-  width: 100%;
+.meal__buttons-section {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -236,8 +215,10 @@
   -webkit-box-pack: end;
       -ms-flex-pack: end;
           justify-content: flex-end;
+  width: calc(100% - 40px);
+  margin: 20px;
 }
-.main__meal__bottom__buttons-section__remove-button {
+.meal__buttons-section__remove-button {
   background: #FFFFFF;
   color: #7500AF;
   padding: 8px;
@@ -246,7 +227,7 @@
   -webkit-box-shadow: 0 0 3px #707070;
           box-shadow: 0 0 3px #707070;
 }
-.main__meal__bottom__buttons-section__add-button {
+.meal__buttons-section__add-button {
   background: #7500AF;
   color: #FFFFFF;
   margin-left: 10px;

@@ -1,10 +1,88 @@
 // IMPORTS
 
-import React from 'react';
+import React, { useState } from 'react';
 import './styles/meal.css';
 
 
-// PRIMARY COMPONENTS 
+// COMPONENTS
+
+export default function Meal(props) {
+
+  const [mealOpened, setMealOpened] = useState(false);
+
+  const handleMealOpening = () => {
+    setMealOpened(!mealOpened);
+  }
+
+  return (
+    <div className="meal" style={ mealOpened ? {left: '-10px'} : {left: '0px'} }>
+      <section className="meal__top-section" onClick={ handleMealOpening }>
+        
+        <h2 className="meal__top-section__meal-title">{props.name}</h2>        
+        
+        <ul className="meal__top-section__meal-stats-list">                   
+          <li className="meal__top-section__meal-stats-list__item">20g</li>
+          <li className="meal__top-section__meal-stats-list__item">10g</li>
+          <li className="meal__top-section__meal-stats-list__item">174g</li>
+          <li className="meal__top-section__meal-stats-list__item">262kcal</li>
+        </ul> 
+
+      </section>
+
+
+      <section className="meal__products-section" style={ mealOpened ? {display: "flex"} : {display: "none"} }>
+       
+        <Product 
+          name="Jaja kurze"
+          weight={100}
+          proteins={40}
+          fats={50}
+          carbs={100}
+          kcal={122}>
+        </Product>
+
+        <Product 
+          name="Jaja kurze"
+          weight={100}
+          proteins={40}
+          fats={50}
+          carbs={100}
+          kcal={122}>
+        </Product>
+
+      </section>
+
+
+      <section className="meal__buttons-section" style={ mealOpened ? {display: "flex"} : {display: "none"} }>
+
+        <button className="meal__buttons-section__remove-button">Remove</button> 
+        <button className="meal__buttons-section__add-button">Add</button>       
+      
+      </section>
+    </div>
+  )
+}
+
+function Product(props) {
+
+  return (
+    <div className="meal__products-section__product">
+      <div className="meal__products-section__product__info">
+        <h2 className="meal__products-section__product__title">{props.name}</h2>          
+        <p className="meal__products-section__product__weight">{props.weight}g</p>           
+      </div>
+        
+      <ul className="meal__products-section__product__stats-list">             
+        <li className="meal__products-section__product__stats-list__item">{props.proteins}g</li>
+        <li className="meal__products-section__product__stats-list__item">{props.fats}g</li>
+        <li className="meal__products-section__product__stats-list__item">{props.carbs}g</li>
+        <li className="meal__products-section__product__stats-list__item">{props.kcal}kcal</li>
+      </ul>
+    </div>
+  )
+}
+
+/*
 
 class Meal extends React.Component {
   constructor(props) {
@@ -356,8 +434,4 @@ class ProductWeight extends React.Component {
     );
   }
 }
-
-
-// EXPORTS
-
-export { Meal };
+ */

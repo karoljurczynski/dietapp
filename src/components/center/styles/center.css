@@ -2,7 +2,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Cookie&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap");
-.top__title, .top__date-changer__day {
+.center-section__top__title, .center-section__top__date-changer__current-date {
   font-family: "Roboto", sans-serif;
   font-weight: 700;
 }
@@ -21,7 +21,29 @@
   font-size: 16px;
 }
 
-.top {
+.center-section {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  width: 55%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.6);
+  border: 2px 0 2px 0 solid white;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding: 50px 0;
+}
+.center-section__top {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -38,13 +60,13 @@
   width: 100%;
   padding: 0 40px 20px;
 }
-.top__title {
+.center-section__top__title {
   display: block;
   width: 50%;
   font-size: 2rem;
   letter-spacing: -1px;
 }
-.top__date-changer {
+.center-section__top__date-changer {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -60,32 +82,31 @@
           justify-content: flex-end;
   width: 50%;
 }
-.top__date-changer__day {
+.center-section__top__date-changer__previous-button {
+  display: block;
+  width: 20px;
+  font-size: 1.4rem;
+  background: none;
+}
+.center-section__top__date-changer__previous-button > * {
+  width: 100%;
+}
+.center-section__top__date-changer__current-date {
   display: block;
   font-size: 1.6rem;
   letter-spacing: -1px;
   margin: 0 20px;
 }
-.top__date-changer__previous-button {
-  display: block;
-  width: 20px;
-  font-size: 1.4rem;
-  background: none;
-}
-.top__date-changer__previous-button > * {
-  width: 100%;
-}
-.top__date-changer__next-button {
+.center-section__top__date-changer__next-button {
   display: block;
   background: none;
   font-size: 1.4rem;
   width: 20px;
 }
-.top__date-changer__next-button > * {
+.center-section__top__date-changer__next-button > * {
   width: 100%;
 }
-
-.main {
+.center-section__meals {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
