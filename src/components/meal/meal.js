@@ -5,7 +5,9 @@ import { useReducer } from 'react';
 import './styles/meal.css';
 
 const ACTIONS = {
-  NEGATE_BOOLEAN: 'negate-boolean',
+  NEGATE_MEAL_STATE: 'negate-meal-state',
+  NEGATE_ADDING_WINDOW_STATE: 'negate-adding-window-state',
+  NEGATE_REMOVING_WINDOW_STATE: 'negate-removing-window-state',
   ADD_PRODUCT: 'add-product',
   REMOVE_PRODUCT: 'remove-product'
 }
@@ -19,20 +21,42 @@ export default function Meal(props) {
   const initialState = {
     isMealOpened: false, 
     isAddingWindowOpened: false,
-    isRemovingWindowOpened: false 
+    isRemovingWindowOpened: false,
+    productList: [
+      { id: Date.now(), name: "Jaja kurze", weight: 100, proteins: 40, fats: 20, carbs: 50, kcal: 250 },
+      { id: Date.now(), name: "Ryż", weight: 584, proteins: 278, fats: 22, carbs: 542, kcal: 1523 }
+    ],
+    newProduct: { id: '', name: '', weight: '', proteins: '', fats: '', carbs: '', kcal: '' }
   };
 
   const reducer = (state, action) => {
     switch(action.type) {
 
-      case ACTIONS.NEGATE_BOOLEAN:
+      case ACTIONS.NEGATE_MEAL_STATE:
         return {...state, isMealOpened: !state.isMealOpened};
       
-      case ACTIONS.ADD_PRODUCT:
+      case ACTIONS.NEGATE_ADDING_WINDOW_STATE:
         return {...state, isAddingWindowOpened: !state.isAddingWindowOpened};
 
-      case ACTIONS.REMOVE_PRODUCT:
+      case ACTIONS.NEGATE_REMOVING_WINDOW_STATE:
         return {...state, isRemovingWindowOpened: !state.isRemovingWindowOpened};
+
+      case ACTIONS.CHANGE_NEW_PRODUCT_DATA: {
+        switch(action.payload.key) {
+          case 'name':      return {...state, newProduct: {...state.newProduct, name:     action.payload.value}};
+          case 'weight':    return {...state, newProduct: {...state.newProduct, weight:   Number(action.payload.value)}};
+          case 'proteins':  return {...state, newProduct: {...state.newProduct, proteins: Number(action.payload.value)}};
+          case 'fats':      return {...state, newProduct: {...state.newProduct, fats:     Number(action.payload.value)}};
+          case 'carbs':     return {...state, newProduct: {...state.newProduct, carbs:    Number(action.payload.value)}};
+          case 'kcal':      return {...state, newProduct: {...state.newProduct, kcal:     Number(action.payload.value)}};
+        }
+      }
+
+      case ACTIONS.ADD_PRODUCT: {
+        state.newProduct.id = Date.now();
+        state.productList.push(state.newProduct);
+        return {...state, newProduct: { id: '', name: '', weight: '', proteins: '', fats: '', carbs: '', kcal: ''}};
+      }
 
       default:
         break;
@@ -43,15 +67,33 @@ export default function Meal(props) {
   // END OF REDUCER STUFF
 
   const handleMealOpening = () => {
-    dispatch( {type: ACTIONS.NEGATE_BOOLEAN} );
+    dispatch( {type: ACTIONS.NEGATE_MEAL_STATE} );
   }
 
-  const handleProductAdding = () => {
-    dispatch( {type: ACTIONS.ADD_PRODUCT} );
+  const handleAddingWindow = () => {
+    dispatch( {type: ACTIONS.NEGATE_ADDING_WINDOW_STATE} );
+    console.log(state.newProduct);
   }
 
-  const handleProductRemoving = () => {
-    dispatch( {type: ACTIONS.REMOVE_PRODUCT} );
+  const handleProductAdding = e => {
+    e.preventDefault();
+    dispatch( {type:ACTIONS.ADD_PRODUCT});
+    dispatch( {type:ACTIONS.NEGATE_ADDING_WINDOW_STATE});
+    console.log(state.newProduct);
+    console.log(state.productList);
+  }
+
+  const handleProductRemoving = e => {
+    console.log(state.newProduct);
+    console.log(state.productList);
+  }
+
+  const handleRemovingWindow = () => {
+    dispatch( {type: ACTIONS.NEGATE_REMOVING_WINDOW_STATE} );
+  }
+
+  const handleOnChange = e => {
+    dispatch({ type: ACTIONS.CHANGE_NEW_PRODUCT_DATA, payload: { key: e.target.id, value:e.target.value } });
   }
 
 
@@ -74,23 +116,18 @@ export default function Meal(props) {
 
       <section className="meal__products-section" style={ state.isMealOpened ? {display: "flex"} : {display: "none"} }>
        
-        <Product 
-          name="Jaja kurze"
-          weight={100}
-          proteins={40}
-          fats={50}
-          carbs={100}
-          kcal={122}>
-        </Product>
-
-        <Product 
-          name="Jaja kurze"
-          weight={100}
-          proteins={40}
-          fats={50}
-          carbs={100}
-          kcal={122}>
-        </Product>
+        { state.productList.map(product => {
+          return (
+            <Product key={product.id} 
+              name={product.name}
+              weight={product.weight}
+              proteins={product.proteins}
+              fats={product.fats}
+              carbs={product.carbs}
+              kcal={product.kcal}>
+            </Product>
+          )
+        })}
 
       </section>
 
@@ -99,13 +136,13 @@ export default function Meal(props) {
 
         <button 
           className="meal__buttons-section__remove-button" 
-          onClick={handleProductRemoving} 
+          onClick={ handleRemovingWindow } 
           disabled={ state.isAddingWindowOpened || state.isRemovingWindowOpened ? true : false }>
           Remove</button> 
 
         <button 
           className="meal__buttons-section__add-button" 
-          onClick={handleProductAdding} 
+          onClick={ handleAddingWindow } 
           disabled={ state.isAddingWindowOpened || state.isRemovingWindowOpened ? true : false }>
           Add</button>       
       
@@ -113,12 +150,70 @@ export default function Meal(props) {
 
       <div 
         className="meal__adding-window" 
-        style={ state.isAddingWindowOpened ? {display: "flex"} : {display: "none"}}
-        onClick={ handleProductAdding }></div>
+        style={ state.isAddingWindowOpened ? {display: "flex"} : {display: "none"}}>
+
+        <form onSubmit= { handleProductAdding }>
+
+          <label htmlFor="name">Product name: </label>
+          <input 
+            type="text"
+            id="name"
+            value={ state.newProduct.name } 
+            onChange={ handleOnChange }
+            required />
+
+          <label htmlFor="weight">Product weight: </label>
+          <input 
+            type="text" 
+            id="weight"
+            value={ state.newProduct.weight } 
+            onChange={ handleOnChange }
+            required />
+
+          <label htmlFor="proteins">Proteins: </label>
+          <input 
+            type="text" 
+            id="proteins"
+            value={ state.newProduct.proteins } 
+            onChange={ handleOnChange }
+            required />
+
+          <label htmlFor="fats">Fats: </label>
+          <input 
+            type="text" 
+            id="fats"
+            value={ state.newProduct.fats } 
+            onChange={ handleOnChange }
+            required />
+
+          <label htmlFor="carbs">Carbs: </label>
+          <input 
+            type="text" 
+            id="carbs"
+            value={ state.newProduct.carbs } 
+            onChange={ handleOnChange }
+            required />
+
+          <label htmlFor="kcal">Calories: </label>
+          <input 
+            type="text" 
+            id="kcal"
+            value={ state.newProduct.kcal }
+            onChange={ handleOnChange }
+            required />
+
+          <input 
+            type="submit" 
+            value="Add" />
+
+        </form>
+      </div>
       <div 
         className="meal__removing-window" 
         style={ state.isRemovingWindowOpened ? {display: "flex"} : {display: "none"}}
-        onClick={ handleProductRemoving }></div>
+        onClick={ handleProductRemoving }>
+        
+      </div>
     
     </div>
   )

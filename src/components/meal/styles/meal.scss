@@ -18,7 +18,15 @@
     position: absolute;
     top: 0;
     background-color: black;
+    @include flexSetup(column, center, space-around);
+    & > * {
+      @include flexSetup(column, center, center);
+      width: 80%;
+      color: white;
+
+    }
   }
+
   &__removing-window {
     background: blue;
   }
