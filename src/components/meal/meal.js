@@ -13,7 +13,9 @@ const ACTIONS = {
   ADD_PRODUCT: 'add-product',
   ENABLE_PLACEHOLDER: 'enable-placeholder',
   DISABLE_PLACEHOLDER: 'disable-placeholder',
-  REMOVE_PRODUCT: 'remove-product'
+  REMOVE_PRODUCT: 'remove-product',
+  ADD_TO_SUMMARY: 'add-to-summary',
+  SUB_FROM_SUMMARY: 'sub-from-summary'
 }
 
 
@@ -26,6 +28,7 @@ export default function Meal(props) {
     isMealOpened: false, 
     isAddingWindowOpened: false,
     isRemovingWindowOpened: false,
+    countIngredients: false,
     productList: [],
     newProduct: { id: '', mealId: props.mealId,  name: '', weight: '', proteins: '', fats: '', carbs: '', kcal: '' },
     summary: {
@@ -38,7 +41,6 @@ export default function Meal(props) {
 
   const reducer = (state, action) => {
     switch(action.type) {
-
       case ACTIONS.NEGATE_MEAL_STATE:
         return {...state, isMealOpened: !state.isMealOpened};
       
@@ -49,7 +51,7 @@ export default function Meal(props) {
         return {...state, isRemovingWindowOpened: !state.isRemovingWindowOpened};
 
       case ACTIONS.CHANGE_NEW_PRODUCT_DATA: {
-        switch(action.payload.key) {
+        switch (action.payload.key) {
           case 'name':      return {...state, newProduct: {...state.newProduct, name:     action.payload.value}};
           case 'weight':    return {...state, newProduct: {...state.newProduct, weight:   action.payload.value}};
           case 'proteins':  return {...state, newProduct: {...state.newProduct, proteins: action.payload.value}};
@@ -81,8 +83,25 @@ export default function Meal(props) {
         return {...state, productList: newProductList};
       }
 
-      default:
-        break;
+      case ACTIONS.ADD_TO_SUMMARY: {
+        switch (action.payload.ingredient) {
+          case 'proteins': return {...state, summary: {...state.summary, proteins: state.summary.proteins + Number(action.payload.value)}};
+          case 'fats':     return {...state, summary: {...state.summary, fats:     state.summary.fats     + Number(action.payload.value)}};
+          case 'carbs':    return {...state, summary: {...state.summary, carbs:    state.summary.carbs    + Number(action.payload.value)}};
+          case 'kcal':     return {...state, summary: {...state.summary, kcal:     state.summary.kcal     + Number(action.payload.value)}};
+        }
+      }
+      
+      case ACTIONS.SUB_FROM_SUMMARY: {
+        switch (action.payload.ingredient) {
+          case 'proteins': return {...state, summary: {...state.summary, proteins: state.summary.proteins - Number(action.payload.value)}};
+          case 'fats':     return {...state, summary: {...state.summary, fats:     state.summary.fats     - Number(action.payload.value)}};
+          case 'carbs':    return {...state, summary: {...state.summary, carbs:    state.summary.carbs    - Number(action.payload.value)}};
+          case 'kcal':     return {...state, summary: {...state.summary, kcal:     state.summary.kcal     - Number(action.payload.value)}};
+        }
+      }
+
+      default: return console.error(`Unknown action type: ${action.type}`);
     }
   }
 
@@ -97,11 +116,40 @@ export default function Meal(props) {
         state.productList.push(value);
       }
     });
+    state.productList.forEach(product => {
+      handleAddingtoSummary(product);
+    });
   }, []);
   // END OF REDUCER STUFF
 
   const handleMealOpening = () => {
     dispatch( {type: ACTIONS.NEGATE_MEAL_STATE} );
+  }
+
+  const handleAddingtoSummary = (object) => {
+    let keys = Object.keys(object);
+    for (let i = 4; i < keys.length; i++) {
+      dispatch({
+        type: ACTIONS.ADD_TO_SUMMARY,
+        payload: {
+          ingredient: keys[i],
+          value: object[keys[i]]
+        }
+      });
+    };
+  }
+
+  const handleSubstractingFromSummary = (object) => {
+    let keys = Object.keys(object);
+    for (let i = 4; i < keys.length; i++) {
+      dispatch({
+        type: ACTIONS.SUB_FROM_SUMMARY,
+        payload: {
+          ingredient: keys[i],
+          value: object[keys[i]]
+        }
+      });
+    };
   }
 
   const handleAddingWindow = () => {
