@@ -41,6 +41,7 @@ export default function Meal(props) {
 
   const reducer = (state, action) => {
     switch(action.type) {
+
       case ACTIONS.NEGATE_MEAL_STATE:
         return {...state, isMealOpened: !state.isMealOpened};
       
@@ -107,6 +108,7 @@ export default function Meal(props) {
 
   const [state, dispatch] = useReducer(reducer, initialState);
   const [isPlaceholderEnabled, setPlaceholderState] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     let localStorageKeys = Object.keys(localStorage);
@@ -115,10 +117,9 @@ export default function Meal(props) {
       if (value.mealId === props.mealId) {
         state.productList.push(value);
       }
-    });
-    state.productList.forEach(product => {
-      handleAddingtoSummary(product);
-    });
+      setRefresh(true);
+    })
+
   }, []);
   // END OF REDUCER STUFF
 
@@ -126,30 +127,28 @@ export default function Meal(props) {
     dispatch( {type: ACTIONS.NEGATE_MEAL_STATE} );
   }
 
-  const handleAddingtoSummary = (object) => {
-    let keys = Object.keys(object);
-    for (let i = 4; i < keys.length; i++) {
+  const handleAddingToSummary = (object) => {
+    Object.keys(object).forEach(key => {
       dispatch({
         type: ACTIONS.ADD_TO_SUMMARY,
         payload: {
-          ingredient: keys[i],
-          value: object[keys[i]]
+          ingredient: key,
+          value: object[key]
         }
       });
-    };
+    });
   }
 
   const handleSubstractingFromSummary = (object) => {
-    let keys = Object.keys(object);
-    for (let i = 4; i < keys.length; i++) {
+    Object.keys(object).forEach(key => {
       dispatch({
         type: ACTIONS.SUB_FROM_SUMMARY,
         payload: {
-          ingredient: keys[i],
-          value: object[keys[i]]
+          ingredient: key,
+          value: object[key]
         }
       });
-    };
+    });
   }
 
   const handleAddingWindow = () => {
@@ -238,18 +237,21 @@ export default function Meal(props) {
 
       </section>
 
-      {state.productList.length !== 0 ? (
+      { state.productList.length !== 0 ? (
         <section className="meal__products-section" style={ state.isMealOpened ? {display: "flex"} : {display: "none"} }>
        
         { state.productList.map(product => {
           return (
-            <Product key={product.id} 
-              name={product.name}
-              weight={product.weight}
-              proteins={product.proteins}
-              fats={product.fats}
-              carbs={product.carbs}
-              kcal={product.kcal}>
+            <Product key={ product.id } 
+              name={ product.name }
+              weight={ product.weight }
+              proteins={ product.proteins }
+              fats={ product.fats }
+              carbs={ product.carbs }
+              kcal={ product.kcal }
+              addIngredientsFunction={ handleAddingToSummary }
+              subIngredientsFunction={ handleSubstractingFromSummary }
+              refresh={ state.refresh }>
             </Product>
           )
         })}
@@ -340,10 +342,9 @@ export default function Meal(props) {
           <input 
             type="submit" 
             value="Add" />
-          
-          <button onClick={ handleAddingWindow }>Cancel</button>
-
+        
         </form>
+        <button onClick={ handleAddingWindow }>Cancel</button>
       </div>
 
       <div className="meal__removing-window" style={ state.isRemovingWindowOpened ? {display: "flex"} : {display: "none"}}>
@@ -361,15 +362,22 @@ export default function Meal(props) {
           })}
 
           <input type="submit" value="Remove"/>
-          <button onClick={ handleRemovingWindow }>Cancel</button>
         </form>
+
+        <button onClick={ handleRemovingWindow }>Cancel</button>
       </div>
-    
+
     </div>
   )
 }
 
 function Product(props) {
+  useEffect(() => { 
+    let ingredients = { proteins: props.proteins, fats: props.fats, carbs: props.carbs, kcal: props.kcal };
+    props.addIngredientsFunction(ingredients);
+
+    return () => props.subIngredientsFunction(ingredients);
+  }, [ props.refresh ]);
 
   return (
     <div className="meal__products-section__product">
