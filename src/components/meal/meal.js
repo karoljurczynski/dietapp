@@ -27,7 +27,13 @@ export default function Meal(props) {
     isAddingWindowOpened: false,
     isRemovingWindowOpened: false,
     productList: [],
-    newProduct: { id: '', mealId: props.mealId,  name: '', weight: '', proteins: '', fats: '', carbs: '', kcal: '' }
+    newProduct: { id: '', mealId: props.mealId,  name: '', weight: '', proteins: '', fats: '', carbs: '', kcal: '' },
+    summary: {
+      proteins: 0,
+      fats: 0,
+      carbs: 0,
+      kcal: 0
+    }
   };
 
   const reducer = (state, action) => {
@@ -60,6 +66,21 @@ export default function Meal(props) {
         return {...state, newProduct: { id: '', mealId: props.mealId, name: '', weight: '', proteins: '', fats: '', carbs: '', kcal: ''}};
       }
 
+      case ACTIONS.REMOVE_PRODUCT: {
+        let newProductList = state.productList;
+        let checkedIdList = action.payload;
+        
+        checkedIdList.forEach(checkedId => {
+          newProductList.forEach((product, index) => {
+            if (Number(product.id) === Number(checkedId)) {
+              newProductList.splice(index, 1);
+              localStorage.removeItem(product.id);
+            }
+          });
+        });
+        return {...state, productList: newProductList};
+      }
+
       default:
         break;
     }
@@ -81,16 +102,9 @@ export default function Meal(props) {
 
   const handleMealOpening = () => {
     dispatch( {type: ACTIONS.NEGATE_MEAL_STATE} );
-    console.log(state.productList);
   }
 
   const handleAddingWindow = () => {
-    dispatch( {type: ACTIONS.NEGATE_ADDING_WINDOW_STATE} );
-  }
-
-  const handleProductAdding = e => {
-    e.preventDefault();
-    dispatch( {type: ACTIONS.ADD_PRODUCT} );
     dispatch( {type: ACTIONS.NEGATE_ADDING_WINDOW_STATE} );
   }
 
@@ -98,11 +112,26 @@ export default function Meal(props) {
     dispatch( {type: ACTIONS.NEGATE_REMOVING_WINDOW_STATE} );
   }
 
-  const handleProductRemoving = e => {
+  const handleProductAdding = (e) => {
     e.preventDefault();
+    dispatch( {type: ACTIONS.ADD_PRODUCT} );
+    dispatch( {type: ACTIONS.NEGATE_ADDING_WINDOW_STATE} );
   }
 
-  const handleOnChange = e => {
+  const handleProductRemoving = (e) => {
+    e.preventDefault();
+
+    let checkedIdsList = [];
+    for (let i = 0; i < state.productList.length; i++) {
+      if (e.target[i].checked)
+        checkedIdsList.push(e.target[i].id);
+    }
+
+    dispatch( {type: ACTIONS.REMOVE_PRODUCT, payload: checkedIdsList} );
+    dispatch( {type: ACTIONS.NEGATE_REMOVING_WINDOW_STATE} );
+  }
+
+  const handleOnChange = (e) => {
     const isNumber = /[0-9]/;
     const isWord = /[a-z\s]/i;
     const isZero = /^[0]{1}/;
@@ -111,12 +140,13 @@ export default function Meal(props) {
       dispatch({ type: ACTIONS.CHANGE_NEW_PRODUCT_DATA, payload: { key: e.target.id, value: '0' }});
       setPlaceholderState(false);
     }
+
     const setValueAsNull = () => {
       dispatch({ type: ACTIONS.CHANGE_NEW_PRODUCT_DATA, payload: { key: e.target.id, value: "" } });
       setPlaceholderState(true);
     }
+
     const setValueAsCorrect = () => {
-      console.log(e.target.value);
       dispatch({ type: ACTIONS.CHANGE_NEW_PRODUCT_DATA, payload: { key: e.target.id, value: e.target.value }});
       setPlaceholderState(false);
     }
@@ -124,7 +154,7 @@ export default function Meal(props) {
     if (e.target.id === 'name') {
 
       isWord.test(e.target.value[e.target.value.length - 1]) ? setValueAsCorrect() : setValueAsNull();
-    
+
     }
 
     else {
@@ -137,6 +167,7 @@ export default function Meal(props) {
         else
           setValueAsCorrect();
       }
+
       else {
         setValueAsNull();
       }
@@ -151,10 +182,10 @@ export default function Meal(props) {
         <h2 className="meal__top-section__meal-title">{props.name}</h2>        
         
         <ul className="meal__top-section__meal-stats-list">                   
-          <li className="meal__top-section__meal-stats-list__item">20 g</li>
-          <li className="meal__top-section__meal-stats-list__item">10 g</li>
-          <li className="meal__top-section__meal-stats-list__item">174 g</li>
-          <li className="meal__top-section__meal-stats-list__item">262 kcal</li>
+          <li className="meal__top-section__meal-stats-list__item">{ state.summary.proteins } g</li>
+          <li className="meal__top-section__meal-stats-list__item">{ state.summary.fats } g</li>
+          <li className="meal__top-section__meal-stats-list__item">{ state.summary.carbs } g</li>
+          <li className="meal__top-section__meal-stats-list__item">{ state.summary.kcal } kcal</li>
         </ul> 
 
       </section>
@@ -182,7 +213,7 @@ export default function Meal(props) {
 
         <button 
           className="meal__buttons-section__remove-button" 
-          onClick={ handleRemovingWindow } 
+          onClick={ state.productList.length ? handleRemovingWindow : null } 
           disabled={ state.isAddingWindowOpened || state.isRemovingWindowOpened ? true : false }>
           Remove</button> 
 
@@ -268,9 +299,20 @@ export default function Meal(props) {
       </div>
 
       <div className="meal__removing-window" style={ state.isRemovingWindowOpened ? {display: "flex"} : {display: "none"}}>
-        <form onSubmit={handleProductRemoving}>
-          
-          <input type="submit" />
+        <form onSubmit={ handleProductRemoving }>
+
+          {state.productList.map(product => {
+            return (
+
+              <span key={ product.id }>
+                <label htmlFor={ product.name }>{ product.name }</label>
+                <input type="checkbox" id={ product.id } name={ product.name } />
+              </span>
+
+            )
+          })}
+
+          <input type="submit" value="Remove"/>
           <button onClick={ handleRemovingWindow }>Cancel</button>
         </form>
       </div>
