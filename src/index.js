@@ -56,11 +56,11 @@ function App() {
       
         <section className="center-section__meals">
 
-          <Meal name="Breakfast"/>
-          <Meal name="II Breakfast"/>
-          <Meal name="Lunch"/>
-          <Meal name="Snack"/>
-          <Meal name="Dinner"/>
+          <Meal name="Breakfast" mealId={0} />
+          <Meal name="II Breakfast" mealId={1} />
+          <Meal name="Lunch" mealId={2} />
+          <Meal name="Snack" mealId={3} />
+          <Meal name="Dinner" mealId={4} />
 
         </section>
 

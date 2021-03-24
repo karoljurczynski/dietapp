@@ -1,6 +1,7 @@
 // IMPORTS
 
 import React from 'react';
+import { useEffect } from 'react';
 import { useState } from 'react';
 import { useReducer } from 'react';
 import './styles/meal.css';
@@ -25,11 +26,8 @@ export default function Meal(props) {
     isMealOpened: false, 
     isAddingWindowOpened: false,
     isRemovingWindowOpened: false,
-    productList: [
-      { id: Date.now(), name: "Jaja kurze", weight: 100, proteins: 40, fats: 20, carbs: 50, kcal: 250 },
-      { id: Date.now(), name: "Ryż", weight: 584, proteins: 278, fats: 22, carbs: 542, kcal: 1523 }
-    ],
-    newProduct: { id: '', name: '', weight: '', proteins: '', fats: '', carbs: '', kcal: '' }
+    productList: [],
+    newProduct: { id: '', mealId: props.mealId,  name: '', weight: '', proteins: '', fats: '', carbs: '', kcal: '' }
   };
 
   const reducer = (state, action) => {
@@ -58,7 +56,8 @@ export default function Meal(props) {
       case ACTIONS.ADD_PRODUCT: {
         state.newProduct.id = Date.now();
         state.productList.push(state.newProduct);
-        return {...state, newProduct: { id: '', name: '', weight: '', proteins: '', fats: '', carbs: '', kcal: ''}};
+        localStorage.setItem(state.newProduct.id, JSON.stringify(state.newProduct));
+        return {...state, newProduct: { id: '', mealId: props.mealId, name: '', weight: '', proteins: '', fats: '', carbs: '', kcal: ''}};
       }
 
       default:
@@ -68,10 +67,21 @@ export default function Meal(props) {
 
   const [state, dispatch] = useReducer(reducer, initialState);
   const [isPlaceholderEnabled, setPlaceholderState] = useState(false);
+
+  useEffect(() => {
+    let localStorageKeys = Object.keys(localStorage);
+    localStorageKeys.forEach(key => {
+      let value = JSON.parse(localStorage.getItem(key));
+      if (value.mealId === props.mealId) {
+        state.productList.push(value);
+      }
+    });
+  }, []);
   // END OF REDUCER STUFF
 
   const handleMealOpening = () => {
     dispatch( {type: ACTIONS.NEGATE_MEAL_STATE} );
+    console.log(state.productList);
   }
 
   const handleAddingWindow = () => {
@@ -84,22 +94,53 @@ export default function Meal(props) {
     dispatch( {type: ACTIONS.NEGATE_ADDING_WINDOW_STATE} );
   }
 
-  const handleProductRemoving = e => {
-    e.preventDefault();
-  }
-
   const handleRemovingWindow = () => {
     dispatch( {type: ACTIONS.NEGATE_REMOVING_WINDOW_STATE} );
   }
 
+  const handleProductRemoving = e => {
+    e.preventDefault();
+  }
+
   const handleOnChange = e => {
-    if ((e.target.id !== 'name') && !(Number(e.target.value))) {
-      setPlaceholderState(true);
-      dispatch({ type: ACTIONS.CHANGE_NEW_PRODUCT_DATA, payload: { key: e.target.id, value: "" } });
-    }
-    else {
-      dispatch({ type: ACTIONS.CHANGE_NEW_PRODUCT_DATA, payload: { key: e.target.id, value: e.target.value }}); 
+    const isNumber = /[0-9]/;
+    const isWord = /[a-z\s]/i;
+    const isZero = /^[0]{1}/;
+
+    const setValueAsZero = () => {
+      dispatch({ type: ACTIONS.CHANGE_NEW_PRODUCT_DATA, payload: { key: e.target.id, value: '0' }});
       setPlaceholderState(false);
+    }
+    const setValueAsNull = () => {
+      dispatch({ type: ACTIONS.CHANGE_NEW_PRODUCT_DATA, payload: { key: e.target.id, value: "" } });
+      setPlaceholderState(true);
+    }
+    const setValueAsCorrect = () => {
+      console.log(e.target.value);
+      dispatch({ type: ACTIONS.CHANGE_NEW_PRODUCT_DATA, payload: { key: e.target.id, value: e.target.value }});
+      setPlaceholderState(false);
+    }
+
+    if (e.target.id === 'name') {
+
+      isWord.test(e.target.value[e.target.value.length - 1]) ? setValueAsCorrect() : setValueAsNull();
+    
+    }
+
+    else {
+
+      if (isNumber.test(e.target.value[e.target.value.length - 1])) {
+
+        if (isZero.test(e.target.value))
+          e.target.id === 'weight' ? setValueAsNull() : setValueAsZero();
+
+        else
+          setValueAsCorrect();
+      }
+      else {
+        setValueAsNull();
+      }
+
     }
   }
 
@@ -118,8 +159,8 @@ export default function Meal(props) {
 
       </section>
 
-
-      <section className="meal__products-section" style={ state.isMealOpened ? {display: "flex"} : {display: "none"} }>
+      {state.productList.length !== 0 ? (
+        <section className="meal__products-section" style={ state.isMealOpened ? {display: "flex"} : {display: "none"} }>
        
         { state.productList.map(product => {
           return (
@@ -134,8 +175,8 @@ export default function Meal(props) {
           )
         })}
 
-      </section>
-
+        </section>
+      ) : null}
 
       <section className="meal__buttons-section" style={ state.isMealOpened ? {display: "flex"} : {display: "none"} }>
 
@@ -153,9 +194,7 @@ export default function Meal(props) {
       
       </section>
 
-      <div 
-        className="meal__adding-window" 
-        style={ state.isAddingWindowOpened ? {display: "flex"} : {display: "none"}}>
+      <div className="meal__adding-window" style={ state.isAddingWindowOpened ? {display: "flex"} : {display: "none"}}>
 
         <form onSubmit= { handleProductAdding }>
 
@@ -165,6 +204,8 @@ export default function Meal(props) {
             id="name"
             value={ state.newProduct.name } 
             onChange={ handleOnChange }
+            placeholder={ isPlaceholderEnabled ? "Product name must be a string!" : null }
+            maxLength="32"
             required />
 
           <label htmlFor="weight">Product weight: </label>
@@ -173,7 +214,8 @@ export default function Meal(props) {
             id="weight"
             value={ state.newProduct.weight } 
             onChange={ handleOnChange }
-            placeholder={ isPlaceholderEnabled ? "Enter a number!" : null }
+            placeholder={ isPlaceholderEnabled ? "Weight must be a number different than zero!" : null }
+            maxLength="5"
             required />
 
           <label htmlFor="proteins">Proteins: </label>
@@ -182,7 +224,8 @@ export default function Meal(props) {
             id="proteins"
             value={ state.newProduct.proteins } 
             onChange={ handleOnChange }
-            placeholder={ isPlaceholderEnabled ? "Enter a number!" : null }
+            placeholder={ isPlaceholderEnabled ? "Proteins must be a number!" : null }
+            maxLength="5"
             required />
 
           <label htmlFor="fats">Fats: </label>
@@ -191,7 +234,8 @@ export default function Meal(props) {
             id="fats"
             value={ state.newProduct.fats } 
             onChange={ handleOnChange }
-            placeholder={ isPlaceholderEnabled ? "Enter a number!" : null }
+            placeholder={ isPlaceholderEnabled ? "Fats must be a number!" : null }
+            maxLength="5"
             required />
 
           <label htmlFor="carbs">Carbs: </label>
@@ -200,7 +244,8 @@ export default function Meal(props) {
             id="carbs"
             value={ state.newProduct.carbs } 
             onChange={ handleOnChange }
-            placeholder={ isPlaceholderEnabled ? "Enter a number!" : null }
+            placeholder={ isPlaceholderEnabled ? "Carbs must be a number!" : null }
+            maxLength="5"
             required />
 
           <label htmlFor="kcal">Calories: </label>
@@ -209,20 +254,25 @@ export default function Meal(props) {
             id="kcal"
             value={ state.newProduct.kcal }
             onChange={ handleOnChange }
-            placeholder={ isPlaceholderEnabled ? "Enter a number!" : null }
+            placeholder={ isPlaceholderEnabled ? "Calories must be a number!" : null }
+            maxLength="5"
             required />
 
           <input 
             type="submit" 
             value="Add" />
+          
+          <button onClick={ handleAddingWindow }>Cancel</button>
 
         </form>
       </div>
-      <div 
-        className="meal__removing-window" 
-        style={ state.isRemovingWindowOpened ? {display: "flex"} : {display: "none"}}
-        onClick={ handleProductRemoving }>
-        
+
+      <div className="meal__removing-window" style={ state.isRemovingWindowOpened ? {display: "flex"} : {display: "none"}}>
+        <form onSubmit={handleProductRemoving}>
+          
+          <input type="submit" />
+          <button onClick={ handleRemovingWindow }>Cancel</button>
+        </form>
       </div>
     
     </div>

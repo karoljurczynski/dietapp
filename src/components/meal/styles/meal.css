@@ -240,6 +240,9 @@
   margin-left: 15px;
   font-weight: 700;
 }
+.meal__products-section__product:last-of-type {
+  margin-bottom: 0;
+}
 .meal__buttons-section {
   display: -webkit-box;
   display: -ms-flexbox;
