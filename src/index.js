@@ -17,11 +17,23 @@ import { useReducer } from 'react';
 const ACTIONS = {
   UPDATE_MEALS_INGREDIENTS_SUMMARY: 'update-meals-ingredients-summary',
   UPDATE_DAILY_INGREDIENTS_SUMMARY: 'update-daily-ingredients-summary',
+  COUNT_GAUGES_DATA: 'count-gauges-data'
 }
 
 const MEALS = ["Breakfast", "II Breakfast", "Lunch", "Snack", "Dinner"];
 
-const DAILY_DEMAND = { KCAL: 2000, PROTEINS: 120, FATS: 55, CARBS: 240 };
+const DAILY_DEMAND = { kcal: 2000, proteins: 120, fats: 55, carbs: 240 };
+
+const countPercentOfEatenIngredient = (eatenAmount, maxAmount) => {
+  return Math.round(eatenAmount / maxAmount * 100);
+}
+
+const countAmountOfIngredientLeft = (eatenAmount, maxAmount) => {
+  if (eatenAmount >= maxAmount)
+    return 0;
+  else
+    return maxAmount - eatenAmount;
+}
 
 
 // COMPONENTS
@@ -42,51 +54,58 @@ function App() {
       }
 
       case ACTIONS.UPDATE_DAILY_INGREDIENTS_SUMMARY: {
-        let dailyIngredientsSum = { proteinsSum: 0, fatsSum: 0, carbsSum: 0, kcalSum: 0 };
-        let mealsIngredientsSum = { proteinsSum: 0, fatsSum: 0, carbsSum: 0, kcalSum: 0 };
+        let dailyIngredientsSum = { proteins: 0, fats: 0, carbs: 0, kcal: 0 };
+        let mealsIngredientsSum = { proteins: 0, fats: 0, carbs: 0, kcal: 0 };
 
         state.mealsIngredientsSummary.forEach(meal => {
-          mealsIngredientsSum = { proteinsSum: meal.proteins,
-                                  fatsSum:     meal.fats,
-                                  carbsSum:    meal.carbs,
-                                  kcalSum:     meal.kcal };
+          mealsIngredientsSum = { proteins: meal.proteins,
+                                  fats:     meal.fats,
+                                  carbs:    meal.carbs,
+                                  kcal:     meal.kcal };
 
-          dailyIngredientsSum = { proteinsSum: dailyIngredientsSum.proteinsSum + mealsIngredientsSum.proteinsSum,
-                                  fatsSum:     dailyIngredientsSum.fatsSum     + mealsIngredientsSum.fatsSum,
-                                  carbsSum:    dailyIngredientsSum.carbsSum    + mealsIngredientsSum.carbsSum,
-                                  kcalSum:     dailyIngredientsSum.kcalSum     + mealsIngredientsSum.kcalSum };
+          dailyIngredientsSum = { proteins: dailyIngredientsSum.proteins + mealsIngredientsSum.proteins,
+                                  fats:     dailyIngredientsSum.fats     + mealsIngredientsSum.fats,
+                                  carbs:    dailyIngredientsSum.carbs    + mealsIngredientsSum.carbs,
+                                  kcal:     dailyIngredientsSum.kcal     + mealsIngredientsSum.kcal };
 
-          mealsIngredientsSum = { proteinsSum: 0,
-                                  fatsSum: 0,
-                                  carbsSum: 0,
-                                  kcalSum: 0 };
+          mealsIngredientsSum = { proteins: 0,
+                                  fats: 0,
+                                  carbs: 0,
+                                  kcalS: 0 };
         });
         console.log(dailyIngredientsSum);
         return {...state, dailyIngredientsSummary: dailyIngredientsSum };
       }
 
+      case ACTIONS.COUNT_GAUGES_DATA: {
+        const ingredient = action.payload.typeOfIngredient;
+
+        return {...state, gaugesData: {...state.gaugesData, 
+          [ingredient]: { 
+            eaten: state.dailyIngredientsSummary[ingredient], 
+            left: countAmountOfIngredientLeft(state.dailyIngredientsSummary[ingredient], DAILY_DEMAND[ingredient]), 
+            max: DAILY_DEMAND[ingredient], 
+            percent: countPercentOfEatenIngredient(state.dailyIngredientsSummary[ingredient], DAILY_DEMAND[ingredient]) }
+          }
+        }
+      }
+
       default: return console.error(`Unknown action type: ${action.type}`);
     }
-
   }
 
   const initialState = {
     mealsIngredientsSummary: [],
-    dailyIngredientsSummary: {}
+    dailyIngredientsSummary: {},
+    gaugesData: {
+      kcal: { eaten: 0, left: 0, max: 0, percent: 0 },
+      proteins: { eaten: 0, left: 0, max: 0, percent: 0 },
+      fats: { eaten: 0, left: 0, max: 0, percent: 0 },
+      carbs: { eaten: 0, left: 0, max: 0, percent: 0 }
+    }
   }
 
   const [state, dispatch] = useReducer(reducer, initialState);
-
-  const countPercentOfEatenIngredient = (eatenAmount, maxAmount) => {
-    return Math.round(eatenAmount / maxAmount * 100);
-  }
-
-  const countAmountOfIngredientLeft = (eatenAmount, maxAmount) => {
-    if (eatenAmount >= maxAmount)
-      return 0;
-    else
-      return maxAmount - eatenAmount;
-  }
 
   const updateMealSummary = (object, mealId) => {
     dispatch({ type: ACTIONS.UPDATE_MEALS_INGREDIENTS_SUMMARY, payload: {data: object, mealId: mealId} });
@@ -95,7 +114,14 @@ function App() {
 
   const updateDailySummary = () => {
     dispatch({ type: ACTIONS.UPDATE_DAILY_INGREDIENTS_SUMMARY });
-  };
+    updateGauges();
+  }
+
+  const updateGauges = () => {
+    Object.keys(DAILY_DEMAND).forEach(ingredient => {
+      dispatch({ type: ACTIONS.COUNT_GAUGES_DATA, payload: { typeOfIngredient: ingredient} });
+    });
+  }
 
   return (
     <div className="wrapper">
@@ -150,29 +176,29 @@ function App() {
       <aside className="right-section">
 
         <Gauge 
-          amount={ state.dailyIngredientsSummary.kcalSum }
+          amount={ state.gaugesData.kcal.eaten }
           name="kcal"
-          percent={ countPercentOfEatenIngredient(state.dailyIngredientsSummary.kcalSum, DAILY_DEMAND.KCAL) }
-          left={ countAmountOfIngredientLeft(state.dailyIngredientsSummary.kcalSum, DAILY_DEMAND.KCAL) }
+          percent={ state.gaugesData.kcal.percent }
+          left={ state.gaugesData.kcal.left }
           isKcal={true} />
 
         <Gauge 
-          amount={ state.dailyIngredientsSummary.proteinsSum }
+          amount={ state.gaugesData.proteins.eaten }
           name="proteins" 
-          percent={ countPercentOfEatenIngredient(state.dailyIngredientsSummary.proteinsSum, DAILY_DEMAND.PROTEINS) }
-          left={ countAmountOfIngredientLeft(state.dailyIngredientsSummary.proteinsSum, DAILY_DEMAND.PROTEINS) } />
+          percent={ state.gaugesData.proteins.percent }
+          left={ state.gaugesData.proteins.left } />
         
         <Gauge 
-          amount={ state.dailyIngredientsSummary.fatsSum }
+          amount={ state.gaugesData.fats.eaten }
           name="fats" 
-          percent={ countPercentOfEatenIngredient(state.dailyIngredientsSummary.fatsSum, DAILY_DEMAND.FATS) }
-          left={ countAmountOfIngredientLeft(state.dailyIngredientsSummary.fatsSum, DAILY_DEMAND.FATS) } />
+          percent={ state.gaugesData.fats.percent }
+          left={ state.gaugesData.fats.left } />
         
         <Gauge 
-          amount={ state.dailyIngredientsSummary.carbsSum }   
+          amount={ state.gaugesData.carbs.eaten }   
           name="carbohydrates" 
-          percent={ countPercentOfEatenIngredient(state.dailyIngredientsSummary.carbsSum, DAILY_DEMAND.CARBS) }
-          left={ countAmountOfIngredientLeft(state.dailyIngredientsSummary.carbsSum, DAILY_DEMAND.CARBS) } />
+          percent={ state.gaugesData.carbs.percent }
+          left={ state.gaugesData.carbs.left } />
 
       </aside>
 
