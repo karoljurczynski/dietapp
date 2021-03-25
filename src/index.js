@@ -21,6 +21,8 @@ const ACTIONS = {
 
 const MEALS = ["Breakfast", "II Breakfast", "Lunch", "Snack", "Dinner"];
 
+const DAILY_DEMAND = { KCAL: 2000, PROTEINS: 120, FATS: 55, CARBS: 240 };
+
 
 // COMPONENTS
 
@@ -75,14 +77,24 @@ function App() {
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  const countPercentOfEatenIngredient = (eatenAmount, maxAmount) => {
+    return Math.round(eatenAmount / maxAmount * 100);
+  }
+
+  const countAmountOfIngredientLeft = (eatenAmount, maxAmount) => {
+    if (eatenAmount >= maxAmount)
+      return 0;
+    else
+      return maxAmount - eatenAmount;
+  }
+
   const updateMealSummary = (object, mealId) => {
     dispatch({ type: ACTIONS.UPDATE_MEALS_INGREDIENTS_SUMMARY, payload: {data: object, mealId: mealId} });
-    dispatch({ type: ACTIONS.UPDATE_DAILY_INGREDIENTS_SUMMARY });
-  }
-    
+    updateDailySummary();
+  } 
 
   const updateDailySummary = () => {
-    dispatch({ type: ACTIONS.UPDATE_DAILY_SUMMARY });
+    dispatch({ type: ACTIONS.UPDATE_DAILY_INGREDIENTS_SUMMARY });
   };
 
   return (
@@ -137,10 +149,30 @@ function App() {
 
       <aside className="right-section">
 
-        <Gauge amount={ state.dailyIngredientsSummary.kcalSum }     type="kcal" percent="25" left="1500" isKcal={true} />
-        <Gauge amount={ state.dailyIngredientsSummary.proteinsSum } type="proteins" percent="75" left="50"/>
-        <Gauge amount={ state.dailyIngredientsSummary.fatsSum }     type="fats" percent="40" left="30"/>
-        <Gauge amount={ state.dailyIngredientsSummary.carbsSum }    type="carbohydrates" percent="50" left="150"/>
+        <Gauge 
+          amount={ state.dailyIngredientsSummary.kcalSum }
+          name="kcal"
+          percent={ countPercentOfEatenIngredient(state.dailyIngredientsSummary.kcalSum, DAILY_DEMAND.KCAL) }
+          left={ countAmountOfIngredientLeft(state.dailyIngredientsSummary.kcalSum, DAILY_DEMAND.KCAL) }
+          isKcal={true} />
+
+        <Gauge 
+          amount={ state.dailyIngredientsSummary.proteinsSum }
+          name="proteins" 
+          percent={ countPercentOfEatenIngredient(state.dailyIngredientsSummary.proteinsSum, DAILY_DEMAND.PROTEINS) }
+          left={ countAmountOfIngredientLeft(state.dailyIngredientsSummary.proteinsSum, DAILY_DEMAND.PROTEINS) } />
+        
+        <Gauge 
+          amount={ state.dailyIngredientsSummary.fatsSum }
+          name="fats" 
+          percent={ countPercentOfEatenIngredient(state.dailyIngredientsSummary.fatsSum, DAILY_DEMAND.FATS) }
+          left={ countAmountOfIngredientLeft(state.dailyIngredientsSummary.fatsSum, DAILY_DEMAND.FATS) } />
+        
+        <Gauge 
+          amount={ state.dailyIngredientsSummary.carbsSum }   
+          name="carbohydrates" 
+          percent={ countPercentOfEatenIngredient(state.dailyIngredientsSummary.carbsSum, DAILY_DEMAND.CARBS) }
+          left={ countAmountOfIngredientLeft(state.dailyIngredientsSummary.carbsSum, DAILY_DEMAND.CARBS) } />
 
       </aside>
 

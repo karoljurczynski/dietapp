@@ -22,18 +22,18 @@ export default function Gauge(props) {
     <div className={ !props.isKcal ? "right-section__gauge-container" : "right-section__gauge-container right-section__gauge-container--kcal" }>
         
         <div className={ !props.isKcal ? "right-section__gauge-container__bar" : "right-section__gauge-container__bar right-section__gauge-container__bar--kcal" } 
-          style={handleRotation()}>    
+          style={ props.percent < 100 ? handleRotation() : {borderColor: "#e00000"}}>    
         </div>
 
         <div className={ !props.isKcal ? "right-section__gauge-container__text" : "right-section__gauge-container__text right-section__gauge-container__text--kcal" }>
            <h4 className={ !props.isKcal ? "right-section__gauge-container__text__amount" : "right-section__gauge-container__text__amount right-section__gauge-container__text__amount--kcal" }>
-             {props.amount} </h4>
+             {props.amount} {!props.isKcal ? "g" : null}</h4>
            <h6 className={ !props.isKcal ? "right-section__gauge-container__text__name" : "right-section__gauge-container__text__name right-section__gauge-container__text__name--kcal" }>
              {props.name} </h6>
            <p className={ !props.isKcal ? "right-section__gauge-container__text__percent" : "right-section__gauge-container__text__percent right-section__gauge-container__text__percent--kcal" }>
              {props.percent} %</p>
            <h5 className={ !props.isKcal ? "right-section__gauge-container__text__left" : "right-section__gauge-container__text__left right-section__gauge-container__text__left--kcal" }>
-             {props.left} left</h5>
+             {props.left} {!props.isKcal ? "g" : null} left</h5>
         </div>
 
     </div>
