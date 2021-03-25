@@ -123,6 +123,26 @@ export default function Meal(props) {
   }, []);
 
   useEffect(() => { props.updateGauges(state.summary, props.mealId) }, [state.summary]);
+
+  useEffect(() => {
+
+    // EFFECT WHICH DISABLES BUTTONS IN OTHER MEALS WHEN ONE OF THESE ARE OPENED
+    
+    const changePointerEventsForMealsButtons = (value) => {
+      const meals = document.querySelectorAll(".meal");
+
+      meals.forEach(meal => {
+        let buttons = meal.childNodes[meal.childNodes.length - 3];
+        buttons.style.pointerEvents = value;
+      });
+    } 
+
+    state.isAddingWindowOpened || state.isRemovingWindowOpened
+    ? changePointerEventsForMealsButtons("none")
+    : changePointerEventsForMealsButtons("auto");
+
+  }, [state.isAddingWindowOpened, state.isRemovingWindowOpened]);
+
   // END OF REDUCER STUFF
 
   const handleMealOpening = () => {
