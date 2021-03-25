@@ -13,11 +13,13 @@ import './components/left/styles/left.css';
 import './components/center/styles/center.css';
 import './components/right/styles/right.css';
 import { useReducer } from 'react';
+import { useEffect } from 'react';
 
 const ACTIONS = {
   UPDATE_MEALS_INGREDIENTS_SUMMARY: 'update-meals-ingredients-summary',
   UPDATE_DAILY_INGREDIENTS_SUMMARY: 'update-daily-ingredients-summary',
-  COUNT_GAUGES_DATA: 'count-gauges-data'
+  COUNT_GAUGES_DATA: 'count-gauges-data',
+  CHANGE_DAY: 'change-day'
 }
 
 const MEALS = ["Breakfast", "II Breakfast", "Lunch", "Snack", "Dinner"];
@@ -45,11 +47,12 @@ function App() {
       case ACTIONS.UPDATE_MEALS_INGREDIENTS_SUMMARY: {
         const newMealsIngredientsSummary = [...state.mealsIngredientsSummary];
 
-        newMealsIngredientsSummary[action.payload.mealId] = { proteins: action.payload.data.proteins,
+        newMealsIngredientsSummary[action.payload.mealId] = {
+                                                              proteins: action.payload.data.proteins,
                                                               fats: action.payload.data.fats, 
                                                               carbs: action.payload.data.carbs, 
                                                               kcal: action.payload.data.kcal };
-        console.log(newMealsIngredientsSummary);
+
         return {...state, mealsIngredientsSummary: newMealsIngredientsSummary};                                                                 
       }
 
@@ -58,12 +61,14 @@ function App() {
         let mealsIngredientsSum = { proteins: 0, fats: 0, carbs: 0, kcal: 0 };
 
         state.mealsIngredientsSummary.forEach(meal => {
-          mealsIngredientsSum = { proteins: meal.proteins,
+          mealsIngredientsSum = {
+                                  proteins: meal.proteins,
                                   fats:     meal.fats,
                                   carbs:    meal.carbs,
                                   kcal:     meal.kcal };
 
-          dailyIngredientsSum = { proteins: dailyIngredientsSum.proteins + mealsIngredientsSum.proteins,
+          dailyIngredientsSum = {
+                                  proteins: dailyIngredientsSum.proteins + mealsIngredientsSum.proteins,
                                   fats:     dailyIngredientsSum.fats     + mealsIngredientsSum.fats,
                                   carbs:    dailyIngredientsSum.carbs    + mealsIngredientsSum.carbs,
                                   kcal:     dailyIngredientsSum.kcal     + mealsIngredientsSum.kcal };
@@ -73,7 +78,7 @@ function App() {
                                   carbs: 0,
                                   kcalS: 0 };
         });
-        console.log(dailyIngredientsSum);
+
         return {...state, dailyIngredientsSummary: dailyIngredientsSum };
       }
 
@@ -90,11 +95,17 @@ function App() {
         }
       }
 
+      case ACTIONS.CHANGE_DAY: {
+        return {...state, dayId: action.payload};
+      }
+
       default: return console.error(`Unknown action type: ${action.type}`);
     }
   }
 
+
   const initialState = {
+    dayId: 0,
     mealsIngredientsSummary: [],
     dailyIngredientsSummary: {},
     gaugesData: {
@@ -106,6 +117,12 @@ function App() {
   }
 
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  useEffect(() => {
+    console.log(state.mealsIngredientsSummary);
+    console.log(state.dailyIngredientsSummary);
+    console.log(state.dayId);
+  }, [state.mealsIngredientsSummary]);
 
   const updateMealSummary = (object, mealId) => {
     dispatch({ type: ACTIONS.UPDATE_MEALS_INGREDIENTS_SUMMARY, payload: {data: object, mealId: mealId} });
@@ -121,6 +138,10 @@ function App() {
     Object.keys(DAILY_DEMAND).forEach(ingredient => {
       dispatch({ type: ACTIONS.COUNT_GAUGES_DATA, payload: { typeOfIngredient: ingredient} });
     });
+  }
+
+  const handleDayChanging = (newDayId) => {
+    dispatch({type: ACTIONS.CHANGE_DAY, payload: newDayId })
   }
 
   return (
@@ -154,18 +175,18 @@ function App() {
         <section className="center-section__top">
         
           <h3 className="center-section__top__title">Dashboard</h3>
-          <DateChanger />
+          <DateChanger changeDay={ handleDayChanging } />
 
         </section>
 
       
         <section className="center-section__meals">
 
-        <Meal name="Breakfast" mealId={0} updateGauges={ updateMealSummary } />
-        <Meal name="II Breakfast" mealId={1} updateGauges={ updateMealSummary } />
-        <Meal name="Lunch" mealId={2} updateGauges={ updateMealSummary } />
-        <Meal name="Snack" mealId={3} updateGauges={ updateMealSummary } />
-        <Meal name="Dinner" mealId={4} updateGauges={ updateMealSummary } />
+        <Meal name="Breakfast"    mealId={0} dayId={ state.dayId } updateGauges={ updateMealSummary } />
+        <Meal name="II Breakfast" mealId={1} dayId={ state.dayId } updateGauges={ updateMealSummary } />
+        <Meal name="Lunch"        mealId={2} dayId={ state.dayId } updateGauges={ updateMealSummary } />
+        <Meal name="Snack"        mealId={3} dayId={ state.dayId } updateGauges={ updateMealSummary } />
+        <Meal name="Dinner"       mealId={4} dayId={ state.dayId } updateGauges={ updateMealSummary } />
 
         </section>
 

@@ -15,7 +15,9 @@ const ACTIONS = {
   DISABLE_PLACEHOLDER: 'disable-placeholder',
   REMOVE_PRODUCT: 'remove-product',
   ADD_TO_SUMMARY: 'add-to-summary',
-  SUB_FROM_SUMMARY: 'sub-from-summary'
+  SUB_FROM_SUMMARY: 'sub-from-summary',
+  CLEAR_PRODUCTLIST_BEFORE_DAY_CHANGING: 'clear-productlist-before-day-changing',
+  ADD_PRODUCT_TO_PRODUCTLIST: 'add-product-to-productlist'
 }
 
 
@@ -30,7 +32,7 @@ export default function Meal(props) {
     isRemovingWindowOpened: false,
     countIngredients: false,
     productList: [],
-    newProduct: { id: '', mealId: props.mealId,  name: '', weight: '', proteins: '', fats: '', carbs: '', kcal: '' },
+    newProduct: { id: 0, mealId: props.mealId, dayId: 0,  name: '', weight: '', proteins: '', fats: '', carbs: '', kcal: '' },
     summary: {
       proteins: 0,
       fats: 0,
@@ -64,6 +66,7 @@ export default function Meal(props) {
 
       case ACTIONS.ADD_PRODUCT: {
         state.newProduct.id = Date.now();
+        state.newProduct.dayId = props.dayId;
         state.productList.push(state.newProduct);
         localStorage.setItem(state.newProduct.id, JSON.stringify(state.newProduct));
         return {...state, newProduct: { id: '', mealId: props.mealId, name: '', weight: '', proteins: '', fats: '', carbs: '', kcal: ''}};
@@ -102,6 +105,14 @@ export default function Meal(props) {
         }
       }
 
+      case ACTIONS.ADD_PRODUCT_TO_PRODUCTLIST: {
+        return {...state, productList: [...state.productList, action.payload]};
+      }
+
+      case ACTIONS.CLEAR_PRODUCTLIST_BEFORE_DAY_CHANGING: {
+        return {...state, productList: []};
+      }
+
       default: return console.error(`Unknown action type: ${action.type}`);
     }
   }
@@ -110,24 +121,37 @@ export default function Meal(props) {
   const [isPlaceholderEnabled, setPlaceholderState] = useState(false);
   const [refresh, setRefresh] = useState(false);
 
+
+  // LOADS DATA FROM LOCAL STORAGE AFTER DAY CHANGE
   useEffect(() => {
     let localStorageKeys = Object.keys(localStorage);
     localStorageKeys.forEach(key => {
       let value = JSON.parse(localStorage.getItem(key));
-      if (value.mealId === props.mealId) {
-        state.productList.push(value);
-      }
+      if (value.mealId === props.mealId && value.dayId === props.dayId)
+        dispatch({ type: ACTIONS.ADD_PRODUCT_TO_PRODUCTLIST, payload: value });
+
       setRefresh(true);
-    })
+    });
 
-  }, []);
+  }, [props.dayId]);
 
-  useEffect(() => { props.updateGauges(state.summary, props.mealId) }, [state.summary]);
 
+  // CLEARS PRODUCTLIST AFTER DAY CHANGE
+  useEffect(() => { 
+    return () => dispatch({ type: ACTIONS.CLEAR_PRODUCTLIST_BEFORE_DAY_CHANGING });
+
+  }, [props.dayId]);
+
+
+  // SENDS DATA FROM MEAL TO GAUGES
+  useEffect(() => { 
+    props.updateGauges(state.summary, props.mealId);
+
+  }, [state.summary]);
+
+
+  // DISABLES BUTTONS IN MEALS WHEN ONE OF FORM WINDOWS IS OPENED 
   useEffect(() => {
-
-    // EFFECT WHICH DISABLES BUTTONS IN OTHER MEALS WHEN ONE OF THESE ARE OPENED
-    
     const changePointerEventsForMealsButtons = (value) => {
       const meals = document.querySelectorAll(".meal");
 
@@ -136,14 +160,12 @@ export default function Meal(props) {
         buttons.style.pointerEvents = value;
       });
     } 
-
     state.isAddingWindowOpened || state.isRemovingWindowOpened
     ? changePointerEventsForMealsButtons("none")
     : changePointerEventsForMealsButtons("auto");
 
   }, [state.isAddingWindowOpened, state.isRemovingWindowOpened]);
 
-  // END OF REDUCER STUFF
 
   const handleMealOpening = () => {
     dispatch( {type: ACTIONS.NEGATE_MEAL_STATE} );
