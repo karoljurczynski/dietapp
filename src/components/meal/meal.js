@@ -119,7 +119,6 @@ export default function Meal(props) {
 
   const [state, dispatch] = useReducer(reducer, initialState);
   const [isPlaceholderEnabled, setPlaceholderState] = useState(false);
-  const [refresh, setRefresh] = useState(false);
 
 
   // LOADS DATA FROM LOCAL STORAGE AFTER DAY CHANGE
@@ -129,8 +128,6 @@ export default function Meal(props) {
       let value = JSON.parse(localStorage.getItem(key));
       if (value.mealId === props.mealId && value.dayId === props.dayId)
         dispatch({ type: ACTIONS.ADD_PRODUCT_TO_PRODUCTLIST, payload: value });
-
-      setRefresh(true);
     });
 
   }, [props.dayId]);
@@ -141,6 +138,20 @@ export default function Meal(props) {
     return () => dispatch({ type: ACTIONS.CLEAR_PRODUCTLIST_BEFORE_DAY_CHANGING });
 
   }, [props.dayId]);
+
+
+  // CLOSES WINDOWS AFTER DAY CHANGE
+  useEffect(() => {
+    const disableVisibilityIfEnabled = (state, action) => {
+      if (state)
+        dispatch({type: action});
+    }
+    
+    disableVisibilityIfEnabled(state.isMealOpened, ACTIONS.NEGATE_MEAL_STATE);
+    disableVisibilityIfEnabled(state.isAddingWindowOpened, ACTIONS.NEGATE_ADDING_WINDOW_STATE);
+    disableVisibilityIfEnabled(state.isRemovingWindowOpened, ACTIONS.NEGATE_REMOVING_WINDOW_STATE);
+
+  }, [props.dayId])
 
 
   // SENDS DATA FROM MEAL TO GAUGES
@@ -295,8 +306,7 @@ export default function Meal(props) {
               carbs={ product.carbs }
               kcal={ product.kcal }
               addIngredientsFunction={ handleAddingToSummary }
-              subIngredientsFunction={ handleSubstractingFromSummary }
-              refresh={ state.refresh }>
+              subIngredientsFunction={ handleSubstractingFromSummary }>
             </Product>
           )
         })}
@@ -424,7 +434,7 @@ function Product(props) {
     return () => {
       props.subIngredientsFunction(ingredients);
       }
-  }, [ props.refresh ]);
+  }, []);
 
   return (
     <div className="meal__products-section__product">

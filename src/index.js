@@ -1,6 +1,6 @@
 // IMPORTS
 
-import React from 'react';
+import { React, useReducer, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
 import { Logo, Title, MenuItem, Quotation } from './components/left/left';
@@ -12,19 +12,15 @@ import './styles/index/index.css';
 import './components/left/styles/left.css';
 import './components/center/styles/center.css';
 import './components/right/styles/right.css';
-import { useReducer } from 'react';
-import { useEffect } from 'react';
 
+const MEALS = ["Breakfast", "II Breakfast", "Lunch", "Snack", "Dinner"];
+const DAILY_DEMAND = { kcal: 2000, proteins: 120, fats: 55, carbs: 240 };
 const ACTIONS = {
   UPDATE_MEALS_INGREDIENTS_SUMMARY: 'update-meals-ingredients-summary',
   UPDATE_DAILY_INGREDIENTS_SUMMARY: 'update-daily-ingredients-summary',
   COUNT_GAUGES_DATA: 'count-gauges-data',
   CHANGE_DAY: 'change-day'
 }
-
-const MEALS = ["Breakfast", "II Breakfast", "Lunch", "Snack", "Dinner"];
-
-const DAILY_DEMAND = { kcal: 2000, proteins: 120, fats: 55, carbs: 240 };
 
 const countPercentOfEatenIngredient = (eatenAmount, maxAmount) => {
   return Math.round(eatenAmount / maxAmount * 100);
@@ -103,7 +99,6 @@ function App() {
     }
   }
 
-
   const initialState = {
     dayId: 0,
     mealsIngredientsSummary: [],
@@ -117,12 +112,6 @@ function App() {
   }
 
   const [state, dispatch] = useReducer(reducer, initialState);
-
-  useEffect(() => {
-    console.log(state.mealsIngredientsSummary);
-    console.log(state.dailyIngredientsSummary);
-    console.log(state.dayId);
-  }, [state.mealsIngredientsSummary]);
 
   const updateMealSummary = (object, mealId) => {
     dispatch({ type: ACTIONS.UPDATE_MEALS_INGREDIENTS_SUMMARY, payload: {data: object, mealId: mealId} });
