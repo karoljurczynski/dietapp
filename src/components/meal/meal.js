@@ -121,6 +121,8 @@ export default function Meal(props) {
     })
 
   }, []);
+
+  useEffect(() => { props.updateGauges(state.summary, props.mealId) }, [state.summary]);
   // END OF REDUCER STUFF
 
   const handleMealOpening = () => {
@@ -149,6 +151,7 @@ export default function Meal(props) {
         }
       });
     });
+    
   }
 
   const handleAddingWindow = () => {
@@ -376,7 +379,9 @@ function Product(props) {
     let ingredients = { proteins: props.proteins, fats: props.fats, carbs: props.carbs, kcal: props.kcal };
     props.addIngredientsFunction(ingredients);
 
-    return () => props.subIngredientsFunction(ingredients);
+    return () => {
+      props.subIngredientsFunction(ingredients);
+      }
   }, [ props.refresh ]);
 
   return (
