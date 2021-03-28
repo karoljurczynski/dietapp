@@ -32,7 +32,7 @@ export default function Meal(props) {
     isRemovingWindowOpened: false,
     countIngredients: false,
     productList: [],
-    newProduct: { id: 0, mealId: props.mealId, dayId: 0,  name: '', weight: '', proteins: '', fats: '', carbs: '', kcal: '' },
+    newProduct: { id: 0, mealId: props.mealId, dateIds: { dayId: 0, monthId: 0, yearId: 0 },  name: '', weight: '', proteins: '', fats: '', carbs: '', kcal: '' },
     summary: {
       proteins: 0,
       fats: 0,
@@ -66,10 +66,11 @@ export default function Meal(props) {
 
       case ACTIONS.ADD_PRODUCT: {
         state.newProduct.id = Date.now();
-        state.newProduct.dayId = props.dayId;
+        console.log(props.dateIds);
+        state.newProduct.dateIds = props.dateIds;
         state.productList.push(state.newProduct);
         localStorage.setItem(state.newProduct.id, JSON.stringify(state.newProduct));
-        return {...state, newProduct: { id: '', mealId: props.mealId, name: '', weight: '', proteins: '', fats: '', carbs: '', kcal: ''}};
+        return {...state, newProduct: { id: 0, mealId: props.mealId, dateIds: { dayId: 0, monthId: 0, yearId: 0 }, name: '', weight: '', proteins: '', fats: '', carbs: '', kcal: ''}};
       }
 
       case ACTIONS.REMOVE_PRODUCT: {
@@ -126,18 +127,20 @@ export default function Meal(props) {
     let localStorageKeys = Object.keys(localStorage);
     localStorageKeys.forEach(key => {
       let value = JSON.parse(localStorage.getItem(key));
-      if (value.mealId === props.mealId && value.dayId === props.dayId)
+      if (value.mealId === props.mealId && ((value.dateIds.dayId === props.dateIds.dayId) &&
+                                            (value.dateIds.monthId === props.dateIds.monthId) &&
+                                            (value.dateIds.yearId === props.dateIds.yearId)))
         dispatch({ type: ACTIONS.ADD_PRODUCT_TO_PRODUCTLIST, payload: value });
     });
 
-  }, [props.dayId]);
+  }, [props.dateIds]);
 
 
   // CLEARS PRODUCTLIST AFTER DAY CHANGE
   useEffect(() => { 
     return () => dispatch({ type: ACTIONS.CLEAR_PRODUCTLIST_BEFORE_DAY_CHANGING });
 
-  }, [props.dayId]);
+  }, [props.dateIds]);
 
 
   // CLOSES WINDOWS AFTER DAY CHANGE
@@ -151,7 +154,7 @@ export default function Meal(props) {
     disableVisibilityIfEnabled(state.isAddingWindowOpened, ACTIONS.NEGATE_ADDING_WINDOW_STATE);
     disableVisibilityIfEnabled(state.isRemovingWindowOpened, ACTIONS.NEGATE_REMOVING_WINDOW_STATE);
 
-  }, [props.dayId])
+  }, [props.dateIds])
 
 
   // SENDS DATA FROM MEAL TO GAUGES

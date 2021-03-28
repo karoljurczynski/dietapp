@@ -19,7 +19,7 @@ const ACTIONS = {
   UPDATE_MEALS_INGREDIENTS_SUMMARY: 'update-meals-ingredients-summary',
   UPDATE_DAILY_INGREDIENTS_SUMMARY: 'update-daily-ingredients-summary',
   COUNT_GAUGES_DATA: 'count-gauges-data',
-  CHANGE_DAY: 'change-day'
+  CHANGE_DATE: 'change-date'
 }
 
 const countPercentOfEatenIngredient = (eatenAmount, maxAmount) => {
@@ -91,8 +91,10 @@ function App() {
         }
       }
 
-      case ACTIONS.CHANGE_DAY: {
-        return {...state, dayId: action.payload};
+      case ACTIONS.CHANGE_DATE: {
+        return {...state, dateIds: { dayId: action.payload.currentDay,  
+                                     monthId: action.payload.currentMonth,
+                                     yearId: action.payload.currentYear }};
       }
 
       default: return console.error(`Unknown action type: ${action.type}`);
@@ -100,7 +102,7 @@ function App() {
   }
 
   const initialState = {
-    dayId: 0,
+    dateIds: { dayId: 0, monthId: 0, yearId: 0 },
     mealsIngredientsSummary: [],
     dailyIngredientsSummary: {},
     gaugesData: {
@@ -129,8 +131,8 @@ function App() {
     });
   }
 
-  const handleDayChanging = (newDayId) => {
-    dispatch({type: ACTIONS.CHANGE_DAY, payload: newDayId })
+  const updateDateIds = (newDateIds) => {
+    dispatch({type: ACTIONS.CHANGE_DATE, payload: newDateIds })
   }
 
   return (
@@ -164,18 +166,19 @@ function App() {
         <section className="center-section__top">
         
           <h3 className="center-section__top__title">Dashboard</h3>
-          <DateChanger changeDay={ handleDayChanging } />
+          <DateChanger changeDate={ updateDateIds } />
 
         </section>
 
       
         <section className="center-section__meals">
+        
 
-        <Meal name="Breakfast"    mealId={0} dayId={ state.dayId } updateGauges={ updateMealSummary } />
-        <Meal name="II Breakfast" mealId={1} dayId={ state.dayId } updateGauges={ updateMealSummary } />
-        <Meal name="Lunch"        mealId={2} dayId={ state.dayId } updateGauges={ updateMealSummary } />
-        <Meal name="Snack"        mealId={3} dayId={ state.dayId } updateGauges={ updateMealSummary } />
-        <Meal name="Dinner"       mealId={4} dayId={ state.dayId } updateGauges={ updateMealSummary } />
+        <Meal name="Breakfast"    mealId={0} dateIds={ state.dateIds } updateGauges={ updateMealSummary } />
+        <Meal name="II Breakfast" mealId={1} dateIds={ state.dateIds } updateGauges={ updateMealSummary } />
+        <Meal name="Lunch"        mealId={2} dateIds={ state.dateIds } updateGauges={ updateMealSummary } />
+        <Meal name="Snack"        mealId={3} dateIds={ state.dateIds } updateGauges={ updateMealSummary } />
+        <Meal name="Dinner"       mealId={4} dateIds={ state.dateIds } updateGauges={ updateMealSummary } />
 
         </section>
 
