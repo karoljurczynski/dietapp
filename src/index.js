@@ -16,7 +16,6 @@ import './components/right/styles/right.css';
 
 // GLOBALS
 
-const MEALS = ["Breakfast", "II Breakfast", "Lunch", "Snack", "Dinner"];
 const MENU_CATEGORIES= ["Log in", "Nutrition", "Training", "Settings", "About"];
 const ACTIONS = {
   UPDATE_MEALS_INGREDIENTS_SUMMARY: 'update-meals-ingredients-summary',
@@ -26,7 +25,8 @@ const ACTIONS = {
   CHANGE_PAGE_TITLE: 'change-page-title',
   CHANGE_SETTINGS_DATA: 'change-settings-data',
   BACKUP_OLD_SETTINGS: 'backup-old-settings',
-  RESTORE_OLD_SETTINGS: 'restore-old-settings'
+  RESTORE_OLD_SETTINGS: 'restore-old-settings',
+  LOAD_SETTINGS: 'load-settings'
 }
 
 
@@ -124,7 +124,6 @@ function App() {
 
       case ACTIONS.CHANGE_SETTINGS_DATA: {
         switch (action.payload.key) {
-
           case 'clearAllProducts': {
             return {...state, 
               settingsData: { ...state.settingsData, 
@@ -133,27 +132,33 @@ function App() {
             };
           };
 
-          case 'editMeals': {
+          case 'editMealName': {
             return {...state, 
               settingsData: { ...state.settingsData, 
               nutrition: {...state.settingsData.nutrition,
-              titlesOfMeals: action.payload.value }}
+              namesOfMeals: {...state.settingsData.nutrition.namesOfMeals, [action.payload.index]: action.payload.value }}}
             };
           };
 
-          
+          case 'setMealsNumber': {
+            return {...state, 
+              settingsData: { ...state.settingsData, 
+              nutrition: {...state.settingsData.nutrition,
+              numberOfMeals: action.payload.value }}
+            };
+          };
+
           default: return {...state, 
                            settingsData: { ...state.settingsData, 
                            nutrition: {...state.settingsData.nutrition, 
                            dailyDemand: {...state.settingsData.nutrition.dailyDemand, 
                            [action.payload.key]: action.payload.value }}}};
-
-          case 'setDailyProteins':      return {...state, 
-                                            settingsData: { ...state.settingsData, 
-                                            nutrition: {...state.settingsData.nutrition, 
-                                            dailyDemand: {...state.settingsData.nutrition.dailyDemand, 
-                                            proteins: action.payload.value }}}};
         }
+      }
+
+      case ACTIONS.LOAD_SETTINGS: {
+        let newSettings = JSON.parse(localStorage.getItem("settings"));
+        return {...state, settingsData: newSettings }
       }
 
       default: return console.error(`Unknown action type: ${action.type}`);
@@ -164,7 +169,7 @@ function App() {
     dateIds: { dayId: 0, monthId: 0, yearId: 0 },
     pageTitle: 'Settings',
     mealsIngredientsSummary: [],
-    dailyIngredientsSummary: { kcal:0, proteins: 0, fats: 0, carbs: 0 },
+    dailyIngredientsSummary: { kcal: 0, proteins: 0, fats: 0, carbs: 0 },
     gaugesData: {
       kcal: { eaten: 0, left: 0, max: 0, percent: 0 },
       proteins: { eaten: 0, left: 0, max: 0, percent: 0 },
@@ -177,8 +182,9 @@ function App() {
       },
 
       nutrition: {
-        dailyDemand: { kcal: 2000, proteins: 120, fats: 55, carbs: 240 },
-        titlesOfMeals: ["Breakfast", "II Breakfast", "Lunch", "Snack", "Dinner"],
+        dailyDemand: { kcal: 0, proteins: 0, fats: 0, carbs: 0 },
+        namesOfMeals: { 0: "Breakfast", 1: "II Breakfast", 2: "Lunch", 3: "Snack", 4: "Dinner", 5: "", 6: "", 7: "", 8: "", 9: "" },
+        numberOfMeals: 5,
         clearAllProducts: false
       },
 
@@ -193,12 +199,20 @@ function App() {
 
   useEffect(() => {
     updateGauges();
+    if (Object.keys(localStorage) !== 0)
+      dispatch({ type: ACTIONS.LOAD_SETTINGS });
   }, [ state.dateIds ]);
+
+  /*useEffect(() => {
+    if (state.settingsData.nutrition.clearAllProducts)
+      Object.keys(localStorage).forEach(product => localStorage.removeItem(product));
+
+  }, [ state.settingsData.nutrition.clearAllProducts ]);*/
 
   useEffect(() => {
     if (state.pageTitle === 'Settings')
-      dispatch({ type:ACTIONS.BACKUP_OLD_SETTINGS });
-
+      dispatch({ type: ACTIONS.BACKUP_OLD_SETTINGS });
+      
   }, [ state.pageTitle ]);
 
   const updateMealSummary = (object, mealId) => {
@@ -244,20 +258,34 @@ function App() {
 
   const handleSettingsSaved = (e) => {
     e.preventDefault();
-    dispatch({ type:ACTIONS.BACKUP_OLD_SETTINGS });
+    dispatch({ type: ACTIONS.BACKUP_OLD_SETTINGS });
+    localStorage.setItem("settings", JSON.stringify(state.settingsData));
   }
 
   const handleSettingOnChange = (e) => {
-    const isNumber = /[1-9]/;
+    const isNumber = /[0-9]/;
+    const isZero = /^[0]{1}/;
+
     e.preventDefault();
-    console.log(isNumber.test(e.target.value[e.target.value.length - 1]));
+
+    if (e.target.id === 'clearAllProducts') {
+      console.log("g");
+    }
     
-    if (isNumber.test(e.target.value[e.target.value.length - 1]))
-      dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: e.target.id, value: e.target.value }});
+    else if (e.target.id === 'editMealName') {
+      dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: e.target.id, index: Number(e.target.attributes["data-key"].value), value: e.target.value }})
+    }
+    
+    if (isNumber.test(e.target.value[e.target.value.length - 1])) {
+
+      if (isZero.test(e.target.value))
+        dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: e.target.id, value: 1 }});
+      else
+        dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: e.target.id, value: e.target.value }});
+    }
+
     else
       dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: e.target.id, value: "" }});
-    
-    console.log(state.settingsData);
     updateGauges();
   }
   return (
@@ -311,9 +339,11 @@ function App() {
 
         { state.pageTitle === 'Dashboard' && 
 
-          MEALS.map((meal, index) => {
-            return <Meal key={ index } name={ meal } mealId={ index } dateIds={ state.dateIds } updateGauges={ updateMealSummary } />
-          })
+          Object.values(state.settingsData.nutrition.namesOfMeals).map((meal, index) => {
+            if (state.settingsData.nutrition.numberOfMeals > index)
+              return <Meal key={ index } name={ meal } mealId={ index } dateIds={ state.dateIds } updateGauges={ updateMealSummary } />
+            })
+
         }
 
         { state.pageTitle === 'Training' &&
@@ -341,7 +371,8 @@ function App() {
                       id="kcal"
                       value={ state.settingsData.nutrition.dailyDemand.kcal }
                       maxLength={5}
-                      onChange={ handleSettingOnChange } />
+                      onChange={ handleSettingOnChange }
+                      required />
                   </span>
                   
                   <span className="center-section__main__settings__form__section__input">
@@ -351,7 +382,8 @@ function App() {
                       id="proteins"
                       value={ state.settingsData.nutrition.dailyDemand.proteins }
                       maxLength={4}
-                      onChange={ handleSettingOnChange } />
+                      onChange={ handleSettingOnChange }
+                      required />
                   </span>
 
                   <span className="center-section__main__settings__form__section__input">
@@ -361,7 +393,8 @@ function App() {
                       id="fats"
                       value={ state.settingsData.nutrition.dailyDemand.fats }
                       maxLength={4}
-                      onChange={ handleSettingOnChange } />
+                      onChange={ handleSettingOnChange }
+                      required />
                   </span>
 
                   <span className="center-section__main__settings__form__section__input">
@@ -371,7 +404,8 @@ function App() {
                       id="carbs"
                       value={ state.settingsData.nutrition.dailyDemand.carbs }
                       maxLength={4}
-                      onChange={ handleSettingOnChange } />
+                      onChange={ handleSettingOnChange } 
+                      required />
                   </span>
 
                 </section>
@@ -385,19 +419,39 @@ function App() {
                     onChange={ handleSettingOnChange } />
                 </span>
 
+                <span className="center-section__main__settings__form__section__input">
+                  <label htmlFor="setMealsNumber">Set number of meals: </label>
+                  <input 
+                    type="text" 
+                    id="setMealsNumber"
+                    value={ state.settingsData.nutrition.numberOfMeals }
+                    onChange={ handleSettingOnChange }
+                    required />
+                </span>
+
                 
-                { state.settingsData.nutrition.titlesOfMeals.map((meal, index) => {
-                  return (
-                    <span key={ index } className="center-section__main__settings__form__section__input">
-                      <label htmlFor="editMeals">Set meal name: </label>
-                      <input 
-                        type="text" 
-                        id="editMeals"
-                        value={ meal } 
-                        onChange={ handleSettingOnChange } />
-                    </span>
-                  )
-                } )}
+                { Object.values(state.settingsData.nutrition.namesOfMeals).map((meal, index) => {
+                  if (state.settingsData.nutrition.numberOfMeals > index) {
+                    return (
+                      <span key={ index } className="center-section__main__settings__form__section__input">
+                        <label htmlFor="editMealName">Set meal name: </label>
+                        <input
+                          data-key={ index }
+                          type="text" 
+                          id="editMealName"
+                          value={ state.settingsData.nutrition.namesOfMeals[index] } 
+                          onChange={ handleSettingOnChange }
+                          required />
+                      </span>
+                    ) 
+                  }
+
+                  else {
+                    return (
+                      null
+                    )
+                  }
+                })}
                 
               </section>
 
