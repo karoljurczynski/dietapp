@@ -70,25 +70,39 @@
       height: 100%;
 
       &__form {
-        @include flexSetup(column, flex-start, flex-start);
-      
+        @include flexSetup(column, flex-start, space-between);
+        width: 100%;
+
         &__section {
-          @include flexSetup(column, flex-start, flex-start);
+          @include flexSetup(column, flex-start, space-between);
+          width: 100%;
           margin-bottom: 20px;
 
           &__title {
             font-weight: bold;
             margin-bottom: 10px;
+            width: 100%;
           }
 
           &__input {
             margin-bottom: 10px;
+            width: 100%;
+            @include flexSetup(row, flex-start, space-between);
           }
 
           &__daily-demand {
-            @include flexSetup(column, flex-start, flex-start);
             margin-bottom: 20px;
+            width: 100%;
           }
+        }
+
+        &__submit-button {
+          width: 100%;
+          margin-bottom: 5px;
+        }
+
+        &__cancel-button {
+          width: 100%;
         }
       }
     }

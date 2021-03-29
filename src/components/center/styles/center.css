@@ -151,9 +151,10 @@
   -webkit-box-align: start;
       -ms-flex-align: start;
           align-items: flex-start;
-  -webkit-box-pack: start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  width: 100%;
 }
 .center-section__main__settings__form__section {
   display: -webkit-box;
@@ -166,32 +167,43 @@
   -webkit-box-align: start;
       -ms-flex-align: start;
           align-items: flex-start;
-  -webkit-box-pack: start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  width: 100%;
   margin-bottom: 20px;
 }
 .center-section__main__settings__form__section__title {
   font-weight: bold;
   margin-bottom: 10px;
+  width: 100%;
 }
 .center-section__main__settings__form__section__input {
   margin-bottom: 10px;
-}
-.center-section__main__settings__form__section__daily-demand {
+  width: 100%;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: vertical;
+  -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+      -ms-flex-direction: row;
+          flex-direction: row;
   -webkit-box-align: start;
       -ms-flex-align: start;
           align-items: flex-start;
-  -webkit-box-pack: start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+.center-section__main__settings__form__section__daily-demand {
   margin-bottom: 20px;
+  width: 100%;
+}
+.center-section__main__settings__form__submit-button {
+  width: 100%;
+  margin-bottom: 5px;
+}
+.center-section__main__settings__form__cancel-button {
+  width: 100%;
 }
 /*# sourceMappingURL=center.css.map */

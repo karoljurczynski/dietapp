@@ -1,6 +1,6 @@
 // IMPORTS
 
-import { React, useReducer } from 'react';
+import { React, useReducer, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
 import { Logo, Title, MenuItem, Quotation } from './components/left/left';
@@ -17,7 +17,6 @@ import './components/right/styles/right.css';
 // GLOBALS
 
 const MEALS = ["Breakfast", "II Breakfast", "Lunch", "Snack", "Dinner"];
-const DAILY_DEMAND = { kcal: 2000, proteins: 120, fats: 55, carbs: 240 };
 const MENU_CATEGORIES= ["Log in", "Nutrition", "Training", "Settings", "About"];
 const ACTIONS = {
   UPDATE_MEALS_INGREDIENTS_SUMMARY: 'update-meals-ingredients-summary',
@@ -25,14 +24,19 @@ const ACTIONS = {
   COUNT_GAUGES_DATA: 'count-gauges-data',
   CHANGE_DATE: 'change-date',
   CHANGE_PAGE_TITLE: 'change-page-title',
-  CHANGE_SETTINGS_DATA: 'change-settings-data'
+  CHANGE_SETTINGS_DATA: 'change-settings-data',
+  BACKUP_OLD_SETTINGS: 'backup-old-settings',
+  RESTORE_OLD_SETTINGS: 'restore-old-settings'
 }
 
 
 // FUNCTIONS
 
 const countPercentOfEatenIngredient = (eatenAmount, maxAmount) => {
-  return Math.round(eatenAmount / maxAmount * 100);
+  if (Number.isNaN((Math.round(eatenAmount / maxAmount * 100))))
+    return 0;
+  else
+   return Math.round(eatenAmount / maxAmount * 100);
 }
 
 const countAmountOfIngredientLeft = (eatenAmount, maxAmount) => {
@@ -93,9 +97,9 @@ function App() {
         return {...state, gaugesData: {...state.gaugesData, 
           [ingredient]: { 
             eaten: state.dailyIngredientsSummary[ingredient], 
-            left: countAmountOfIngredientLeft(state.dailyIngredientsSummary[ingredient], DAILY_DEMAND[ingredient]), 
-            max: DAILY_DEMAND[ingredient], 
-            percent: countPercentOfEatenIngredient(state.dailyIngredientsSummary[ingredient], DAILY_DEMAND[ingredient]) }
+            left: countAmountOfIngredientLeft(state.dailyIngredientsSummary[ingredient], state.settingsData.nutrition.dailyDemand[ingredient]), 
+            max: state.settingsData.nutrition.dailyDemand[ingredient], 
+            percent: countPercentOfEatenIngredient(state.dailyIngredientsSummary[ingredient], state.settingsData.nutrition.dailyDemand[ingredient]) }
           }
         }
       }
@@ -110,6 +114,13 @@ function App() {
         return {...state, pageTitle: action.payload};
       }
 
+      case ACTIONS.BACKUP_OLD_SETTINGS: {
+        return {...state, oldSettingsData: state.settingsData};
+      }
+
+      case ACTIONS.RESTORE_OLD_SETTINGS: {
+        return {...state, settingsData: state.oldSettingsData};
+      }
 
       case ACTIONS.CHANGE_SETTINGS_DATA: {
         switch (action.payload.key) {
@@ -122,15 +133,7 @@ function App() {
             };
           };
 
-          case 'setMealsNumber': {
-            return {...state, 
-              settingsData: { ...state.settingsData, 
-              nutrition: {...state.settingsData.nutrition,
-              numberOfMeals: action.payload.value }}
-            };
-          };
-
-          case 'setMealsTitles': {
+          case 'editMeals': {
             return {...state, 
               settingsData: { ...state.settingsData, 
               nutrition: {...state.settingsData.nutrition,
@@ -139,22 +142,17 @@ function App() {
           };
 
           
-          default:      return {...state, 
-                                            settingsData: { ...state.settingsData, 
-                                            nutrition: {...state.settingsData.nutrition, 
-                                            dailyDemand: {...state.settingsData.nutrition.dailyDemand, 
-                                            [action.payload.key]: action.payload.value }}}};
+          default: return {...state, 
+                           settingsData: { ...state.settingsData, 
+                           nutrition: {...state.settingsData.nutrition, 
+                           dailyDemand: {...state.settingsData.nutrition.dailyDemand, 
+                           [action.payload.key]: action.payload.value }}}};
 
           case 'setDailyProteins':      return {...state, 
                                             settingsData: { ...state.settingsData, 
                                             nutrition: {...state.settingsData.nutrition, 
                                             dailyDemand: {...state.settingsData.nutrition.dailyDemand, 
                                             proteins: action.payload.value }}}};
-          case 'weight':    return {...state, newProduct: {...state.newProduct, weight:   action.payload.value}};
-          case 'proteins':  return {...state, newProduct: {...state.newProduct, proteins: action.payload.value}};
-          case 'fats':      return {...state, newProduct: {...state.newProduct, fats:     action.payload.value}};
-          case 'carbs':     return {...state, newProduct: {...state.newProduct, carbs:    action.payload.value}};
-          case 'kcal':      return {...state, newProduct: {...state.newProduct, kcal:     action.payload.value}};
         }
       }
 
@@ -166,7 +164,7 @@ function App() {
     dateIds: { dayId: 0, monthId: 0, yearId: 0 },
     pageTitle: 'Settings',
     mealsIngredientsSummary: [],
-    dailyIngredientsSummary: {},
+    dailyIngredientsSummary: { kcal:0, proteins: 0, fats: 0, carbs: 0 },
     gaugesData: {
       kcal: { eaten: 0, left: 0, max: 0, percent: 0 },
       proteins: { eaten: 0, left: 0, max: 0, percent: 0 },
@@ -179,19 +177,29 @@ function App() {
       },
 
       nutrition: {
-        dailyDemand: { dailyKcal: 2000, dailyProteins: 120, dailyFats: 55, dailyCarbs: 240 },
-        numberOfMeals: 5,
-        titlesOfMeals: [''],
-        clearAllProducts: true
+        dailyDemand: { kcal: 2000, proteins: 120, fats: 55, carbs: 240 },
+        titlesOfMeals: ["Breakfast", "II Breakfast", "Lunch", "Snack", "Dinner"],
+        clearAllProducts: false
       },
 
       training: {
 
       }
-    }
+    },
+    oldSettingsData: {}
   }
 
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  useEffect(() => {
+    updateGauges();
+  }, [ state.dateIds ]);
+
+  useEffect(() => {
+    if (state.pageTitle === 'Settings')
+      dispatch({ type:ACTIONS.BACKUP_OLD_SETTINGS });
+
+  }, [ state.pageTitle ]);
 
   const updateMealSummary = (object, mealId) => {
     dispatch({ type: ACTIONS.UPDATE_MEALS_INGREDIENTS_SUMMARY, payload: {data: object, mealId: mealId} });
@@ -204,7 +212,7 @@ function App() {
   }
 
   const updateGauges = () => {
-    Object.keys(DAILY_DEMAND).forEach(ingredient => {
+    Object.keys(state.settingsData.nutrition.dailyDemand).forEach(ingredient => {
       dispatch({ type: ACTIONS.COUNT_GAUGES_DATA, payload: { typeOfIngredient: ingredient} });
     });
   }
@@ -228,8 +236,19 @@ function App() {
     changePageTitle(categoryTitle);
   }
 
+  const handleSettingsCanceled = (e) => {
+    e.preventDefault();
+    dispatch({ type: ACTIONS.RESTORE_OLD_SETTINGS });
+    updateGauges();
+  }
+
+  const handleSettingsSaved = (e) => {
+    e.preventDefault();
+    dispatch({ type:ACTIONS.BACKUP_OLD_SETTINGS });
+  }
+
   const handleSettingOnChange = (e) => {
-    const isNumber = /[0-9]/;
+    const isNumber = /[1-9]/;
     e.preventDefault();
     console.log(isNumber.test(e.target.value[e.target.value.length - 1]));
     
@@ -239,6 +258,7 @@ function App() {
       dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: e.target.id, value: "" }});
     
     console.log(state.settingsData);
+    updateGauges();
   }
   return (
     <div className="wrapper">
@@ -305,7 +325,7 @@ function App() {
         { state.pageTitle === 'Settings' &&
           <section className="center-section__main__settings">
 
-            <form className="center-section__main__settings__form">
+            <form className="center-section__main__settings__form" onSubmit={ handleSettingsSaved }>
 
               <section className="center-section__main__settings__form__section">
 
@@ -315,41 +335,41 @@ function App() {
 
                 <section id="setDailyDemand" className="center-section__main__settings__form__section__daily-demand">
                   <span className="center-section__main__settings__form__section__input">
-                    <label htmlFor="dailyKcal">Kcal: </label>
+                    <label htmlFor="kcal">Kcal: </label>
                     <input 
                       type="text" 
-                      id="dailyKcal"
-                      value={ state.settingsData.nutrition.dailyDemand.dailyKcal }
+                      id="kcal"
+                      value={ state.settingsData.nutrition.dailyDemand.kcal }
                       maxLength={5}
                       onChange={ handleSettingOnChange } />
                   </span>
                   
                   <span className="center-section__main__settings__form__section__input">
-                    <label htmlFor="dailyProteins">Proteins: </label>
+                    <label htmlFor="proteins">Proteins: </label>
                     <input 
                       type="text" 
-                      id="dailyProteins"
-                      value={ state.settingsData.nutrition.dailyDemand.dailyProteins }
+                      id="proteins"
+                      value={ state.settingsData.nutrition.dailyDemand.proteins }
                       maxLength={4}
                       onChange={ handleSettingOnChange } />
                   </span>
 
                   <span className="center-section__main__settings__form__section__input">
-                    <label htmlFor="dailyFats">Fats: </label>
+                    <label htmlFor="fats">Fats: </label>
                     <input 
                       type="text" 
-                      id="dailyFats"
-                      value={ state.settingsData.nutrition.dailyDemand.dailyFats }
+                      id="fats"
+                      value={ state.settingsData.nutrition.dailyDemand.fats }
                       maxLength={4}
                       onChange={ handleSettingOnChange } />
                   </span>
 
                   <span className="center-section__main__settings__form__section__input">
-                    <label htmlFor="dailyCarbs">Carbs: </label>
+                    <label htmlFor="carbs">Carbs: </label>
                     <input 
                       type="text" 
-                      id="dailyCarbs"
-                      value={ state.settingsData.nutrition.dailyDemand.dailyCarbs }
+                      id="carbs"
+                      value={ state.settingsData.nutrition.dailyDemand.carbs }
                       maxLength={4}
                       onChange={ handleSettingOnChange } />
                   </span>
@@ -361,35 +381,40 @@ function App() {
                   <input 
                     type="checkbox" 
                     id="clearAllProducts"
-                    value={ state.settingsData.nutrition.clearAllProducts }
+                    value={ !state.settingsData.nutrition.clearAllProducts }
                     onChange={ handleSettingOnChange } />
                 </span>
 
-                <span className="center-section__main__settings__form__section__input">
-                  <label htmlFor="setMealsNumber">Set number of meals: </label>
-                  <input 
-                    type="text"
-                    id="setMealsNumber" 
-                    value={ state.settingsData.nutrition.numberOfMeals }
-                    onChange={ handleSettingOnChange } />
-                </span>
-
-                <span className="center-section__main__settings__form__section__input">
-                  <label htmlFor="setMealsTitles">Set titles of meals: </label>
-                    <input 
-                    type="text" 
-                    id="setMealsTitles"
-                    value={ state.settingsData.nutrition.titlesOfMeals } 
-                    onChange={ handleSettingOnChange } />
-                </span>
-
+                
+                { state.settingsData.nutrition.titlesOfMeals.map((meal, index) => {
+                  return (
+                    <span key={ index } className="center-section__main__settings__form__section__input">
+                      <label htmlFor="editMeals">Set meal name: </label>
+                      <input 
+                        type="text" 
+                        id="editMeals"
+                        value={ meal } 
+                        onChange={ handleSettingOnChange } />
+                    </span>
+                  )
+                } )}
+                
               </section>
 
-              <input type="submit" value="Save" id="saveSettings"/>
+              <input 
+                className="center-section__main__settings__form__submit-button"
+                type="submit" 
+                value="Save" 
+                id="saveSettings"/>
 
             </form>
 
-            <button>Cancel</button>
+            <button 
+              className="center-section__main__settings__form__cancel-button"
+              onClick={ handleSettingsCanceled } 
+              disabled={ state.oldSettingsData === state.settingsData ? true : false }>
+              Cancel
+            </button>
 
           </section>
         }
