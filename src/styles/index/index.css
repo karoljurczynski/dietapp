@@ -24,6 +24,10 @@ body {
   -webkit-backdrop-filter: blur(20px);
           backdrop-filter: blur(20px);
   overflow-y: visible;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
 }
 
 #root {

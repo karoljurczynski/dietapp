@@ -1,10 +1,8 @@
 // IMPORTS
 
-import { React, useState } from 'react';
+import { React, useState, useEffect } from 'react';
 import './styles/center.css';
 import { FaChevronCircleLeft, FaChevronCircleRight } from 'react-icons/fa';
-import { useEffect } from 'react';
-
 
 
 // COMPONENTS
@@ -161,13 +159,13 @@ export default function DateChanger(props) {
 
   }, [currentDay, currentMonth, currentYear]);
 
+
   return (
     <div className="center-section__top__date-changer">
 
       <button 
         className="center-section__top__date-changer__previous-button"
-        onClick={ handlePreviousButton }
-        disabled={ currentDay === 0 ? true : false }>
+        onClick={ handlePreviousButton }>
         <FaChevronCircleLeft />
       </button>
 

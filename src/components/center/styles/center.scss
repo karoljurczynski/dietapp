@@ -59,10 +59,38 @@
     }
   }
 
-  &__meals {
+  &__main {
     @include flexSetup(column, flex-start, flex-start);
     width: 100%;
     padding: 0 40px;
-  
+
+    &__settings {
+      @include flexSetup(column, flex-start, flex-start);
+      width: 100%;
+      height: 100%;
+
+      &__form {
+        @include flexSetup(column, flex-start, flex-start);
+      
+        &__section {
+          @include flexSetup(column, flex-start, flex-start);
+          margin-bottom: 20px;
+
+          &__title {
+            font-weight: bold;
+            margin-bottom: 10px;
+          }
+
+          &__input {
+            margin-bottom: 10px;
+          }
+
+          &__daily-demand {
+            @include flexSetup(column, flex-start, flex-start);
+            margin-bottom: 20px;
+          }
+        }
+      }
+    }
   }
 }

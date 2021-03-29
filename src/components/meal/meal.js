@@ -1,9 +1,6 @@
 // IMPORTS
 
-import React from 'react';
-import { useEffect } from 'react';
-import { useState } from 'react';
-import { useReducer } from 'react';
+import { React, useState, useEffect, useReducer } from 'react';
 import './styles/meal.css';
 
 const ACTIONS = {

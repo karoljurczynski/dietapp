@@ -12,6 +12,7 @@ body {
   background-attachment: fixed;
   backdrop-filter: blur(20px);
   overflow-y: visible;
+  user-select: none;
 }
 
 #root {
