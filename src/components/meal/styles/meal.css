@@ -155,6 +155,35 @@
   font-weight: 700;
   color: #7500AF;
 }
+.meal__top-section__grade-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+}
+.meal__top-section__grade-container__point {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #7500AF;
+  opacity: 0.5;
+  margin-right: 8px;
+}
+.meal__top-section__grade-container__point:first-of-type {
+  background-color: #7500AF;
+  opacity: 1;
+}
+.meal__top-section__grade-container__point:last-of-type {
+  margin-right: 0;
+}
 .meal__products-section {
   display: -webkit-box;
   display: -ms-flexbox;

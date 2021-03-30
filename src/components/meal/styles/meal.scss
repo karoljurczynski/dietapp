@@ -66,6 +66,28 @@
         }
       }
     }
+
+    &__grade-container {
+      @include flexSetup(row, center, space-around);
+
+      &__point {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: $purple-color;
+        opacity: 0.5;
+        margin-right: 8px;
+
+        &:first-of-type {
+          background-color: $purple-color;
+          opacity: 1;
+        }
+
+        &:last-of-type {
+          margin-right: 0;
+        }
+      }
+    }
   }
 
   &__products-section {

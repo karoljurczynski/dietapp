@@ -7,6 +7,7 @@ import { Logo, Title, MenuItem, Quotation } from './components/left/left';
 import DateChanger from './components/center/DateChanger';
 import Meal from './components/meal/Meal';
 import Gauge from './components/right/Gauge';
+import Exercise from './components/exercise/Exercise';
 
 import './styles/index/index.css';
 import './components/left/styles/left.css';
@@ -154,7 +155,6 @@ function App() {
                            dailyDemand: {...state.settingsData.nutrition.dailyDemand, 
                            [action.payload.key]: action.payload.value }}}};
         }
-        
       }
 
       case ACTIONS.LOAD_SETTINGS: {
@@ -190,7 +190,8 @@ function App() {
       },
 
       training: {
-
+        namesOfExercises: { 0: "Bench Press", 1: "Deadlift", 2: "Squat", 3: "Biceps", 4: "Triceps", 5: "ABS", 6: "", 7: "", 8: "", 9: "" },
+        numberOfExercises: 6
       }
     },
     oldSettingsData: {}
@@ -201,7 +202,7 @@ function App() {
   useEffect(() => {
     updateGauges();
     if (Object.keys(localStorage) !== 0)
-      dispatch({ type: ACTIONS.LOAD_SETTINGS });
+      dispatch({ type: ACTIONS.LOAD_SETTINGS });      
   }, [ state.dateIds ]);
 
   useEffect(() => {
@@ -240,6 +241,8 @@ function App() {
 
     dispatch({type: ACTIONS.CHANGE_PAGE_TITLE, payload: newPageTitle })
     dispatch({ type: ACTIONS.RESTORE_OLD_SETTINGS });
+    dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: 'clearAllProducts', value: false } });
+
   }
 
   const handleMenu = (categoryTitle) => {
@@ -256,6 +259,10 @@ function App() {
 
   const restoreSettingsFromBackup = () => {
     dispatch({ type: ACTIONS.RESTORE_OLD_SETTINGS });
+  }
+
+  const backupSettings = () => {
+    dispatch({ type: ACTIONS.BACKUP_OLD_SETTINGS });
   }
 
   const confirmClearAllProducts = () => {
@@ -289,7 +296,7 @@ function App() {
       dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: 'clearAllProducts', value: false } });
       resetCheckbox("clearAllProducts");
     }
-
+    backupSettings();
     updateGauges();
   }
 
@@ -329,6 +336,7 @@ function App() {
 
   return (
     <div className="wrapper">
+    {console.log(state.settingsData)}
 
 
       <aside className="left-section">
@@ -370,18 +378,20 @@ function App() {
       
         <section className="center-section__main">
 
-        {state.settingsData.nutrition.clearAllProducts && 
-          <>
-            <div>Are you sure?</div>
-            <button onClick={ confirmClearAllProducts }>Yes</button>
-            <button onClick={ cancelClearAllProducts }>No</button>
-          </>
-        }
 
         { state.pageTitle === 'Log in' &&
 
           <h2>Log in</h2>
         
+        }
+
+        { state.pageTitle === 'Training' && 
+
+          Object.values(state.settingsData.training.namesOfExercises).map((exercise, index) => {
+            if (state.settingsData.training.numberOfExercises > index)
+              return <Exercise key={ index } name={ exercise } exerciseId={ index } dateIds={ state.dateIds } />
+            })
+
         }
 
         { state.pageTitle === 'Dashboard' && 
@@ -393,13 +403,17 @@ function App() {
 
         }
 
-        { state.pageTitle === 'Training' &&
-
-          <h2>Training</h2>
-        
-        }
-
         { state.pageTitle === 'Settings' &&
+
+          <>
+
+          {state.settingsData.nutrition.clearAllProducts && 
+            <>
+              <div>Remove ALL products?</div>
+              <button onClick={ confirmClearAllProducts }>Remove</button>
+              <button onClick={ cancelClearAllProducts }>Cancel</button>
+            </>
+          }
           <section className="center-section__main__settings">
 
             <form className="center-section__main__settings__form" onSubmit={ handleSettingsSaved }>
@@ -516,6 +530,9 @@ function App() {
             </form>
 
           </section>
+
+          </>
+
         }
 
         { state.pageTitle === 'About' &&
