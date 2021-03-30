@@ -128,7 +128,7 @@ function App() {
             return {...state, 
               settingsData: { ...state.settingsData, 
               nutrition: {...state.settingsData.nutrition,
-              clearAllProducts: !state.settingsData.nutrition.clearAllProducts }}
+              clearAllProducts: action.payload.value }}
             };
           };
 
@@ -154,6 +154,7 @@ function App() {
                            dailyDemand: {...state.settingsData.nutrition.dailyDemand, 
                            [action.payload.key]: action.payload.value }}}};
         }
+        
       }
 
       case ACTIONS.LOAD_SETTINGS: {
@@ -203,12 +204,6 @@ function App() {
       dispatch({ type: ACTIONS.LOAD_SETTINGS });
   }, [ state.dateIds ]);
 
-  /*useEffect(() => {
-    if (state.settingsData.nutrition.clearAllProducts)
-      Object.keys(localStorage).forEach(product => localStorage.removeItem(product));
-
-  }, [ state.settingsData.nutrition.clearAllProducts ]);*/
-
   useEffect(() => {
     if (state.pageTitle === 'Settings')
       dispatch({ type: ACTIONS.BACKUP_OLD_SETTINGS });
@@ -244,22 +239,68 @@ function App() {
       newPageTitle = categoryTitle;
 
     dispatch({type: ACTIONS.CHANGE_PAGE_TITLE, payload: newPageTitle })
+    dispatch({ type: ACTIONS.RESTORE_OLD_SETTINGS });
   }
 
   const handleMenu = (categoryTitle) => {
     changePageTitle(categoryTitle);
   }
 
-  const handleSettingsCanceled = (e) => {
-    e.preventDefault();
+  const resetCheckbox = (idOfCheckbox) => {
+    document.querySelector("#" + idOfCheckbox).checked = false;
+  }
+
+  const saveSettingsToLocalStorage = () => {
+    localStorage.setItem("settings", JSON.stringify(state.settingsData));
+  }
+
+  const restoreSettingsFromBackup = () => {
     dispatch({ type: ACTIONS.RESTORE_OLD_SETTINGS });
+  }
+
+  const confirmClearAllProducts = () => {
+    dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: 'clearAllProducts', value: false } });
+
+    Object.keys(localStorage).forEach(key => {
+      if (key !== "settings")
+        localStorage.removeItem(key);
+    });
+    
+    resetCheckbox("clearAllProducts");
+    updateGauges();
+  }
+
+  const cancelClearAllProducts = () => {
+    dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: 'clearAllProducts', value: false } });
+    resetCheckbox("clearAllProducts");
     updateGauges();
   }
 
   const handleSettingsSaved = (e) => {
     e.preventDefault();
-    dispatch({ type: ACTIONS.BACKUP_OLD_SETTINGS });
-    localStorage.setItem("settings", JSON.stringify(state.settingsData));
+
+    saveSettingsToLocalStorage();
+
+    if (e.target[4].checked === true) {
+      dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: 'clearAllProducts', value: true } });
+    }
+
+    else {
+      dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: 'clearAllProducts', value: false } });
+      resetCheckbox("clearAllProducts");
+    }
+
+    updateGauges();
+  }
+
+  const handleSettingsCanceled = (e) => {
+    e.preventDefault();
+
+    restoreSettingsFromBackup();
+    saveSettingsToLocalStorage();
+
+    resetCheckbox("clearAllProducts");
+    updateGauges();
   }
 
   const handleSettingOnChange = (e) => {
@@ -267,12 +308,8 @@ function App() {
     const isZero = /^[0]{1}/;
 
     e.preventDefault();
-
-    if (e.target.id === 'clearAllProducts') {
-      console.log("g");
-    }
-    
-    else if (e.target.id === 'editMealName') {
+  
+    if (e.target.id === 'editMealName') {
       dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: e.target.id, index: Number(e.target.attributes["data-key"].value), value: e.target.value }})
     }
     
@@ -286,8 +323,10 @@ function App() {
 
     else
       dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: e.target.id, value: "" }});
+
     updateGauges();
   }
+
   return (
     <div className="wrapper">
 
@@ -330,6 +369,14 @@ function App() {
 
       
         <section className="center-section__main">
+
+        {state.settingsData.nutrition.clearAllProducts && 
+          <>
+            <div>Are you sure?</div>
+            <button onClick={ confirmClearAllProducts }>Yes</button>
+            <button onClick={ cancelClearAllProducts }>No</button>
+          </>
+        }
 
         { state.pageTitle === 'Log in' &&
 
@@ -414,9 +461,7 @@ function App() {
                   <label htmlFor="clearAllProducts">Clear all products: </label>
                   <input 
                     type="checkbox" 
-                    id="clearAllProducts"
-                    value={ !state.settingsData.nutrition.clearAllProducts }
-                    onChange={ handleSettingOnChange } />
+                    id="clearAllProducts" />
                 </span>
 
                 <span className="center-section__main__settings__form__section__input">
@@ -461,14 +506,14 @@ function App() {
                 value="Save" 
                 id="saveSettings"/>
 
-            </form>
+              <button 
+                className="center-section__main__settings__form__cancel-button"
+                onClick={ handleSettingsCanceled } 
+                disabled={ state.oldSettingsData === state.settingsData ? true : false }>
+                Cancel
+              </button>
 
-            <button 
-              className="center-section__main__settings__form__cancel-button"
-              onClick={ handleSettingsCanceled } 
-              disabled={ state.oldSettingsData === state.settingsData ? true : false }>
-              Cancel
-            </button>
+            </form>
 
           </section>
         }
