@@ -1,0 +1,20 @@
+@forward '../../../styles/config/config';
+//@forward '../styles/media_queries/media';
+@use '../../../styles/config/config' as *;
+
+
+.meal__removing-window {
+  z-index: 5;
+  width: 500px;
+  height: 500px;
+  position: absolute;
+  top: 0;
+  background: blue;
+  @include flexSetup(column, center, space-around);
+
+  & > * {
+    @include flexSetup(column, center, center);
+    width: 80%;
+    color: white;
+  }
+}

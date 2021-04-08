@@ -1,6 +1,8 @@
 // IMPORTS
 
 import { React, useState, useEffect, useReducer } from 'react';
+import ProductAddingWindow from '../product_adding_window/ProductAddingWindow';
+import ProductRemovingWindow from '../product_removing_window/ProductRemovingWindow';
 import './styles/meal.css';
 
 const ACTIONS = {
@@ -167,14 +169,15 @@ export default function Meal(props) {
       const meals = document.querySelectorAll(".meal");
 
       meals.forEach(meal => {
-        let buttons = meal.childNodes[meal.childNodes.length - 3];
+        let buttons = meal.querySelector(".meal__buttons-section");
         buttons.style.pointerEvents = value;
       });
-    } 
+    }
+
     state.isAddingWindowOpened || state.isRemovingWindowOpened
     ? changePointerEventsForMealsButtons("none")
     : changePointerEventsForMealsButtons("auto");
-
+    
   }, [state.isAddingWindowOpened, state.isRemovingWindowOpened]);
 
 
@@ -312,8 +315,8 @@ export default function Meal(props) {
         })}
 
         </section>
-      ) : null}
-
+      ) : null }
+      
       <section className="meal__buttons-section" style={ state.isMealOpened ? {display: "flex"} : {display: "none"} }>
 
         <button 
@@ -330,97 +333,29 @@ export default function Meal(props) {
       
       </section>
 
-      <div className="meal__adding-window" style={ state.isAddingWindowOpened ? {display: "flex"} : {display: "none"}}>
+      { state.isAddingWindowOpened 
+        ? <ProductAddingWindow 
+            data={{ 
+              isPlaceholderEnabled: isPlaceholderEnabled,
+              name: state.newProduct.name, 
+              weight: state.newProduct.weight,
+              proteins: state.newProduct.proteins,
+              fats: state.newProduct.fats,
+              carbs: state.newProduct.carbs,
+              kcal: state.newProduct.kcal }}
+            handleOnChange={ handleOnChange }
+            handleProductAdding={ handleProductAdding }
+            handleAddingWindow={ handleAddingWindow }
+          />
+        : null }
 
-        <form onSubmit= { handleProductAdding }>
-
-          <label htmlFor="name">Product name: </label>
-          <input 
-            type="text"
-            id="name"
-            value={ state.newProduct.name } 
-            onChange={ handleOnChange }
-            placeholder={ isPlaceholderEnabled ? "Product name must be a string!" : null }
-            maxLength="32"
-            required />
-
-          <label htmlFor="weight">Product weight: </label>
-          <input 
-            type="text" 
-            id="weight"
-            value={ state.newProduct.weight } 
-            onChange={ handleOnChange }
-            placeholder={ isPlaceholderEnabled ? "Weight must be a number different than zero!" : null }
-            maxLength="5"
-            required />
-
-          <label htmlFor="proteins">Proteins: </label>
-          <input 
-            type="text" 
-            id="proteins"
-            value={ state.newProduct.proteins } 
-            onChange={ handleOnChange }
-            placeholder={ isPlaceholderEnabled ? "Proteins must be a number!" : null }
-            maxLength="5"
-            required />
-
-          <label htmlFor="fats">Fats: </label>
-          <input 
-            type="text" 
-            id="fats"
-            value={ state.newProduct.fats } 
-            onChange={ handleOnChange }
-            placeholder={ isPlaceholderEnabled ? "Fats must be a number!" : null }
-            maxLength="5"
-            required />
-
-          <label htmlFor="carbs">Carbs: </label>
-          <input 
-            type="text" 
-            id="carbs"
-            value={ state.newProduct.carbs } 
-            onChange={ handleOnChange }
-            placeholder={ isPlaceholderEnabled ? "Carbs must be a number!" : null }
-            maxLength="5"
-            required />
-
-          <label htmlFor="kcal">Calories: </label>
-          <input 
-            type="text" 
-            id="kcal"
-            value={ state.newProduct.kcal }
-            onChange={ handleOnChange }
-            placeholder={ isPlaceholderEnabled ? "Calories must be a number!" : null }
-            maxLength="5"
-            required />
-
-          <input 
-            type="submit" 
-            value="Add" />
-        
-        </form>
-        <button onClick={ handleAddingWindow }>Cancel</button>
-      </div>
-
-      <div className="meal__removing-window" style={ state.isRemovingWindowOpened ? {display: "flex"} : {display: "none"}}>
-        <form onSubmit={ handleProductRemoving }>
-
-          {state.productList.map(product => {
-            return (
-
-              <span key={ product.id }>
-                <label htmlFor={ product.name }>{ product.name }</label>
-                <input type="checkbox" id={ product.id } name={ product.name } />
-              </span>
-
-            )
-          })}
-
-          <input type="submit" value="Remove"/>
-        </form>
-
-        <button onClick={ handleRemovingWindow }>Cancel</button>
-      </div>
+      { state.isRemovingWindowOpened 
+        ? <ProductRemovingWindow
+            productList={ state.productList }
+            handleProductRemoving={ handleProductRemoving }
+            handleRemovingWindow={ handleRemovingWindow }
+          />
+        : null }
 
     </div>
   )
