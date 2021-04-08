@@ -3,18 +3,118 @@
 @use '../../../styles/config/config' as *;
 
 
-.meal__removing-window {
+.removing-window {
+  @include flexSetup(column, flex-start, flex-start);
   z-index: 5;
-  width: 500px;
-  height: 500px;
+  width: 600px;
   position: absolute;
-  top: 0;
-  background: blue;
-  @include flexSetup(column, center, space-around);
+  top: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: $white-color;
+  padding: 25px;
+  border-radius: 30px;
+  box-shadow: 1px 1px 5px $gray-color;
+  
+  &__title {
+    margin-bottom: 25px;
+    color: $purple-color;
+    font-size: 1.8rem;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 700;
+    line-height: 1;
+  }
 
-  & > * {
-    @include flexSetup(column, center, center);
-    width: 80%;
-    color: white;
+  &__main {
+    @include flexSetup(column, flex-start, flex-start);
+    width: 100%;
+
+    &__list {
+      @include flexSetup(column, flex-start, flex-start);
+      width: 100%;
+      max-height: 300px;
+      overflow-y: scroll;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      
+      &::-webkit-scrollbar {
+        display: none;
+      }
+
+      &--heading {
+        border: none;
+        border-top: 2px solid $gray-color;
+        overflow: hidden;
+      }
+
+      &__item {
+        @include flexSetup(row, center, space-between);
+        width: 100%;
+        padding: 8px 20px;
+        color: $gray-color;
+        border-radius: 30px;
+        border: 2px solid $purple-color;
+        margin: 3px 0;
+
+        & > * {
+          font-size: 1rem;
+        }
+
+        &--heading {
+          margin: 20px 0 12px 0;
+          background: $purple-color;
+          color: white;
+          border-radius: 30px;
+        }
+
+        &__name {
+          width: 40%;
+        }
+
+        &__nutrition-facts {
+          @include flexSetup(row, center, flex-start);
+          width: 35%;
+
+          & > * {
+            @include flexSetup(row, center, flex-start);
+            width: calc(100% / 3);
+            font-size: 1rem;
+          }
+        }
+
+        &__calories {
+          @include flexSetup(row, center, flex-end);
+          width: 20%;
+        }
+      }
+
+      &__buttons-section {
+        margin-top: 20px;
+        width: 100%;
+        border-top: 2px solid $gray-color;
+        @include flexSetup(row, flex-end, flex-end);
+        padding-top: 25px;
+
+        &__secondary {
+          background: $white-color;
+          color: $purple-color;
+          padding: 8px 15px;
+          border-radius: 15px;
+          @extend %robotoNormal;
+          font-size: 1.2rem;
+          box-shadow: 0 0 3px $gray-color;
+        }
+    
+        &__primary {
+          background: $purple-color;
+          color: $white-color;
+          margin-left: 10px;
+          padding: 8px 10px;
+          @extend %robotoNormal;
+          font-size: 1.2rem;
+          border-radius: 15px;
+        }
+      }
+    }
   }
 }
