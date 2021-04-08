@@ -92,7 +92,7 @@
         margin-top: 20px;
         width: 100%;
         border-top: 2px solid $gray-color;
-        @include flexSetup(row, flex-end, flex-end);
+        @include flexSetup(row, flex-end, space-between);
         padding-top: 25px;
 
         &__secondary {
@@ -113,6 +113,16 @@
           @extend %robotoNormal;
           font-size: 1.2rem;
           border-radius: 15px;
+        }
+
+        &__tertiary {
+          background: $white-color;
+          border: 1px solid $purple-color;
+          color: black;
+          padding: 8px 15px;
+          border-radius: 15px;
+          @extend %robotoNormal;
+          font-size: 1.2rem;
         }
       }
     }

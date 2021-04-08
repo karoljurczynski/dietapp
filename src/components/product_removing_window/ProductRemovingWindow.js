@@ -4,7 +4,7 @@ import './styles/productRemovingWindow.css';
 export default function ProductRemovingWindow(props) {
 
   const handleSelected = (e) => {
-    const product = document.querySelector(`#${e.target.id}`);
+    const product = document.getElementById(e.target.id);
 
     // IF COLOR IS BLACK (SELECTED) THEN RESET TO DEFAULT
     if (product.childNodes[0].style.color === "black") {
@@ -42,8 +42,27 @@ export default function ProductRemovingWindow(props) {
     }
   }
 
-  const handleRemoveButton = (e) => {
+  const handleRemoveButton = () => {
+    const selectedIds = [];
+    const products = document.querySelectorAll(".removing-window__main__list__item");
 
+    products.forEach(product => {
+      if(product.childNodes[0].style.color === "black")
+        selectedIds.push(Number(product.id));
+    });
+
+    props.handleProductRemoving(selectedIds);
+  }
+
+  const handleRemovingAll = () => {
+    const selectedIds = [];
+    const products = document.querySelectorAll(".removing-window__main__list__item");
+
+    products.forEach(product => {
+      selectedIds.push(Number(product.id))
+    });
+
+    props.handleProductRemoving(selectedIds);
   }
   
   return (
@@ -69,49 +88,32 @@ export default function ProductRemovingWindow(props) {
 
           { props.productList.map(product => {
             return (
-              <li id={ product.name } key={ product.id } className="removing-window__main__list__item">
-                <span id={ product.name } className="removing-window__main__list__item__name">{ product.name }</span>
-                <span id={ product.name } className="removing-window__main__list__item__nutrition-facts">
-                  <p id={ product.name } className="removing-window__main__list__item__nutrition-facts__proteins" title="Proteins">{ product.proteins } g</p>
-                  <p id={ product.name } className="removing-window__main__list__item__nutrition-facts__fats" title="Fats">{ product.fats } g</p>
-                  <p id={ product.name } className="removing-window__main__list__item__nutrition-facts__carbs" title="Carbohydrates">{ product.carbs } g</p>
+
+              <li onClick={ handleSelected } id={ product.id } key={ product.id } className="removing-window__main__list__item">
+                <span id={ product.id } className="removing-window__main__list__item__name">{ product.name }</span>
+                <span id={ product.id } className="removing-window__main__list__item__nutrition-facts">
+                  <p id={ product.id } className="removing-window__main__list__item__nutrition-facts__proteins" title="Proteins">{ product.proteins } g</p>
+                  <p id={ product.id } className="removing-window__main__list__item__nutrition-facts__fats" title="Fats">{ product.fats } g</p>
+                  <p id={ product.id } className="removing-window__main__list__item__nutrition-facts__carbs" title="Carbohydrates">{ product.carbs } g</p>
                 </span>
-                <span id={ product.name } className="removing-window__main__list__item__calories">{ product.kcal } kcal</span>
-                <input type="checkbox" id={ product.id }></input>
+                <span id={ product.id } className="removing-window__main__list__item__calories">{ product.kcal } kcal</span>
               </li>
-            )
-          })
+
+            )})
           }
 
         </ul>
         
         <section className="removing-window__main__list__buttons-section">
-          <button className="removing-window__main__list__buttons-section__secondary" onClick={ props.handleRemovingWindow }>Cancel</button>
-          <button className="removing-window__main__list__buttons-section__primary" onClick={ props.handleProductRemoving }>Remove</button>
+          <button className="removing-window__main__list__buttons-section__tertiary" onClick={ handleRemovingAll }>Remove all</button>
+          <div>
+            <button className="removing-window__main__list__buttons-section__secondary" onClick={ props.handleRemovingWindow }>Cancel</button>
+            <button className="removing-window__main__list__buttons-section__primary" onClick={ handleRemoveButton }>Remove</button>
+          </div>
         </section>
 
       </main>
 
     </section>
-
-    /*<div className="meal__removing-window">
-        <form onSubmit={ props.handleProductRemoving }>
-
-          { props.productList.map(product => {
-            return (
-
-              <span key={ product.id }>
-                <label htmlFor={ product.name }>{ product.name }</label>
-                <input type="checkbox" id={ product.id } name={ product.name } />
-              </span>
-
-            )
-          })}
-
-          <input type="submit" value="Remove"/>
-        </form>
-
-        <button onClick={ props.handleRemovingWindow }>Cancel</button>
-      </div>*/
   )
 }

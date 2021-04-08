@@ -2,7 +2,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Cookie&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap");
-.removing-window__main__list__buttons-section__secondary, .removing-window__main__list__buttons-section__primary {
+.removing-window__main__list__buttons-section__secondary, .removing-window__main__list__buttons-section__primary, .removing-window__main__list__buttons-section__tertiary {
   font-family: "Roboto", sans-serif;
   font-weight: 400;
 }
@@ -196,9 +196,9 @@
   -webkit-box-align: end;
       -ms-flex-align: end;
           align-items: flex-end;
-  -webkit-box-pack: end;
-      -ms-flex-pack: end;
-          justify-content: flex-end;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
   padding-top: 25px;
 }
 .removing-window__main__list__buttons-section__secondary {
@@ -217,5 +217,13 @@
   padding: 8px 10px;
   font-size: 1.2rem;
   border-radius: 15px;
+}
+.removing-window__main__list__buttons-section__tertiary {
+  background: #FFFFFF;
+  border: 1px solid #7500AF;
+  color: black;
+  padding: 8px 15px;
+  border-radius: 15px;
+  font-size: 1.2rem;
 }
 /*# sourceMappingURL=productRemovingWindow.css.map */

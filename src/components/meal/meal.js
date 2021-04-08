@@ -224,15 +224,7 @@ export default function Meal(props) {
     dispatch( {type: ACTIONS.NEGATE_ADDING_WINDOW_STATE} );
   }
 
-  const handleProductRemoving = (e) => {
-    e.preventDefault();
-
-    let checkedIdsList = [];
-    for (let i = 0; i < state.productList.length; i++) {
-      if (e.target[i].checked)
-        checkedIdsList.push(e.target[i].id);
-    }
-
+  const handleProductRemoving = (checkedIdsList) => {
     dispatch( {type: ACTIONS.REMOVE_PRODUCT, payload: checkedIdsList} );
     dispatch( {type: ACTIONS.NEGATE_REMOVING_WINDOW_STATE} );
   }
