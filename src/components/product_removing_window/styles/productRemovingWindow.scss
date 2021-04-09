@@ -63,8 +63,13 @@
         overflow: hidden;
       }
 
-      &__item {
+      &__wrapper {
         @include flexSetup(row, center, space-between);
+        width: 100%;
+      }
+
+      &__item {
+        @include flexSetup(column, flex-start, flex-start);
         width: 100%;
         padding: 8px 20px;
         color: $gray-color;
@@ -85,6 +90,11 @@
 
         &__name {
           width: 40%;
+          color: black;
+        }
+
+        &__weight {
+          font-size: 0.8rem;    
         }
 
         &__nutrition-facts {
@@ -101,6 +111,7 @@
         &__calories {
           @include flexSetup(row, center, flex-end);
           width: 20%;
+          padding-right: 10px;
         }
       }
 

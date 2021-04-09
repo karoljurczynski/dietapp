@@ -140,7 +140,7 @@
   border-top: 2px solid #707070;
   overflow: hidden;
 }
-.adding-window__main__adding-list__item {
+.adding-window__main__adding-list__wrapper {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -155,11 +155,28 @@
       -ms-flex-pack: justify;
           justify-content: space-between;
   width: 100%;
+}
+.adding-window__main__adding-list__item {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  width: 100%;
   padding: 8px 20px;
   color: #707070;
   border-radius: 30px;
   border: 2px solid #7500AF;
   margin: 3px 0;
+  position: relative;
 }
 .adding-window__main__adding-list__item > * {
   font-size: 1rem;
@@ -172,6 +189,10 @@
 }
 .adding-window__main__adding-list__item__name {
   width: 40%;
+  color: black;
+}
+.adding-window__main__adding-list__item__weight {
+  font-size: 0.8rem;
 }
 .adding-window__main__adding-list__item__nutrition-facts {
   display: -webkit-box;
@@ -221,9 +242,10 @@
       -ms-flex-pack: end;
           justify-content: flex-end;
   width: 20%;
+  padding-right: 10px;
 }
 .adding-window__main__adding-list__buttons-section {
-  margin-top: 15px;
+  margin-top: 20px;
   width: 100%;
   border-top: 2px solid #707070;
   display: -webkit-box;

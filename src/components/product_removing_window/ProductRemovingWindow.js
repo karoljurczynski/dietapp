@@ -19,24 +19,20 @@ export default function ProductRemovingWindow(props) {
 
   const handleSelected = (e) => {
     const product = document.getElementById(e.target.id);
-    const productsNutritionFacts = product.childNodes[1].childNodes;
-    const changeFont = (element, color, weight) => {
-      element.style.cssText = `
-        color: ${color};
-        font-weight: ${weight};
-      `;
-    }
-    
-    // "UNSELECTING" CHANGING FONT PROPERTIES BACK TO DEFAULT
-    if (product.childNodes[0].style.color === "black") {
-      product.childNodes.forEach(child => changeFont(child, "#707070", "normal"));
-      productsNutritionFacts.forEach(child => changeFont(child, "#707070", "normal"));
-    }
+    if(e.target.id) {
+      const productName = product.querySelector(".removing-window__main__list__item__name");
 
-    // "SELECTING" CHANGING FONT PROPERTIES TO BLACK AND BOLD
-    else {
-      product.childNodes.forEach(child => changeFont(child, "black", "bold"));
-      productsNutritionFacts.forEach(child => changeFont(child, "black", "bold"));
+      // "UNSELECTING"
+      if (productName.style.fontWeight === "bold") {
+        product.style.background = "#ffffff";
+        productName.style.fontWeight = "normal";
+      }
+
+      // "SELECTING"
+      else {
+        product.style.background = "#7500AF30";
+        productName.style.fontWeight = "bold";
+      }
     }
   }
 
@@ -45,7 +41,8 @@ export default function ProductRemovingWindow(props) {
     const products = document.querySelectorAll(".removing-window__main__list__item");
 
     products.forEach(product => {
-      if(product.childNodes[0].style.color === "black")
+      const name = product.querySelector(".removing-window__main__list__item__name")
+      if(name.style.fontWeight === "bold")
         selectedIds.push(Number(product.id));
     });
 
@@ -82,13 +79,15 @@ export default function ProductRemovingWindow(props) {
 
           <ul className="removing-window__main__list removing-window__main__list--heading">
             <li className="removing-window__main__list__item removing-window__main__list__item--heading">
-              <span className="removing-window__main__list__item__name">Product name</span>
-              <span className="removing-window__main__list__item__nutrition-facts">
-                <p className="removing-window__main__list__item__nutrition-facts__proteins" title="Proteins">P</p>
-                <p className="removing-window__main__list__item__nutrition-facts__fats" title="Fats">F</p>
-                <p className="removing-window__main__list__item__nutrition-facts__carbs" title="Carbohydrates">C</p>
-              </span>
-              <span className="removing-window__main__list__item__calories">Calories</span>
+              <div className="removing-window__main__list__wrapper">
+                <span className="removing-window__main__list__item__name" style={{color: "white"}}>Product name</span>
+                <span className="removing-window__main__list__item__nutrition-facts">
+                  <p className="removing-window__main__list__item__nutrition-facts__proteins" title="Proteins">P</p>
+                  <p className="removing-window__main__list__item__nutrition-facts__fats" title="Fats">F</p>
+                  <p className="removing-window__main__list__item__nutrition-facts__carbs" title="Carbohydrates">C</p>
+                </span>
+                <span className="removing-window__main__list__item__calories">Calories</span>
+              </div>
             </li>
           </ul>
 
@@ -98,6 +97,7 @@ export default function ProductRemovingWindow(props) {
               return (
 
                 <li onClick={ handleSelected } id={ product.id } key={ product.id } className="removing-window__main__list__item">
+                <div className="removing-window__main__list__wrapper">
                   <span id={ product.id } className="removing-window__main__list__item__name">{ product.name }</span>
                   <span id={ product.id } className="removing-window__main__list__item__nutrition-facts">
                     <p id={ product.id } className="removing-window__main__list__item__nutrition-facts__proteins" title="Proteins">{ product.proteins } g</p>
@@ -105,6 +105,8 @@ export default function ProductRemovingWindow(props) {
                     <p id={ product.id } className="removing-window__main__list__item__nutrition-facts__carbs" title="Carbohydrates">{ product.carbs } g</p>
                   </span>
                   <span id={ product.id } className="removing-window__main__list__item__calories">{ product.kcal } kcal</span>
+                </div>
+                <span id={ product.id } className="removing-window__main__list__item__weight">{ product.weight } g</span>
                 </li>
 
               )})

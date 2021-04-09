@@ -35,6 +35,7 @@ export default function ProductAddingWindow(props) {
         { isAddingTypeSetAtFromList
           ? <AddingList 
               handleAddingWindow={ props.handleAddingWindow }
+              handleProductAdding={ props.handleProductAdding }
             />
           : <AddingForm 
               data={{ 
