@@ -3,7 +3,7 @@
 @use '../../../styles/config/config' as *;
 
 
-.removing-window {
+.removing-window, .removing-window__confirm {
   @include flexSetup(column, flex-start, flex-start);
   z-index: 5;
   width: 600px;
@@ -15,6 +15,22 @@
   padding: 25px;
   border-radius: 30px;
   box-shadow: 1px 1px 5px $gray-color;
+  transition: 0.3s ease-out;
+
+  &__confirm {
+    width: 300px;
+    position: absolute;
+    top: 5%;
+    z-index: 6;
+
+    &__subtitle {
+      border-top: 2px solid gray;
+      padding-top: 20px;
+      font-size: 1.1rem;
+      color: $black-color;
+      @include flexSetup(row, flex-start, flex-start);
+    }
+  }
   
   &__title {
     margin-bottom: 25px;
@@ -109,7 +125,7 @@
           background: $purple-color;
           color: $white-color;
           margin-left: 10px;
-          padding: 8px 10px;
+          padding: 8px 15px;
           @extend %robotoNormal;
           font-size: 1.2rem;
           border-radius: 15px;
@@ -119,7 +135,7 @@
           background: $white-color;
           border: 1px solid $purple-color;
           color: black;
-          padding: 8px 15px;
+          padding: 8px 12px;
           border-radius: 15px;
           @extend %robotoNormal;
           font-size: 1.2rem;
