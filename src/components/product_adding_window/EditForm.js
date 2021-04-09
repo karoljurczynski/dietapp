@@ -1,4 +1,5 @@
 import { useReducer } from 'react';
+import { useEffect } from 'react';
 import { React, useState } from 'react';
 import './styles/productAddingWindow.css';
 
@@ -43,9 +44,7 @@ export default function EditForm(props) {
                  kcal: props.data.kcal };
       }
 
-      default: {
-
-      }
+      default: return console.error(`Unknown action type: ${action.type}`);
     }
   }
 
@@ -104,108 +103,118 @@ export default function EditForm(props) {
   }
 
   return (
-    <form className="adding-window__main__adding-form" onSubmit={ handleSavingChanges }>
+    <section className="adding-window__edit">
 
-      <section className="adding-window__main__adding-form__product-info">
+      <h1 className="adding-window__title adding-window__title--edit">Edit product</h1>
 
+      <main className="adding-window__main">
 
-        <h3 className="adding-window__main__adding-form__product-info__title">Product info</h3>
-        
-        <div className="adding-window__main__adding-form__product-info__line">
-          <label className="adding-window__main__adding-form__product-info__line__label" htmlFor="name">Product name: </label>
-          <input
-            className="adding-window__main__adding-form__product-info__line__input" 
-            type="text"
-            id="name"
-            value={ state.name } 
-            onChange={ handleNameChanging }
-            placeholder="Product name"
-            maxLength="32"
-            required>
-          </input>
-          <p className="adding-window__main__adding-form__product-info__line__warning">You are idiot</p>
-        </div>
+        <form className="adding-window__main__adding-form adding-window__main__adding-form--edit"  onSubmit={ handleSavingChanges }>
 
-        <div className="adding-window__main__adding-form__product-info__line">
-          <label className="adding-window__main__adding-form__product-info__line__label" htmlFor="weight">Product weight: </label>
-          <input 
-            className="adding-window__main__adding-form__product-info__line__input" 
-            type="text" 
-            id="weight"
-            value={ state.weight } 
-            onChange={ calculateNutritionFacts }
-            placeholder="Weight"
-            maxLength="4"
-            required>
-          </input>
-          <span className="adding-window__main__adding-form__product-info__line__decoration">g</span>
-          <p className="adding-window__main__adding-form__product-info__line__warning">You are idiot</p>
-        </div>
+          <section className="adding-window__main__adding-form__product-info">
 
 
-      </section>
+            <h3 className="adding-window__main__adding-form__product-info__title">Product info</h3>
+            
+            <div className="adding-window__main__adding-form__product-info__line">
+              <label className="adding-window__main__adding-form__product-info__line__label" htmlFor="name">Product name: </label>
+              <input
+                className="adding-window__main__adding-form__product-info__line__input" 
+                type="text"
+                id="name"
+                value={ state.name } 
+                onChange={ handleNameChanging }
+                placeholder="Product name"
+                maxLength="32"
+                required>
+              </input>
+              <p className="adding-window__main__adding-form__product-info__line__warning">You are idiot</p>
+            </div>
 
-      <section className="adding-window__main__adding-form__nutrition-facts">
-        
-
-        <h3 className="adding-window__main__adding-form__nutrition-facts__title">Nutrition facts</h3>
-        
-        <div className="adding-window__main__adding-form__nutrition-facts__line">
-          <label className="adding-window__main__adding-form__nutrition-facts__line__label" htmlFor="proteins">Proteins: </label>
-          <p 
-            className="adding-window__main__adding-form__nutrition-facts__line__input" 
-            id="proteins">
-            { state.proteins }
-          </p>
-          <span className="adding-window__main__adding-form__nutrition-facts__line__decoration">g</span>
-        </div>
-
-        <div className="adding-window__main__adding-form__nutrition-facts__line">
-          <label className="adding-window__main__adding-form__nutrition-facts__line__label" htmlFor="fats">Fats: </label>
-          <p 
-            className="adding-window__main__adding-form__nutrition-facts__line__input" 
-            id="fats">
-            { state.fats }
-          </p>
-          <span className="adding-window__main__adding-form__nutrition-facts__line__decoration">g</span>
-        </div>
-
-        <div className="adding-window__main__adding-form__nutrition-facts__line">
-          <label className="adding-window__main__adding-form__nutrition-facts__line__label" htmlFor="carbs">Carbs: </label>
-          <p 
-            className="adding-window__main__adding-form__nutrition-facts__line__input" 
-            id="carbs">
-            { state.carbs }
-          </p>
-          <span className="adding-window__main__adding-form__nutrition-facts__line__decoration">g</span>
-        </div>
-
-        <div className="adding-window__main__adding-form__nutrition-facts__line">
-          <label className="adding-window__main__adding-form__nutrition-facts__line__label" htmlFor="kcal">Calories: </label>
-          <p 
-            className="adding-window__main__adding-form__nutrition-facts__line__input" 
-            id="kcal">
-            { state.kcal }
-          </p>
-          <span className="adding-window__main__adding-form__nutrition-facts__line__decoration">kcal</span>
-        </div>
+            <div className="adding-window__main__adding-form__product-info__line">
+              <label className="adding-window__main__adding-form__product-info__line__label" htmlFor="weight">Product weight: </label>
+              <input 
+                className="adding-window__main__adding-form__product-info__line__input" 
+                type="text" 
+                id="weight"
+                value={ state.weight } 
+                onChange={ calculateNutritionFacts }
+                placeholder="Weight"
+                maxLength="4"
+                required>
+              </input>
+              <span className="adding-window__main__adding-form__product-info__line__decoration">g</span>
+              <p className="adding-window__main__adding-form__product-info__line__warning">You are idiot</p>
+            </div>
 
 
-      </section>
+          </section>
 
-      <section className="adding-window__main__adding-form__buttons-section">
+          <section className="adding-window__main__adding-form__nutrition-facts">
+            
+
+            <h3 className="adding-window__main__adding-form__nutrition-facts__title">Nutrition facts</h3>
+            
+            <div className="adding-window__main__adding-form__nutrition-facts__line">
+              <label className="adding-window__main__adding-form__nutrition-facts__line__label" htmlFor="proteins">Proteins: </label>
+              <p 
+                className="adding-window__main__adding-form__nutrition-facts__line__input" 
+                id="proteins">
+                { state.proteins }
+              </p>
+              <span className="adding-window__main__adding-form__nutrition-facts__line__decoration">g</span>
+            </div>
+
+            <div className="adding-window__main__adding-form__nutrition-facts__line">
+              <label className="adding-window__main__adding-form__nutrition-facts__line__label" htmlFor="fats">Fats: </label>
+              <p 
+                className="adding-window__main__adding-form__nutrition-facts__line__input" 
+                id="fats">
+                { state.fats }
+              </p>
+              <span className="adding-window__main__adding-form__nutrition-facts__line__decoration">g</span>
+            </div>
+
+            <div className="adding-window__main__adding-form__nutrition-facts__line">
+              <label className="adding-window__main__adding-form__nutrition-facts__line__label" htmlFor="carbs">Carbs: </label>
+              <p 
+                className="adding-window__main__adding-form__nutrition-facts__line__input" 
+                id="carbs">
+                { state.carbs }
+              </p>
+              <span className="adding-window__main__adding-form__nutrition-facts__line__decoration">g</span>
+            </div>
+
+            <div className="adding-window__main__adding-form__nutrition-facts__line">
+              <label className="adding-window__main__adding-form__nutrition-facts__line__label" htmlFor="kcal">Calories: </label>
+              <p 
+                className="adding-window__main__adding-form__nutrition-facts__line__input" 
+                id="kcal">
+                { state.kcal }
+              </p>
+              <span className="adding-window__main__adding-form__nutrition-facts__line__decoration">kcal</span>
+            </div>
 
 
-        <button className="adding-window__main__adding-form__buttons-section__tertiary" onClick={ handleResetingForm }>Reset</button>
-        
-        <div className="adding-window__main__adding-form__buttons-section__right">
-          <button className="adding-window__main__adding-form__buttons-section__secondary" onClick={ props.handleEditingWindow }>Cancel</button>
-          <input className="adding-window__main__adding-form__buttons-section__primary" type="submit" value="Save"></input>
-        </div>
-      
+          </section>
 
-      </section>
-      
-    </form>
+          <section className="adding-window__main__adding-form__buttons-section">
+
+
+            <button className="adding-window__main__adding-form__buttons-section__tertiary" onClick={ handleResetingForm }>Reset</button>
+            
+            <div className="adding-window__main__adding-form__buttons-section__right">
+              <button className="adding-window__main__adding-form__buttons-section__secondary" onClick={ props.handleEditingWindow }>Cancel</button>
+              <input className="adding-window__main__adding-form__buttons-section__primary" type="submit" value="Save"></input>
+            </div>
+
+
+          </section>
+
+          </form>
+
+      </main>
+
+    </section>
   )
 }

@@ -48,12 +48,27 @@
   -webkit-box-shadow: 1px 1px 5px #707070;
           box-shadow: 1px 1px 5px #707070;
 }
+.adding-window__edit {
+  width: 100%;
+  padding: 25px;
+  position: absolute;
+  border-radius: 30px;
+  background-color: #FFFFFF;
+  top: 0;
+  left: 0;
+  z-index: 6;
+  -webkit-box-shadow: 1px 1px 5px #707070;
+          box-shadow: 1px 1px 5px #707070;
+}
 .adding-window__title {
   color: #7500AF;
   font-size: 1.8rem;
   font-family: "Segoe UI", sans-serif;
   font-weight: 700;
   line-height: 1;
+}
+.adding-window__title--edit {
+  margin-bottom: 25px;
 }
 .adding-window__switch {
   display: -webkit-box;
