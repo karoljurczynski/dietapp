@@ -61,6 +61,7 @@ export default function AddingList(props) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const updateProductSendForEdit = (selectedProduct) => {
+
     dispatch({ type: ACTIONS.SET_PRODUCT_SEND_FOR_EDIT, payload: selectedProduct });
   }
 
@@ -103,6 +104,28 @@ export default function AddingList(props) {
 
   const handleEditingWindow = () => {
     dispatch({ type: ACTIONS.NEGATE_EDIT_WINDOW_STATE });
+  }
+
+  const handleProductsAdding = () => {
+    const selectedProducts = [];
+    const products = document.querySelectorAll(".adding-window__main__adding-list__item");
+
+    products.forEach((product, index) => {
+      const name = product.querySelector(".adding-window__main__adding-list__item__name");
+      if (name.style.fontWeight === "bold")
+        selectedProducts.push(
+          { 
+            name:     state.savedProductList[index - 1].name,
+            weight:   state.savedProductList[index - 1].weight, 
+            proteins: state.savedProductList[index - 1].proteins, 
+            fats:     state.savedProductList[index - 1].fats, 
+            carbs:    state.savedProductList[index - 1].carbs, 
+            kcal:     state.savedProductList[index - 1].kcal 
+          }
+        );
+    });
+
+    props.handlePredefinedProductsAdding(selectedProducts);
   }
 
   useEffect(() => {
@@ -152,7 +175,7 @@ export default function AddingList(props) {
       
       <section className="adding-window__main__adding-list__buttons-section">
         <button className="adding-window__main__adding-list__buttons-section__secondary" onClick={ props.handleAddingWindow }>Cancel</button>
-        <button className="adding-window__main__adding-list__buttons-section__primary" onClick={ props.handleProductEdit }>Add</button>
+        <button className="adding-window__main__adding-list__buttons-section__primary" onClick={ handleProductsAdding }>Add</button>
       </section>
 
       { state.isEditWindowOpened 

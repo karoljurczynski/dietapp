@@ -51,6 +51,17 @@ const countAmountOfIngredientLeft = (eatenAmount, maxAmount) => {
 // COMPONENTS
 
 function App() {
+
+  // EFFECT WHICH CHECKS IS SETTINGS ARE SAVED IN LOCAL STORAGE
+  useEffect(() => {
+
+    if (Object.keys(localStorage).length !== 0)
+      dispatch({ type: ACTIONS.LOAD_SETTINGS });   
+    else
+      saveSettingsToLocalStorage(); 
+
+  }, []);
+
   const reducer = (state, action) => {
     switch (action.type) {
 
@@ -183,7 +194,7 @@ function App() {
       },
 
       nutrition: {
-        dailyDemand: { kcal: 0, proteins: 0, fats: 0, carbs: 0 },
+        dailyDemand: { kcal: 2000, proteins: 120, fats: 55, carbs: 240 },
         namesOfMeals: { 0: "Breakfast", 1: "II Breakfast", 2: "Lunch", 3: "Snack", 4: "Dinner", 5: "", 6: "", 7: "", 8: "", 9: "" },
         numberOfMeals: 5,
         clearAllProducts: false
@@ -199,11 +210,8 @@ function App() {
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  useEffect(() => {
-    updateGauges();
-    if (Object.keys(localStorage) !== 0)
-      dispatch({ type: ACTIONS.LOAD_SETTINGS });      
-  }, [ state.dateIds ]);
+
+  useEffect(() => { updateGauges() }, [ state.dateIds ]);
 
   useEffect(() => {
     if (state.pageTitle === 'Settings')
@@ -336,8 +344,6 @@ function App() {
 
   return (
     <div className="wrapper">
-    {console.log(state.settingsData)}
-
 
       <aside className="left-section">
 

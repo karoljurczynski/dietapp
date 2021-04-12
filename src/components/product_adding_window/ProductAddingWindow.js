@@ -12,7 +12,12 @@ export default function ProductAddingWindow(props) {
   }
 
   return (
+    <>
+
+    <div className="adding-window__background-blur"></div>
+    
     <section className="adding-window">
+
 
       <h1 className="adding-window__title">Add product</h1>
 
@@ -35,7 +40,7 @@ export default function ProductAddingWindow(props) {
         { isAddingTypeSetAtFromList
           ? <AddingList 
               handleAddingWindow={ props.handleAddingWindow }
-              handleProductAdding={ props.handleProductAdding }
+              handlePredefinedProductsAdding={ props.handlePredefinedProductsAdding }
             />
           : <AddingForm 
               data={{ 
@@ -54,5 +59,6 @@ export default function ProductAddingWindow(props) {
       </main>
 
     </section>
+    </>
   )
 }

@@ -65,7 +65,6 @@ export default function Meal(props) {
 
       case ACTIONS.ADD_PRODUCT: {
         state.newProduct.id = Date.now();
-        console.log(props.dateIds);
         state.newProduct.dateIds = props.dateIds;
         state.productList.push(state.newProduct);
         localStorage.setItem(state.newProduct.id, JSON.stringify(state.newProduct));
@@ -220,13 +219,31 @@ export default function Meal(props) {
 
   const handleProductAdding = (e) => {
     e.preventDefault();
-    dispatch( {type: ACTIONS.ADD_PRODUCT} );
-    dispatch( {type: ACTIONS.NEGATE_ADDING_WINDOW_STATE} );
+    dispatch({ type: ACTIONS.ADD_PRODUCT });
+    dispatch({ type: ACTIONS.NEGATE_ADDING_WINDOW_STATE });
+  }
+
+  const handlePredefinedProductsAdding = (selectedProducts) => {
+    selectedProducts.forEach(product => {
+
+      // TIMEOUT TO PREVENT DOUBLED IDS
+      setTimeout(() => {
+
+        Object.keys(product).forEach(key => {
+          dispatch({ type: ACTIONS.CHANGE_NEW_PRODUCT_DATA, payload: { key: key, value: product[key] }});
+        });
+
+        dispatch({ type: ACTIONS.ADD_PRODUCT });
+
+      }, 10);
+    });
+    
+    dispatch({ type: ACTIONS.NEGATE_ADDING_WINDOW_STATE });
   }
 
   const handleProductRemoving = (checkedIdsList) => {
-    dispatch( {type: ACTIONS.REMOVE_PRODUCT, payload: checkedIdsList} );
-    dispatch( {type: ACTIONS.NEGATE_REMOVING_WINDOW_STATE} );
+    dispatch({ type: ACTIONS.REMOVE_PRODUCT, payload: checkedIdsList });
+    dispatch({ type: ACTIONS.NEGATE_REMOVING_WINDOW_STATE });
   }
 
   const handleOnChange = (e) => {
@@ -338,6 +355,7 @@ export default function Meal(props) {
             handleOnChange={ handleOnChange }
             handleProductAdding={ handleProductAdding }
             handleAddingWindow={ handleAddingWindow }
+            handlePredefinedProductsAdding={ handlePredefinedProductsAdding }
           />
         : null }
 
