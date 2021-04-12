@@ -60,6 +60,8 @@ function App() {
     else
       saveSettingsToLocalStorage(); 
 
+    dispatch({ type: ACTIONS.BACKUP_OLD_SETTINGS });
+
   }, []);
 
   const reducer = (state, action) => {
@@ -179,7 +181,7 @@ function App() {
 
   const initialState = {
     dateIds: { dayId: 0, monthId: 0, yearId: 0 },
-    pageTitle: 'Settings',
+    pageTitle: 'Dashboard',
     mealsIngredientsSummary: [],
     dailyIngredientsSummary: { kcal: 0, proteins: 0, fats: 0, carbs: 0 },
     gaugesData: {
@@ -210,14 +212,7 @@ function App() {
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
-
   useEffect(() => { updateGauges() }, [ state.dateIds ]);
-
-  useEffect(() => {
-    if (state.pageTitle === 'Settings')
-      dispatch({ type: ACTIONS.BACKUP_OLD_SETTINGS });
-      
-  }, [ state.pageTitle ]);
 
   const updateMealSummary = (object, mealId) => {
     dispatch({ type: ACTIONS.UPDATE_MEALS_INGREDIENTS_SUMMARY, payload: {data: object, mealId: mealId} });
@@ -249,8 +244,6 @@ function App() {
 
     dispatch({type: ACTIONS.CHANGE_PAGE_TITLE, payload: newPageTitle })
     dispatch({ type: ACTIONS.RESTORE_OLD_SETTINGS });
-    dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: 'clearAllProducts', value: false } });
-
   }
 
   const handleMenu = (categoryTitle) => {

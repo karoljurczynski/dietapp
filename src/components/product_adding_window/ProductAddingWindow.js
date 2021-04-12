@@ -39,6 +39,7 @@ export default function ProductAddingWindow(props) {
       <main className="adding-window__main">
         { isAddingTypeSetAtFromList
           ? <AddingList 
+              warning={ props.warning }
               handleAddingWindow={ props.handleAddingWindow }
               handlePredefinedProductsAdding={ props.handlePredefinedProductsAdding }
             />
@@ -51,7 +52,9 @@ export default function ProductAddingWindow(props) {
                 fats: props.data.fats,
                 carbs: props.data.carbs,
                 kcal: props.data.kcal }}
+              warning={ props.warning }
               handleOnChange={ props.handleOnChange }
+              handleFormClearing={ props.handleFormClearing }
               handleProductAdding={ props.handleProductAdding }
               handleAddingWindow={ props.handleAddingWindow }
             />

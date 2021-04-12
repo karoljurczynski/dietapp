@@ -404,13 +404,13 @@
   background: #7500AF;
 }
 .adding-window__main__adding-form__product-info__line__warning {
-  color: red;
+  color: #c80000;
   position: absolute;
   top: 50%;
   -webkit-transform: translateY(-50%);
           transform: translateY(-50%);
-  left: 400px;
-  width: 200px;
+  left: 285px;
+  width: 300px;
 }
 .adding-window__main__adding-form__nutrition-facts {
   margin-top: 30px;
@@ -504,13 +504,13 @@
   background: #7500AF;
 }
 .adding-window__main__adding-form__nutrition-facts__line__warning {
-  color: red;
+  color: #c80000;
   position: absolute;
-  width: 200px;
   top: 50%;
   -webkit-transform: translateY(-50%);
           transform: translateY(-50%);
-  left: 400px;
+  left: 285px;
+  width: 300px;
 }
 .adding-window__main__adding-form__buttons-section {
   margin-top: 15px;

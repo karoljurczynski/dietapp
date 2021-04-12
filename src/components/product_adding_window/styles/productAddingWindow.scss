@@ -233,12 +233,12 @@
           }
 
           &__warning {
-            color: red;
+            color: $warning-color;
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            left: 400px;
-            width: 200px;
+            left: 285px;
+            width: 300px;
           }
         }
       }
@@ -292,12 +292,12 @@
           }
 
           &__warning {
-            color: red;
+            color: $warning-color;
             position: absolute;
-            width: 200px;
             top: 50%;
             transform: translateY(-50%);
-            left: 400px;
+            left: 285px;
+            width: 300px;
           }
         }
       }

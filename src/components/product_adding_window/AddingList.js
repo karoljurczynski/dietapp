@@ -98,8 +98,6 @@ export default function AddingList(props) {
   const handleProductEditing = (editedProduct) => {
     dispatch({ type: ACTIONS.UPDATE_SAVED_PRODUCTS_LIST, payload: { index: editedProduct.id, newProduct: editedProduct }})
     handleEditingWindow();
-
-    //props.handleProductAdding();
   }
 
   const handleEditingWindow = () => {
@@ -180,8 +178,6 @@ export default function AddingList(props) {
 
       { state.isEditWindowOpened 
         ? <EditForm 
-          handleProductEditing={ handleProductEditing }
-          handleEditingWindow={ handleEditingWindow }
           data={{
             id: state.productSendForEdit.id,
             name: state.productSendForEdit.name,
@@ -191,7 +187,9 @@ export default function AddingList(props) {
             carbs: state.productSendForEdit.carbs,
             kcal: state.productSendForEdit.kcal
           }}
-          
+          warning={ props.warning }
+          handleProductEditing={ handleProductEditing }
+          handleEditingWindow={ handleEditingWindow }
           />
 
         :  null }

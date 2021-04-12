@@ -5,6 +5,12 @@ import ProductAddingWindow from '../product_adding_window/ProductAddingWindow';
 import ProductRemovingWindow from '../product_removing_window/ProductRemovingWindow';
 import './styles/meal.css';
 
+export const warnings = {
+  name:   "Name must be a string of letters only",
+  weight: "Weight must be a positive number",
+  macros: "Macronutrient must be a number"
+};
+
 const ACTIONS = {
   NEGATE_MEAL_STATE: 'negate-meal-state',
   NEGATE_ADDING_WINDOW_STATE: 'negate-adding-window-state',
@@ -12,6 +18,8 @@ const ACTIONS = {
   ADD_PRODUCT: 'add-product',
   ENABLE_PLACEHOLDER: 'enable-placeholder',
   DISABLE_PLACEHOLDER: 'disable-placeholder',
+  SET_WARNING: 'set-warning',
+  CLEAR_WARNING: 'clear-warning',
   REMOVE_PRODUCT: 'remove-product',
   ADD_TO_SUMMARY: 'add-to-summary',
   SUB_FROM_SUMMARY: 'sub-from-summary',
@@ -32,6 +40,7 @@ export default function Meal(props) {
     countIngredients: false,
     productList: [],
     newProduct: { id: 0, mealId: props.mealId, dateIds: { dayId: 0, monthId: 0, yearId: 0 },  name: '', weight: '', proteins: '', fats: '', carbs: '', kcal: '' },
+    warning: ['', ''],
     summary: {
       proteins: 0,
       fats: 0,
@@ -69,6 +78,18 @@ export default function Meal(props) {
         state.productList.push(state.newProduct);
         localStorage.setItem(state.newProduct.id, JSON.stringify(state.newProduct));
         return {...state, newProduct: { id: 0, mealId: props.mealId, dateIds: { dayId: 0, monthId: 0, yearId: 0 }, name: '', weight: '', proteins: '', fats: '', carbs: '', kcal: ''}};
+      }
+
+      case ACTIONS.SET_WARNING: {
+        switch (action.payload) {
+          case 'name':  return { ...state, warning: [warnings.name, action.payload] }
+          case 'weight':  return { ...state, warning: [warnings.weight, action.payload] }
+          default:  return { ...state, warning: [warnings.macros, action.payload] }
+        };
+      }
+
+      case ACTIONS.CLEAR_WARNING: {
+        return { ...state, warning: ['', action.payload]};
       }
 
       case ACTIONS.REMOVE_PRODUCT: {
@@ -246,6 +267,16 @@ export default function Meal(props) {
     dispatch({ type: ACTIONS.NEGATE_REMOVING_WINDOW_STATE });
   }
 
+  const handleFormClearing = () => {
+    dispatch({ type: ACTIONS.CHANGE_NEW_PRODUCT_DATA, payload: { key: 'name', value: '' }});
+    dispatch({ type: ACTIONS.CHANGE_NEW_PRODUCT_DATA, payload: { key: 'weight', value: '' }});
+    dispatch({ type: ACTIONS.CHANGE_NEW_PRODUCT_DATA, payload: { key: 'proteins', value: '' }});
+    dispatch({ type: ACTIONS.CHANGE_NEW_PRODUCT_DATA, payload: { key: 'fats', value: '' }});
+    dispatch({ type: ACTIONS.CHANGE_NEW_PRODUCT_DATA, payload: { key: 'carbs', value: '' }});
+    dispatch({ type: ACTIONS.CHANGE_NEW_PRODUCT_DATA, payload: { key: 'kcal', value: '' }});
+    setPlaceholderState(false);
+  }
+
   const handleOnChange = (e) => {
     const isNumber = /[0-9]/;
     const isWord = /[a-z\s]/i;
@@ -253,17 +284,17 @@ export default function Meal(props) {
 
     const setValueAsZero = () => {
       dispatch({ type: ACTIONS.CHANGE_NEW_PRODUCT_DATA, payload: { key: e.target.id, value: '0' }});
-      setPlaceholderState(false);
+      dispatch({ type: ACTIONS.CLEAR_WARNING, payload: e.target.id });
     }
 
     const setValueAsNull = () => {
       dispatch({ type: ACTIONS.CHANGE_NEW_PRODUCT_DATA, payload: { key: e.target.id, value: "" } });
-      setPlaceholderState(true);
+      dispatch({ type: ACTIONS.SET_WARNING, payload: e.target.id });
     }
 
     const setValueAsCorrect = () => {
       dispatch({ type: ACTIONS.CHANGE_NEW_PRODUCT_DATA, payload: { key: e.target.id, value: e.target.value }});
-      setPlaceholderState(false);
+      dispatch({ type: ACTIONS.CLEAR_WARNING, payload: e.target.id });
     }
 
     if (e.target.id === 'name') {
@@ -286,7 +317,6 @@ export default function Meal(props) {
       else {
         setValueAsNull();
       }
-
     }
   }
 
@@ -352,7 +382,9 @@ export default function Meal(props) {
               fats: state.newProduct.fats,
               carbs: state.newProduct.carbs,
               kcal: state.newProduct.kcal }}
+            warning={ state.warning }
             handleOnChange={ handleOnChange }
+            handleFormClearing = { handleFormClearing }
             handleProductAdding={ handleProductAdding }
             handleAddingWindow={ handleAddingWindow }
             handlePredefinedProductsAdding={ handlePredefinedProductsAdding }

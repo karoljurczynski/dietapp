@@ -1,58 +1,77 @@
-import { useReducer } from 'react';
-import { useEffect } from 'react';
-import { React, useState } from 'react';
+import { React, useReducer} from 'react';
 import './styles/productAddingWindow.css';
+import { warnings } from '../meal/Meal';
 
 const ACTIONS = {
   UPDATE_PRODUCT_DATA: 'update-product-data',
-  RESET_FORM: 'reset-form'
+  RESET_FORM: 'reset-form',
+  SET_WARNING: 'set-warning',
+  CLEAR_WARNING: 'clear-warning'
 }
 
 export default function EditForm(props) {
-  const initialProductData = {
-    id: props.data.id,
-    name: props.data.name,
-    weight: props.data.weight,
-    proteins: props.data.proteins,
-    fats: props.data.fats,
-    carbs: props.data.carbs,
-    kcal: props.data.kcal
-  }
-
+  const initialState = {
+    productData: {
+      id: props.data.id,
+      name: props.data.name,
+      weight: props.data.weight,
+      proteins: props.data.proteins,
+      fats: props.data.fats,
+      carbs: props.data.carbs,
+      kcal: props.data.kcal
+    },
+    warning: ['' ,'']
+  } 
+    
   const reducer = (state, action) => {
     switch (action.type) {
 
       case ACTIONS.UPDATE_PRODUCT_DATA: {
         switch (action.payload.key) {
-          case 'name':     { return { ...state, name: action.payload.value } };
-          case 'weight':   { return { ...state, weight: action.payload.value } };
-          case 'proteins': { return { ...state, proteins: action.payload.value } };
-          case 'fats':     { return { ...state, fats: action.payload.value } };
-          case 'carbs':    { return { ...state, carbs: action.payload.value } };
-          case 'kcal':     { return { ...state, kcal: action.payload.value } };
+          case 'name':     { return { ...state, productData: {...state.productData, name:     action.payload.value } }};
+          case 'weight':   { return { ...state, productData: {...state.productData, weight:   action.payload.value } }};
+          case 'proteins': { return { ...state, productData: {...state.productData, proteins: action.payload.value } }};
+          case 'fats':     { return { ...state, productData: {...state.productData, fats:     action.payload.value } }};
+          case 'carbs':    { return { ...state, productData: {...state.productData, carbs:    action.payload.value } }};
+          case 'kcal':     { return { ...state, productData: {...state.productData, kcal:     action.payload.value } }};
           default:         { return console.error(`Unknown action type: ${action.type}`) };
         }
       }
 
       case ACTIONS.RESET_FORM: {
-        return { id: props.data.id,
-                 name: props.data.name,
-                 weight: props.data.weight,
-                 proteins: props.data.proteins,
-                 fats: props.data.fats,
-                 carbs: props.data.carbs,
-                 kcal: props.data.kcal };
+        return {...state, productData: 
+          { id: props.data.id,
+            name: props.data.name,
+            weight: props.data.weight,
+            proteins: props.data.proteins,
+            fats: props.data.fats,
+            carbs: props.data.carbs,
+            kcal: props.data.kcal 
+        }};
+      }
+
+      case ACTIONS.SET_WARNING: {
+        console.log(action.payload)
+        if (action.payload === 'name')
+          return { ...state, warning: [warnings.name, action.payload] }
+        else 
+          return { ...state, warning: [warnings.weight, action.payload] }
+      }
+
+      case ACTIONS.CLEAR_WARNING: {
+        return { ...state, warning: ['', action.payload] }
       }
 
       default: return console.error(`Unknown action type: ${action.type}`);
     }
   }
 
-  const [state, dispatch] = useReducer(reducer, initialProductData);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   const handleResetingForm = (e) => {
     e.preventDefault();
     dispatch({ type: ACTIONS.RESET_FORM });
+    dispatch({ type: ACTIONS.CLEAR_WARNING });
   }
 
   const calculateNutritionFacts = (e) => {
@@ -66,40 +85,51 @@ export default function EditForm(props) {
       kcal: Number(props.data.kcal) / Number(props.data.weight)
     };
 
-    if (isNumber.test(e.target.value[e.target.value.length - 1])) {
-      if (isZero.test(e.target.value)) {
-        dispatch({ type: ACTIONS.UPDATE_PRODUCT_DATA, payload: { key: 'weight', value: 1 }});
-        dispatch({ type: ACTIONS.UPDATE_PRODUCT_DATA, payload: { key: 'proteins', value: Math.round( 1 * nutritionPerOneGram.proteins) } });
-        dispatch({ type: ACTIONS.UPDATE_PRODUCT_DATA, payload: { key: 'fats', value: Math.round( 1 * nutritionPerOneGram.fats) } });
-        dispatch({ type: ACTIONS.UPDATE_PRODUCT_DATA, payload: { key: 'carbs', value: Math.round( 1 * nutritionPerOneGram.carbs) } });
-        dispatch({ type: ACTIONS.UPDATE_PRODUCT_DATA, payload: { key: 'kcal', value: Math.round( 1 * nutritionPerOneGram.kcal) } });
-
-      }
-
-      else {
-        dispatch({ type: ACTIONS.UPDATE_PRODUCT_DATA, payload: { key: 'weight', value: Number(e.target.value) } });
-        dispatch({ type: ACTIONS.UPDATE_PRODUCT_DATA, payload: { key: 'proteins', value: Math.round( e.target.value * nutritionPerOneGram.proteins) } });
-        dispatch({ type: ACTIONS.UPDATE_PRODUCT_DATA, payload: { key: 'fats', value: Math.round( e.target.value * nutritionPerOneGram.fats) } });
-        dispatch({ type: ACTIONS.UPDATE_PRODUCT_DATA, payload: { key: 'carbs', value: Math.round( e.target.value * nutritionPerOneGram.carbs) } });
-        dispatch({ type: ACTIONS.UPDATE_PRODUCT_DATA, payload: { key: 'kcal', value: Math.round( e.target.value * nutritionPerOneGram.kcal) } });
-      }
+    const setValueAsNull = () => {
+      dispatch({ type: ACTIONS.UPDATE_PRODUCT_DATA, payload: { key: 'weight', value: '' }});
+      dispatch({ type: ACTIONS.UPDATE_PRODUCT_DATA, payload: { key: 'proteins', value: 0 }});
+      dispatch({ type: ACTIONS.UPDATE_PRODUCT_DATA, payload: { key: 'fats', value: 0 }});
+      dispatch({ type: ACTIONS.UPDATE_PRODUCT_DATA, payload: { key: 'carbs', value: 0 }});
+      dispatch({ type: ACTIONS.UPDATE_PRODUCT_DATA, payload: { key: 'kcal', value: 0 }});
+      dispatch({ type: ACTIONS.SET_WARNING, payload: 'weight' });
     }
 
-    else
-      dispatch({ type: ACTIONS.UPDATE_PRODUCT_DATA, payload: { key: 'weight', value: "" }});
+    const setValueAsCorrect = () => {
+      dispatch({ type: ACTIONS.UPDATE_PRODUCT_DATA, payload: { key: 'weight', value: Number(e.target.value) } });
+      dispatch({ type: ACTIONS.UPDATE_PRODUCT_DATA, payload: { key: 'proteins', value: Math.round( e.target.value * nutritionPerOneGram.proteins) } });
+      dispatch({ type: ACTIONS.UPDATE_PRODUCT_DATA, payload: { key: 'fats', value: Math.round( e.target.value * nutritionPerOneGram.fats) } });
+      dispatch({ type: ACTIONS.UPDATE_PRODUCT_DATA, payload: { key: 'carbs', value: Math.round( e.target.value * nutritionPerOneGram.carbs) } });
+      dispatch({ type: ACTIONS.UPDATE_PRODUCT_DATA, payload: { key: 'kcal', value: Math.round( e.target.value * nutritionPerOneGram.kcal) } });
+      dispatch({ type: ACTIONS.CLEAR_WARNING, payload: 'weight' });
+    }
+
+    if (isNumber.test(e.target.value[e.target.value.length - 1])) {
+      isZero.test(e.target.value)
+      ? setValueAsNull()
+      : setValueAsCorrect();
+    }
+
+    else {
+      setValueAsNull();
+    }
   }
 
   const handleNameChanging = (e) => {
     const isWord = /[a-z\s]/i;
     e.preventDefault();
-    isWord.test(e.target.value[e.target.value.length - 1])
-    ? dispatch({ type: ACTIONS.UPDATE_PRODUCT_DATA, payload: { key: 'name', value: e.target.value }})
-    : dispatch({ type: ACTIONS.UPDATE_PRODUCT_DATA, payload: { key: 'name', value: "" }});
+    if (isWord.test(e.target.value[e.target.value.length - 1])) {
+      dispatch({ type: ACTIONS.UPDATE_PRODUCT_DATA, payload: { key: 'name', value: e.target.value }})
+      dispatch({ type: ACTIONS.CLEAR_WARNING, payload: 'name'});
+    }
+    else {
+      dispatch({ type: ACTIONS.UPDATE_PRODUCT_DATA, payload: { key: 'name', value: "" }});
+      dispatch({ type: ACTIONS.SET_WARNING, payload: 'name'});
+    }
   }
 
   const handleSavingChanges = (e) => {
     e.preventDefault();
-    props.handleProductEditing(state);
+    props.handleProductEditing(state.productData);
   }
 
   return (
@@ -122,13 +152,13 @@ export default function EditForm(props) {
                 className="adding-window__main__adding-form__product-info__line__input" 
                 type="text"
                 id="name"
-                value={ state.name } 
+                value={ state.productData.name } 
                 onChange={ handleNameChanging }
                 placeholder="Product name"
                 maxLength="32"
                 required>
               </input>
-              <p className="adding-window__main__adding-form__product-info__line__warning">You are idiot</p>
+              <p className="adding-window__main__adding-form__product-info__line__warning">{ state.warning[1] === 'name' ? state.warning[0] : null }</p>
             </div>
 
             <div className="adding-window__main__adding-form__product-info__line">
@@ -137,14 +167,14 @@ export default function EditForm(props) {
                 className="adding-window__main__adding-form__product-info__line__input" 
                 type="text" 
                 id="weight"
-                value={ state.weight } 
+                value={ state.productData.weight } 
                 onChange={ calculateNutritionFacts }
                 placeholder="Weight"
                 maxLength="4"
                 required>
               </input>
               <span className="adding-window__main__adding-form__product-info__line__decoration">g</span>
-              <p className="adding-window__main__adding-form__product-info__line__warning">You are idiot</p>
+              <p className="adding-window__main__adding-form__product-info__line__warning">{ state.warning[1] === 'weight' ? state.warning[0] : null }</p>
             </div>
 
 
@@ -160,7 +190,7 @@ export default function EditForm(props) {
               <p 
                 className="adding-window__main__adding-form__nutrition-facts__line__input" 
                 id="proteins">
-                { state.proteins }
+                { state.productData.proteins }
               </p>
               <span className="adding-window__main__adding-form__nutrition-facts__line__decoration">g</span>
             </div>
@@ -170,7 +200,7 @@ export default function EditForm(props) {
               <p 
                 className="adding-window__main__adding-form__nutrition-facts__line__input" 
                 id="fats">
-                { state.fats }
+                { state.productData.fats }
               </p>
               <span className="adding-window__main__adding-form__nutrition-facts__line__decoration">g</span>
             </div>
@@ -180,7 +210,7 @@ export default function EditForm(props) {
               <p 
                 className="adding-window__main__adding-form__nutrition-facts__line__input" 
                 id="carbs">
-                { state.carbs }
+                { state.productData.carbs }
               </p>
               <span className="adding-window__main__adding-form__nutrition-facts__line__decoration">g</span>
             </div>
@@ -190,7 +220,7 @@ export default function EditForm(props) {
               <p 
                 className="adding-window__main__adding-form__nutrition-facts__line__input" 
                 id="kcal">
-                { state.kcal }
+                { state.productData.kcal }
               </p>
               <span className="adding-window__main__adding-form__nutrition-facts__line__decoration">kcal</span>
             </div>
@@ -201,10 +231,10 @@ export default function EditForm(props) {
           <section className="adding-window__main__adding-form__buttons-section">
 
 
-            <button className="adding-window__main__adding-form__buttons-section__tertiary" onClick={ handleResetingForm }>Reset</button>
+            <button className="adding-window__main__adding-form__buttons-section__tertiary" type="button" onClick={ handleResetingForm }>Reset</button>
             
             <div className="adding-window__main__adding-form__buttons-section__right">
-              <button className="adding-window__main__adding-form__buttons-section__secondary" onClick={ props.handleEditingWindow }>Cancel</button>
+              <button className="adding-window__main__adding-form__buttons-section__secondary" type="button"  onClick={ props.handleEditingWindow }>Cancel</button>
               <input className="adding-window__main__adding-form__buttons-section__primary" type="submit" value="Save"></input>
             </div>
 
