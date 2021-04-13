@@ -45,6 +45,7 @@
     border: 1px solid $purple-color;
     background: white;
     margin: 25px 0;
+    cursor: pointer;
   
     &__left {
       color: $gray-color;
@@ -103,6 +104,7 @@
       }
 
       &__item {
+        cursor: pointer;
         @include flexSetup(column, flex-start, flex-start);
         width: 100%;
         padding: 8px 20px;
@@ -117,6 +119,7 @@
         }
 
         &--heading {
+          cursor: default;
           margin: 20px 0 12px 0;
           background: $purple-color;
           color: white;
@@ -158,6 +161,7 @@
         padding-top: 25px;
 
         &__secondary {
+          cursor: pointer;
           background: $white-color;
           color: $purple-color;
           padding: 8px 15px;
@@ -167,7 +171,8 @@
           box-shadow: 0 0 3px $gray-color;
         }
     
-        &__primary {
+        &__primary, &__primary--disabled {
+          cursor: pointer;
           background: $purple-color;
           color: $white-color;
           margin-left: 10px;
@@ -175,6 +180,13 @@
           @extend %robotoNormal;
           font-size: 1.2rem;
           border-radius: 15px;
+          box-shadow: 0 0 3px $gray-color;
+
+          &--disabled {
+            cursor: default;
+            opacity: 0.4;
+            box-shadow: 0 0 2px $black-color;
+          }
         }
       }
     }
@@ -277,6 +289,7 @@
       }
 
       &__background {
+        cursor: pointer;
         width: 20px;
         height: 20px;
         border: 2px solid $purple-color;
@@ -294,7 +307,8 @@
         }
       }
 
-      &__primary {
+      &__primary, &__primary--disabled {
+        cursor: pointer;
         background: $purple-color;
         color: $white-color;
         margin-left: 10px;
@@ -302,9 +316,17 @@
         @extend %robotoNormal;
         font-size: 1.2rem;
         border-radius: 15px;
+        box-shadow: 0 0 3px $gray-color;
+
+        &--disabled {
+          cursor: default;
+          opacity: 0.4;
+          box-shadow: 0 0 2px $black-color;
+        }
       }
 
       &__secondary {
+        cursor: pointer;
         background: $white-color;
         color: $purple-color;
         padding: 8px 15px;
@@ -315,6 +337,7 @@
       }
 
       &__tertiary {
+        cursor: pointer;
         background: $white-color;
         border: 1px solid $purple-color;
         color: black;

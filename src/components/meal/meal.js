@@ -359,7 +359,7 @@ export default function Meal(props) {
       <section className="meal__buttons-section" style={ state.isMealOpened ? {display: "flex"} : {display: "none"} }>
 
         <button 
-          className="meal__buttons-section__remove-button" 
+          className={ state.productList.length ? "meal__buttons-section__remove-button" : "meal__buttons-section__remove-button--disabled" } 
           onClick={ state.productList.length ? handleRemovingWindow : null } 
           disabled={ state.isAddingWindowOpened || state.isRemovingWindowOpened ? true : false }>
           Remove</button> 

@@ -9,7 +9,6 @@
   transition: 0.2s linear;
   background: $white-color;
   box-shadow: 1px 1px 5px $gray-color;
-  cursor: pointer;
 
   &__top-section {
     @include flexSetup(row, center, space-between);
@@ -123,24 +122,33 @@
     width: calc(100% - 40px);
     margin: 20px;
 
-    &__remove-button {
+    &__remove-button, &__remove-button--disabled {
+      cursor: pointer;
       background: $white-color;
       color: $purple-color;
-      padding: 8px;
+      padding: 8px 12px;
       border-radius: 15px;
       @extend %robotoNormal;
       font-size: 1.2rem;
       box-shadow: 0 0 3px $gray-color;
+      
+      &--disabled {
+        cursor: default;
+        opacity: 0.4;
+        box-shadow: 0 0 2px $black-color;
+      }
     }
 
     &__add-button {
+      cursor: pointer;
       background: $purple-color;
       color: $white-color;
       margin-left: 10px;
-      padding: 8px 15px;
+      padding: 8px 20px;
       @extend %robotoNormal;
       font-size: 1.2rem;
       border-radius: 15px;
+      box-shadow: 0 0 3px $gray-color;
     }
   }
 }

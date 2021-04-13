@@ -56,9 +56,7 @@ export default function AddingForm(props) {
   }
   const saveNewProductToList = (newProduct) => {
     const newList =  JSON.parse(localStorage.getItem("predefined"));
-    console.log(newList);
     newList.push(newProduct);
-    console.log(newList);
     localStorage.setItem("predefined", JSON.stringify(newList));
   }
 

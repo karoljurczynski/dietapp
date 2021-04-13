@@ -144,6 +144,7 @@
   width: 100%;
 }
 .removing-window__main__list__item, .removing-window__confirm__main__list__item {
+  cursor: pointer;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -168,6 +169,7 @@
   font-size: 1rem;
 }
 .removing-window__main__list__item--heading, .removing-window__confirm__main__list__item--heading {
+  cursor: default;
   margin: 20px 0 12px 0;
   background: #7500AF;
   color: white;
@@ -250,6 +252,7 @@
   padding-top: 25px;
 }
 .removing-window__main__list__buttons-section__secondary, .removing-window__confirm__main__list__buttons-section__secondary {
+  cursor: pointer;
   background: #FFFFFF;
   color: #7500AF;
   padding: 8px 15px;
@@ -259,6 +262,7 @@
           box-shadow: 0 0 3px #707070;
 }
 .removing-window__main__list__buttons-section__primary, .removing-window__confirm__main__list__buttons-section__primary {
+  cursor: pointer;
   background: #7500AF;
   color: #FFFFFF;
   margin-left: 10px;
@@ -267,6 +271,7 @@
   border-radius: 15px;
 }
 .removing-window__main__list__buttons-section__tertiary, .removing-window__confirm__main__list__buttons-section__tertiary {
+  cursor: pointer;
   background: #FFFFFF;
   border: 1px solid #7500AF;
   color: black;

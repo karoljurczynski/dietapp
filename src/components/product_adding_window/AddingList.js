@@ -198,8 +198,19 @@ export default function AddingList(props) {
       </ul>
       
       <section className="adding-window__main__adding-list__buttons-section">
-        <button className="adding-window__main__adding-list__buttons-section__secondary" onClick={ props.handleAddingWindow }>Cancel</button>
-        <button className="adding-window__main__adding-list__buttons-section__primary" onClick={ handleProductsAdding }>Add</button>
+        <button 
+          className="adding-window__main__adding-list__buttons-section__secondary" 
+          onClick={ props.handleAddingWindow }>
+          Cancel
+        </button>
+        
+        <button 
+          className={ !state.productSendForEdit.name 
+                      ? "adding-window__main__adding-list__buttons-section__primary adding-window__main__adding-list__buttons-section__primary--disabled" 
+                      : "adding-window__main__adding-list__buttons-section__primary"  } 
+          onClick={ handleProductsAdding }>
+          Add
+        </button>
       </section>
 
       { state.isEditWindowOpened 

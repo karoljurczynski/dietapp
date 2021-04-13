@@ -2,7 +2,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Cookie&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap");
-.adding-window__main__adding-list__buttons-section__secondary, .adding-window__main__adding-list__buttons-section__primary, .adding-window__main__form__primary, .adding-window__main__form__secondary, .adding-window__main__form__tertiary {
+.adding-window__main__adding-list__buttons-section__secondary, .adding-window__main__adding-list__buttons-section__primary, .adding-window__main__adding-list__buttons-section__primary--disabled, .adding-window__main__form__primary, .adding-window__main__form__primary--disabled, .adding-window__main__form__secondary, .adding-window__main__form__tertiary {
   font-family: "Roboto", sans-serif;
   font-weight: 400;
 }
@@ -87,6 +87,7 @@
   border: 1px solid #7500AF;
   background: white;
   margin: 25px 0;
+  cursor: pointer;
 }
 .adding-window__switch__left {
   color: #707070;
@@ -172,6 +173,7 @@
   width: 100%;
 }
 .adding-window__main__adding-list__item {
+  cursor: pointer;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -197,6 +199,7 @@
   font-size: 1rem;
 }
 .adding-window__main__adding-list__item--heading {
+  cursor: default;
   margin: 20px 0 12px 0;
   background: #7500AF;
   color: white;
@@ -279,6 +282,7 @@
   padding-top: 25px;
 }
 .adding-window__main__adding-list__buttons-section__secondary {
+  cursor: pointer;
   background: #FFFFFF;
   color: #7500AF;
   padding: 8px 15px;
@@ -287,13 +291,22 @@
   -webkit-box-shadow: 0 0 3px #707070;
           box-shadow: 0 0 3px #707070;
 }
-.adding-window__main__adding-list__buttons-section__primary {
+.adding-window__main__adding-list__buttons-section__primary, .adding-window__main__adding-list__buttons-section__primary--disabled {
+  cursor: pointer;
   background: #7500AF;
   color: #FFFFFF;
   margin-left: 10px;
   padding: 8px 20px;
   font-size: 1.2rem;
   border-radius: 15px;
+  -webkit-box-shadow: 0 0 3px #707070;
+          box-shadow: 0 0 3px #707070;
+}
+.adding-window__main__adding-list__buttons-section__primary--disabled, .adding-window__main__adding-list__buttons-section__primary--disabled--disabled {
+  cursor: default;
+  opacity: 0.4;
+  -webkit-box-shadow: 0 0 2px #000000;
+          box-shadow: 0 0 2px #000000;
 }
 .adding-window__main__form {
   width: 100%;
@@ -466,6 +479,7 @@
   width: 300px;
 }
 .adding-window__main__form__background {
+  cursor: pointer;
   width: 20px;
   height: 20px;
   border: 2px solid #7500AF;
@@ -481,15 +495,25 @@
   right: 2px;
   bottom: 2px;
 }
-.adding-window__main__form__primary {
+.adding-window__main__form__primary, .adding-window__main__form__primary--disabled {
+  cursor: pointer;
   background: #7500AF;
   color: #FFFFFF;
   margin-left: 10px;
   padding: 8px 20px;
   font-size: 1.2rem;
   border-radius: 15px;
+  -webkit-box-shadow: 0 0 3px #707070;
+          box-shadow: 0 0 3px #707070;
+}
+.adding-window__main__form__primary--disabled, .adding-window__main__form__primary--disabled--disabled {
+  cursor: default;
+  opacity: 0.4;
+  -webkit-box-shadow: 0 0 2px #000000;
+          box-shadow: 0 0 2px #000000;
 }
 .adding-window__main__form__secondary {
+  cursor: pointer;
   background: #FFFFFF;
   color: #7500AF;
   padding: 8px 15px;
@@ -499,6 +523,7 @@
           box-shadow: 0 0 3px #707070;
 }
 .adding-window__main__form__tertiary {
+  cursor: pointer;
   background: #FFFFFF;
   border: 1px solid #7500AF;
   color: black;
