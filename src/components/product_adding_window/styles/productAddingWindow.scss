@@ -179,165 +179,143 @@
       }
     }
 
-    &__adding-form {
+    &__form {
       width: 100%;
       @include flexSetup(column, flex-start, flex-start);
 
-      &__product-info {
-        width: 100%;
+      &--product-info {
         border-top: 2px solid $gray-color;
-        padding-top: 15px;
-        @include flexSetup(column, flex-start, flex-start);
-
-        &__title {
-          font-size: 1.2rem;
-          color: $black-color;
-          @include flexSetup(row, flex-start, flex-start);
-          margin-bottom: 15px;
-        }
-
-        &__line {
-          width: 30%;
-          @include flexSetup(row, flex-start, space-between);
-          position: relative;
-          margin-bottom: 5px;
-
-          &:first-of-type {
-            width: 50%;
-          }
-
-          &__label {
-            display: none;
-          }
-
-          &__input {
-            width: 100%;
-            color: $black-color;
-            border-radius: 30px;
-            border: 2px solid $purple-color;
-            padding: 10px 15px;
-            position: relative;
-          }
-
-          &__decoration {
-            position: absolute;
-            border-radius: 0 30px 30px 0;
-            @include flexSetup(row, center, center);
-            padding-right: 5px;
-            color: $white-color;
-            right: 0;
-            top: 0;
-            height: 100%;
-            width: 45px;
-            background: $purple-color;
-          }
-
-          &__warning {
-            color: $warning-color;
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            left: 285px;
-            width: 300px;
-          }
-        }
+        padding-top: 30px;
       }
 
-      &__nutrition-facts {
+      &--nutrition-facts {
         margin-top: 30px;
         width: 100%;
         @include flexSetup(column, flex-start, flex-start);
-
-        &__title {
-          font-size: 1.2rem;
-          color: $black-color;
-          @include flexSetup(row, flex-start, flex-start);
-          margin-bottom: 15px;
-        }
-
-        &__line {
-          width: 40%;
-          @include flexSetup(row, flex-start, space-between);
-          position: relative;
-          margin-bottom: 5px;
-
-          &:last-of-type {
-            margin-top: 10px;
-          }
-
-          &__label {
-            display: none;
-          }
-
-          &__input {
-            width: 100%;
-            color: $black-color;
-            border-radius: 30px;
-            border: 2px solid $purple-color;
-            padding: 10px 15px;
-            position: relative;
-          }
-
-          &__decoration {
-            position: absolute;
-            border-radius: 0 30px 30px 0;
-            @include flexSetup(row, center, center);
-            padding-right: 5px;
-            color: $white-color;
-            right: 0;
-            top: 0;
-            height: 100%;
-            width: 45px;
-            background: $purple-color;
-          }
-
-          &__warning {
-            color: $warning-color;
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            left: 285px;
-            width: 300px;
-          }
-        }
       }
 
-      &__buttons-section {
-        margin-top: 15px;
+      &--options {
+        margin-top: 30px;
+        width: 100%;
+        @include flexSetup(column, flex-start, flex-start);
+      }
+
+      &--buttons-section {
+        margin-top: 30px;
         width: 100%;
         border-top: 2px solid $gray-color;
         @include flexSetup(row, flex-end, space-between);
         padding-top: 25px;
+      }
 
-        &__primary {
-          background: $purple-color;
+      &__title {
+        font-size: 1.2rem;
+        color: $black-color;
+        @include flexSetup(row, flex-start, flex-start);
+        margin-bottom: 15px;
+      }
+
+      &__line {
+        width: 30%;
+        @include flexSetup(row, flex-start, space-between);
+        position: relative;
+        margin-bottom: 5px;
+
+        &--nutrition-facts {
+          width: 40%;
+          position: relative;
+          margin-bottom: 5px;
+          &:last-of-type {
+            margin-top: 10px;
+          }
+        }
+
+        &:first-of-type {
+          width: 50%;
+        }
+
+        &__label {
+          display: none;
+        }
+
+        &__input {
+          width: 100%;
+          color: $black-color;
+          border-radius: 30px;
+          border: 2px solid $purple-color;
+          padding: 10px 15px;
+          position: relative;
+        }
+
+        &__decoration {
+          position: absolute;
+          border-radius: 0 30px 30px 0;
+          @include flexSetup(row, center, center);
+          padding-right: 5px;
           color: $white-color;
-          margin-left: 10px;
-          padding: 8px 20px;
-          @extend %robotoNormal;
-          font-size: 1.2rem;
-          border-radius: 15px;
+          right: 0;
+          top: 0;
+          height: 100%;
+          width: 45px;
+          background: $purple-color;
         }
 
-        &__secondary {
-          background: $white-color;
-          color: $purple-color;
-          padding: 8px 15px;
-          border-radius: 15px;
-          @extend %robotoNormal;
-          font-size: 1.2rem;
-          box-shadow: 0 0 3px $gray-color;
+        &__warning {
+          color: $warning-color;
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          left: 285px;
+          width: 300px;
         }
-  
-        &__tertiary {
-          background: $white-color;
-          border: 1px solid $purple-color;
-          color: black;
-          padding: 8px 15px;
-          border-radius: 15px;
-          @extend %robotoNormal;
-          font-size: 1.2rem;
+      }
+
+      &__background {
+        width: 20px;
+        height: 20px;
+        background-color: $purple-color;
+        border-radius: 50%;
+        display: block;
+        position: relative;
+
+        &__checked {
+          position: absolute;
+          border-radius: 50%;
+          top: 2px;
+          left: 2px;
+          right: 2px;
+          bottom: 2px;
         }
+      }
+
+      &__primary {
+        background: $purple-color;
+        color: $white-color;
+        margin-left: 10px;
+        padding: 8px 20px;
+        @extend %robotoNormal;
+        font-size: 1.2rem;
+        border-radius: 15px;
+      }
+
+      &__secondary {
+        background: $white-color;
+        color: $purple-color;
+        padding: 8px 15px;
+        border-radius: 15px;
+        @extend %robotoNormal;
+        font-size: 1.2rem;
+        box-shadow: 0 0 3px $gray-color;
+      }
+
+      &__tertiary {
+        background: $white-color;
+        border: 1px solid $purple-color;
+        color: black;
+        padding: 8px 15px;
+        border-radius: 15px;
+        @extend %robotoNormal;
+        font-size: 1.2rem;
       }
     }
   }

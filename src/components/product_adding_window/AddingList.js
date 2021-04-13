@@ -1,13 +1,12 @@
-import { useReducer } from 'react';
-import { useEffect } from 'react';
-import { React } from 'react';
+import { React, useReducer, useEffect } from 'react';
 import EditForm from './EditForm';
 import './styles/productAddingWindow.css';
 
 const ACTIONS = {
   SET_PRODUCT_SEND_FOR_EDIT: "set-product-send-for-edit",
   NEGATE_EDIT_WINDOW_STATE: "negate-edit-window-state",
-  UPDATE_SAVED_PRODUCTS_LIST: "update-saved-products-list"
+  UPDATE_SAVED_PRODUCTS_LIST: "update-saved-products-list",
+  LOAD_PREDEFINED_PRODUCTS_LIST_FROM_LOCAL_STORAGE: 'load-predefined-products-list-from-local-storage'
 }
 
 const initialState = {
@@ -16,20 +15,20 @@ const initialState = {
     { id: 1, name: "Skyr", weight: 100, proteins: 20, fats: 0, carbs: 12, kcal: 100 },
     { id: 2, name: "Potatos", weight: 100, proteins: 9, fats: 2, carbs: 80, kcal: 126 },
     { id: 3, name: "Coca Cola", weight: 100, proteins: 0, fats: 0, carbs: 100, kcal: 400 },
-    { id: 4, name: "Banana", weight: 100, proteins: 5, fats: 3, carbs: 52, kcal: 173 },
-    { id: 5, name: "Cottage cheese", weight: 100, proteins: 20, fats: 10, carbs: 15, kcal: 250 },
-    { id: 6, name: "Skyr", weight: 100, proteins: 20, fats: 0, carbs: 12, kcal: 100 },
-    { id: 7, name: "Potatos", weight: 100, proteins: 9, fats: 2, carbs: 80, kcal: 126 },
-    { id: 8, name: "Coca Cola", weight: 100, proteins: 0, fats: 0, carbs: 100, kcal: 400 },
-    { id: 9, name: "Banana", weight: 100, proteins: 5, fats: 3, carbs: 52, kcal: 173 }],
+    { id: 4, name: "Banana", weight: 100, proteins: 5, fats: 3, carbs: 52, kcal: 173 }],
   
   productSendForEdit: { id: 0, name: '', weight: 0, proteins: 0, fats: 0, carbs: 0, kcal: 0 },
   isEditWindowOpened: false
 }
 
 export default function AddingList(props) {
+
   const reducer = (state, action) => {
     switch (action.type) {
+
+      case ACTIONS.LOAD_PREDEFINED_PRODUCTS_LIST_FROM_LOCAL_STORAGE: {
+        return {...state, savedProductList: action.payload}
+      }
 
       case ACTIONS.NEGATE_EDIT_WINDOW_STATE: {
         return { ...state, isEditWindowOpened: !state.isEditWindowOpened };
@@ -50,6 +49,7 @@ export default function AddingList(props) {
       case ACTIONS.UPDATE_SAVED_PRODUCTS_LIST: {
         const newSavedProductList = state.savedProductList;
         newSavedProductList[action.payload.index] = action.payload.newProduct;
+        console.log(newSavedProductList);
 
         return {...state, savedProductList: newSavedProductList};
       }
@@ -60,10 +60,20 @@ export default function AddingList(props) {
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const updateProductSendForEdit = (selectedProduct) => {
+  // EFFECT WHICH LOAD / CREATE PREDEFINED PRODUCTS LIST FROM / TO LOCAL STORAGE
+  useEffect(() => { 
+    let predefinedProductsList = [];
 
-    dispatch({ type: ACTIONS.SET_PRODUCT_SEND_FOR_EDIT, payload: selectedProduct });
-  }
+    if (Object.keys(localStorage).includes('predefined')) {
+      predefinedProductsList = JSON.parse(localStorage.getItem("predefined"));
+      dispatch({ type: ACTIONS.LOAD_PREDEFINED_PRODUCTS_LIST_FROM_LOCAL_STORAGE, payload: predefinedProductsList });
+    }
+    else {
+      predefinedProductsList = state.savedProductList;
+      localStorage.setItem("predefined", JSON.stringify(predefinedProductsList)); 
+    }
+
+   }, []);
 
   useEffect(() => {
     const addingWindow = document.querySelector(".adding-window");
@@ -72,7 +82,7 @@ export default function AddingList(props) {
     ? addingWindow.style.boxShadow = "none"
     : addingWindow.style.boxShadow = "1px 1px 5px #707070";
 
-  }, [state.isEditWindowOpened])
+  }, [state.isEditWindowOpened]);
 
   const handleSelected = (e) => {
     const product = document.getElementById(e.target.id);
@@ -95,8 +105,17 @@ export default function AddingList(props) {
     }
   }
 
+  const updateProductSendForEdit = (selectedProduct) => {
+    dispatch({ type: ACTIONS.SET_PRODUCT_SEND_FOR_EDIT, payload: selectedProduct });
+  }
+
   const handleProductEditing = (editedProduct) => {
     dispatch({ type: ACTIONS.UPDATE_SAVED_PRODUCTS_LIST, payload: { index: editedProduct.id, newProduct: editedProduct }})
+    
+    // SAVING CHANGES TO LOCAL STORAGE
+    const predefinedProductsList = state.savedProductList;
+    localStorage.setItem("predefined", JSON.stringify(predefinedProductsList));
+    
     handleEditingWindow();
   }
 
@@ -125,12 +144,6 @@ export default function AddingList(props) {
 
     props.handlePredefinedProductsAdding(selectedProducts);
   }
-
-  useEffect(() => {
-    const list = document.querySelector(".adding-window__main__adding-list");
-    console.log(list);
-
-  }, [state.savedProductList]);
 
   return (
     <> 

@@ -3,6 +3,8 @@ import './styles/productAddingWindow.css';
 
 export default function AddingForm(props) {
 
+  const [isChecked, setIsChecked] = useState(false);
+
   const handleClearButton = () => {
     props.handleFormClearing();
   }
@@ -11,18 +13,22 @@ export default function AddingForm(props) {
     props.handleAddingWindow();
   }
 
+  const handleCheckbox = () => {
+    setIsChecked(!isChecked);
+  }
+
   return (
-    <form className="adding-window__main__adding-form" onSubmit={ props.handleProductAdding }>
+    <form className="adding-window__main__form" onSubmit={ props.handleProductAdding }>
 
-      <section className="adding-window__main__adding-form__product-info">
+      <section className="adding-window__main__form adding-window__main__form--product-info">
 
 
-        <h3 className="adding-window__main__adding-form__product-info__title">Product info</h3>
+        <h3 className="adding-window__main__form__title">Product info</h3>
         
-        <div className="adding-window__main__adding-form__product-info__line">
-          <label className="adding-window__main__adding-form__product-info__line__label" htmlFor="name">Product name: </label>
+        <div className="adding-window__main__form__line">
+          <label className="adding-window__main__form__line__label" htmlFor="name">Product name: </label>
           <input
-            className="adding-window__main__adding-form__product-info__line__input" 
+            className="adding-window__main__form__line__input" 
             type="text"
             id="name"
             value={ props.data.name }
@@ -31,13 +37,13 @@ export default function AddingForm(props) {
             maxLength="32"
             required>
           </input>
-          <p className="adding-window__main__adding-form__product-info__line__warning">{ props.warning[1] === 'name' ? props.warning[0] : null }</p>
+          <p className="adding-window__main__form__line__warning">{ props.warning[1] === 'name' ? props.warning[0] : null }</p>
         </div>
 
-        <div className="adding-window__main__adding-form__product-info__line">
-          <label className="adding-window__main__adding-form__product-info__line__label" htmlFor="weight">Product weight: </label>
+        <div className="adding-window__main__form__line">
+          <label className="adding-window__main__form__line__label" htmlFor="weight">Product weight: </label>
           <input 
-            className="adding-window__main__adding-form__product-info__line__input"
+            className="adding-window__main__form__line__input"
             type="text"
             id="weight"
             value={ props.data.weight } 
@@ -46,22 +52,22 @@ export default function AddingForm(props) {
             maxLength="4"
             required>
           </input>
-          <span className="adding-window__main__adding-form__product-info__line__decoration">g</span>
-          <p className="adding-window__main__adding-form__product-info__line__warning">{ props.warning[1] === 'weight' ? props.warning[0] : null }</p>
+          <span className="adding-window__main__form__line__decoration">g</span>
+          <p className="adding-window__main__form__line__warning">{ props.warning[1] === 'weight' ? props.warning[0] : null }</p>
         </div>
 
 
       </section>
 
-      <section className="adding-window__main__adding-form__nutrition-facts">
+      <section className="adding-window__main__form adding-window__main__form--nutrition-facts">
         
 
-        <h3 className="adding-window__main__adding-form__nutrition-facts__title">Nutrition facts</h3>
+        <h3 className="adding-window__main__form__title">Nutrition facts</h3>
         
-        <div className="adding-window__main__adding-form__nutrition-facts__line">
-          <label className="adding-window__main__adding-form__nutrition-facts__line__label" htmlFor="proteins">Proteins: </label>
+        <div className="adding-window__main__form__line--nutrition-facts">
+          <label className="adding-window__main__form__line__label" htmlFor="proteins">Proteins: </label>
           <input 
-            className="adding-window__main__adding-form__nutrition-facts__line__input" 
+            className="adding-window__main__form__line__input" 
             type="text" 
             id="proteins"
             value={ props.data.proteins } 
@@ -70,14 +76,14 @@ export default function AddingForm(props) {
             maxLength="4"
             required>
           </input>
-          <span className="adding-window__main__adding-form__nutrition-facts__line__decoration">g</span>
-          <p className="adding-window__main__adding-form__nutrition-facts__line__warning">{ props.warning[1] === 'proteins' ? props.warning[0] : null }</p>
+          <span className="adding-window__main__form__line__decoration">g</span>
+          <p className="adding-window__main__form__line__warning">{ props.warning[1] === 'proteins' ? props.warning[0] : null }</p>
         </div>
 
-        <div className="adding-window__main__adding-form__nutrition-facts__line">
-          <label className="adding-window__main__adding-form__nutrition-facts__line__label" htmlFor="fats">Fats: </label>
+        <div className="adding-window__main__form__line--nutrition-facts">
+          <label className="adding-window__main__form__line__label" htmlFor="fats">Fats: </label>
           <input
-            className="adding-window__main__adding-form__nutrition-facts__line__input"  
+            className="adding-window__main__form__line__input"  
             type="text" 
             id="fats"
             value={ props.data.fats } 
@@ -86,14 +92,14 @@ export default function AddingForm(props) {
             maxLength="4"
             required>
           </input>
-          <span className="adding-window__main__adding-form__nutrition-facts__line__decoration">g</span>
-          <p className="adding-window__main__adding-form__nutrition-facts__line__warning">{ props.warning[1] === 'fats' ? props.warning[0] : null }</p>
+          <span className="adding-window__main__form__line__decoration">g</span>
+          <p className="adding-window__main__form__line__warning">{ props.warning[1] === 'fats' ? props.warning[0] : null }</p>
         </div>
 
-        <div className="adding-window__main__adding-form__nutrition-facts__line">
-          <label className="adding-window__main__adding-form__nutrition-facts__line__label" htmlFor="carbs">Carbs: </label>
+        <div className="adding-window__main__form__line--nutrition-facts">
+          <label className="adding-window__main__form__line__label" htmlFor="carbs">Carbs: </label>
           <input
-            className="adding-window__main__adding-form__nutrition-facts__line__input"  
+            className="adding-window__main__form__line__input"  
             type="text" 
             id="carbs"
             value={ props.data.carbs } 
@@ -102,14 +108,14 @@ export default function AddingForm(props) {
             maxLength="4"
             required>
           </input>
-          <span className="adding-window__main__adding-form__nutrition-facts__line__decoration">g</span>
-          <p className="adding-window__main__adding-form__nutrition-facts__line__warning">{ props.warning[1] === 'carbs' ? props.warning[0] : null }</p>
+          <span className="adding-window__main__form__line__decoration">g</span>
+          <p className="adding-window__main__form__line__warning">{ props.warning[1] === 'carbs' ? props.warning[0] : null }</p>
         </div>
 
-        <div className="adding-window__main__adding-form__nutrition-facts__line">
-          <label className="adding-window__main__adding-form__nutrition-facts__line__label" htmlFor="kcal">Calories: </label>
+        <div className="adding-window__main__form__line--nutrition-facts">
+          <label className="adding-window__main__form__line__label" htmlFor="kcal">Calories: </label>
           <input
-            className="adding-window__main__adding-form__nutrition-facts__line__input"  
+            className="adding-window__main__form__line__input"  
             type="text" 
             id="kcal"
             value={ props.data.kcal }
@@ -118,21 +124,40 @@ export default function AddingForm(props) {
             maxLength="4"
             required>
           </input>
-          <span className="adding-window__main__adding-form__nutrition-facts__line__decoration">kcal</span>
-          <p className="adding-window__main__adding-form__nutrition-facts__line__warning">{ props.warning[1] === 'kcal' ? props.warning[0] : null }</p>
+          <span className="adding-window__main__form__line__decoration">kcal</span>
+          <p className="adding-window__main__form__line__warning">{ props.warning[1] === 'kcal' ? props.warning[0] : null }</p>
         </div>
 
 
       </section>
 
-      <section className="adding-window__main__adding-form__buttons-section">
+      <section className="adding-window__main__form adding-window__main__form--options">
+
+        <h3 className="adding-window__main__form__title">Options</h3>
+
+        <div className="adding-window__main__form__line">
+        <label className="adding-window__main__form__line__label" htmlFor="list-saving">Save to list</label>
+          <div className="adding-window__main__form__background">
+            <button 
+              className="adding-window__main__form__background__checked" 
+              id="list-saving"
+              type="button"
+              style={ isChecked ? {backgroundColor: "white"} : {backgroundColor: "transparent"}}
+              onClick={ handleCheckbox }>
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+      <section className="adding-window__main__form adding-window__main__form--buttons-section">
 
 
-        <button className="adding-window__main__adding-form__buttons-section__tertiary" type="button" onClick={ handleClearButton }>Clear</button>
+        <button className="adding-window__main__form__tertiary" type="button" onClick={ handleClearButton }>Clear</button>
 
-        <div className="adding-window__main__adding-form__buttons-section__right">
-          <button className="adding-window__main__adding-form__buttons-section__secondary" type="button" onClick={ handleCancelButton }>Cancel</button>
-          <input className="adding-window__main__adding-form__buttons-section__primary" type="submit" value="Add"></input>
+        <div>
+          <button className="adding-window__main__form__secondary" type="button" onClick={ handleCancelButton }>Cancel</button>
+          <input className="adding-window__main__form__primary" type="submit" value="Add"></input>
         </div>
       
 
