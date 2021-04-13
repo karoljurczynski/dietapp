@@ -139,17 +139,17 @@ export default function EditForm(props) {
 
       <main className="adding-window__main">
 
-        <form className="adding-window__main__adding-form adding-window__main__adding-form--edit"  onSubmit={ handleSavingChanges }>
+        <form className="adding-window__main__form adding-window__main__form--edit"  onSubmit={ handleSavingChanges }>
 
-          <section className="adding-window__main__adding-form__product-info">
+          <section className="adding-window__main__form adding-window__main__form--product-info">
 
 
-            <h3 className="adding-window__main__adding-form__product-info__title">Product info</h3>
+            <h3 className="adding-window__main__form__title">Product info</h3>
             
-            <div className="adding-window__main__adding-form__product-info__line">
-              <label className="adding-window__main__adding-form__product-info__line__label" htmlFor="name">Product name: </label>
+            <div className="adding-window__main__form__line adding-window__main__form__line--long">
+              <label className="adding-window__main__form__line__label" htmlFor="name">Product name: </label>
               <input
-                className="adding-window__main__adding-form__product-info__line__input" 
+                className="adding-window__main__form__line__input" 
                 type="text"
                 id="name"
                 value={ state.productData.name } 
@@ -158,13 +158,13 @@ export default function EditForm(props) {
                 maxLength="32"
                 required>
               </input>
-              <p className="adding-window__main__adding-form__product-info__line__warning">{ state.warning[1] === 'name' ? state.warning[0] : null }</p>
+              <p className="adding-window__main__form__line__warning">{ state.warning[1] === 'name' ? state.warning[0] : null }</p>
             </div>
 
-            <div className="adding-window__main__adding-form__product-info__line">
-              <label className="adding-window__main__adding-form__product-info__line__label" htmlFor="weight">Product weight: </label>
+            <div className="adding-window__main__form__line adding-window__main__form__line--short">
+              <label className="adding-window__main__form__line__label" htmlFor="weight">Product weight: </label>
               <input 
-                className="adding-window__main__adding-form__product-info__line__input" 
+                className="adding-window__main__form__line__input" 
                 type="text" 
                 id="weight"
                 value={ state.productData.weight } 
@@ -173,69 +173,69 @@ export default function EditForm(props) {
                 maxLength="4"
                 required>
               </input>
-              <span className="adding-window__main__adding-form__product-info__line__decoration">g</span>
-              <p className="adding-window__main__adding-form__product-info__line__warning">{ state.warning[1] === 'weight' ? state.warning[0] : null }</p>
+              <span className="adding-window__main__form__line__decoration">g</span>
+              <p className="adding-window__main__form__line__warning">{ state.warning[1] === 'weight' ? state.warning[0] : null }</p>
             </div>
 
 
           </section>
 
-          <section className="adding-window__main__adding-form__nutrition-facts">
+          <section className="adding-window__main__form adding-window__main__form--nutrition-facts">
             
 
-            <h3 className="adding-window__main__adding-form__nutrition-facts__title">Nutrition facts</h3>
+            <h3 className="adding-window__main__form__title">Nutrition facts</h3>
             
-            <div className="adding-window__main__adding-form__nutrition-facts__line">
-              <label className="adding-window__main__adding-form__nutrition-facts__line__label" htmlFor="proteins">Proteins: </label>
+            <div className="adding-window__main__form__line adding-window__main__form__line--normal">
+              <label className="adding-window__main__form__line__label" htmlFor="proteins">Proteins: </label>
               <p 
-                className="adding-window__main__adding-form__nutrition-facts__line__input" 
+                className="adding-window__main__form__line__input" 
                 id="proteins">
                 { state.productData.proteins }
               </p>
-              <span className="adding-window__main__adding-form__nutrition-facts__line__decoration">g</span>
+              <span className="adding-window__main__form__line__decoration">g</span>
             </div>
 
-            <div className="adding-window__main__adding-form__nutrition-facts__line">
-              <label className="adding-window__main__adding-form__nutrition-facts__line__label" htmlFor="fats">Fats: </label>
+            <div className="adding-window__main__form__line adding-window__main__form__line--normal">
+              <label className="adding-window__main__form__line__label" htmlFor="fats">Fats: </label>
               <p 
-                className="adding-window__main__adding-form__nutrition-facts__line__input" 
+                className="adding-window__main__form__line__input" 
                 id="fats">
                 { state.productData.fats }
               </p>
-              <span className="adding-window__main__adding-form__nutrition-facts__line__decoration">g</span>
+              <span className="adding-window__main__form__line__decoration">g</span>
             </div>
 
-            <div className="adding-window__main__adding-form__nutrition-facts__line">
-              <label className="adding-window__main__adding-form__nutrition-facts__line__label" htmlFor="carbs">Carbs: </label>
+            <div className="adding-window__main__form__line adding-window__main__form__line--normal">
+              <label className="adding-window__main__form__line__label" htmlFor="carbs">Carbs: </label>
               <p 
-                className="adding-window__main__adding-form__nutrition-facts__line__input" 
+                className="adding-window__main__form__line__input" 
                 id="carbs">
                 { state.productData.carbs }
               </p>
-              <span className="adding-window__main__adding-form__nutrition-facts__line__decoration">g</span>
+              <span className="adding-window__main__form__line__decoration">g</span>
             </div>
 
-            <div className="adding-window__main__adding-form__nutrition-facts__line">
-              <label className="adding-window__main__adding-form__nutrition-facts__line__label" htmlFor="kcal">Calories: </label>
+            <div className="adding-window__main__form__line adding-window__main__form__line--normal">
+              <label className="adding-window__main__form__line__label" htmlFor="kcal">Calories: </label>
               <p 
-                className="adding-window__main__adding-form__nutrition-facts__line__input" 
+                className="adding-window__main__form__line__input" 
                 id="kcal">
                 { state.productData.kcal }
               </p>
-              <span className="adding-window__main__adding-form__nutrition-facts__line__decoration">kcal</span>
+              <span className="adding-window__main__form__line__decoration">kcal</span>
             </div>
 
 
           </section>
 
-          <section className="adding-window__main__adding-form__buttons-section">
+          <section className="adding-window__main__form adding-window__main__form--buttons-section">
 
 
-            <button className="adding-window__main__adding-form__buttons-section__tertiary" type="button" onClick={ handleResetingForm }>Reset</button>
+            <button className="adding-window__main__form__tertiary" type="button" onClick={ handleResetingForm }>Reset</button>
             
-            <div className="adding-window__main__adding-form__buttons-section__right">
-              <button className="adding-window__main__adding-form__buttons-section__secondary" type="button"  onClick={ props.handleEditingWindow }>Cancel</button>
-              <input className="adding-window__main__adding-form__buttons-section__primary" type="submit" value="Save"></input>
+            <div className="adding-window__main__form__right">
+              <button className="adding-window__main__form__secondary" type="button"  onClick={ props.handleEditingWindow }>Cancel</button>
+              <input className="adding-window__main__form__primary" type="submit" value="Save"></input>
             </div>
 
 

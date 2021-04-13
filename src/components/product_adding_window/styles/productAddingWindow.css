@@ -313,7 +313,7 @@
 }
 .adding-window__main__form--product-info {
   border-top: 2px solid #707070;
-  padding-top: 30px;
+  padding-top: 15px;
 }
 .adding-window__main__form--nutrition-facts {
   margin-top: 30px;
@@ -350,7 +350,7 @@
           justify-content: flex-start;
 }
 .adding-window__main__form--buttons-section {
-  margin-top: 30px;
+  margin-top: 15px;
   width: 100%;
   border-top: 2px solid #707070;
   display: -webkit-box;
@@ -387,7 +387,6 @@
   margin-bottom: 15px;
 }
 .adding-window__main__form__line {
-  width: 30%;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -404,19 +403,26 @@
   position: relative;
   margin-bottom: 5px;
 }
-.adding-window__main__form__line--nutrition-facts {
-  width: 40%;
+.adding-window__main__form__line--long {
   position: relative;
-  margin-bottom: 5px;
-}
-.adding-window__main__form__line--nutrition-facts:last-of-type {
-  margin-top: 10px;
-}
-.adding-window__main__form__line:first-of-type {
   width: 50%;
+}
+.adding-window__main__form__line--short {
+  position: relative;
+  width: 30%;
+}
+.adding-window__main__form__line--normal {
+  position: relative;
+  width: 40%;
+  margin-bottom: 5px;
 }
 .adding-window__main__form__line__label {
   display: none;
+}
+.adding-window__main__form__line__label--options {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
 }
 .adding-window__main__form__line__input {
   width: 100%;
@@ -462,7 +468,7 @@
 .adding-window__main__form__background {
   width: 20px;
   height: 20px;
-  background-color: #7500AF;
+  border: 2px solid #7500AF;
   border-radius: 50%;
   display: block;
   position: relative;

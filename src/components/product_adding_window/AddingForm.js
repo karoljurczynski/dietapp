@@ -25,7 +25,7 @@ export default function AddingForm(props) {
 
         <h3 className="adding-window__main__form__title">Product info</h3>
         
-        <div className="adding-window__main__form__line">
+        <div className="adding-window__main__form__line adding-window__main__form__line--long">
           <label className="adding-window__main__form__line__label" htmlFor="name">Product name: </label>
           <input
             className="adding-window__main__form__line__input" 
@@ -40,7 +40,7 @@ export default function AddingForm(props) {
           <p className="adding-window__main__form__line__warning">{ props.warning[1] === 'name' ? props.warning[0] : null }</p>
         </div>
 
-        <div className="adding-window__main__form__line">
+        <div className="adding-window__main__form__line adding-window__main__form__line--short">
           <label className="adding-window__main__form__line__label" htmlFor="weight">Product weight: </label>
           <input 
             className="adding-window__main__form__line__input"
@@ -64,7 +64,7 @@ export default function AddingForm(props) {
 
         <h3 className="adding-window__main__form__title">Nutrition facts</h3>
         
-        <div className="adding-window__main__form__line--nutrition-facts">
+        <div className="adding-window__main__form__line--normal">
           <label className="adding-window__main__form__line__label" htmlFor="proteins">Proteins: </label>
           <input 
             className="adding-window__main__form__line__input" 
@@ -80,7 +80,7 @@ export default function AddingForm(props) {
           <p className="adding-window__main__form__line__warning">{ props.warning[1] === 'proteins' ? props.warning[0] : null }</p>
         </div>
 
-        <div className="adding-window__main__form__line--nutrition-facts">
+        <div className="adding-window__main__form__line--normal">
           <label className="adding-window__main__form__line__label" htmlFor="fats">Fats: </label>
           <input
             className="adding-window__main__form__line__input"  
@@ -96,7 +96,7 @@ export default function AddingForm(props) {
           <p className="adding-window__main__form__line__warning">{ props.warning[1] === 'fats' ? props.warning[0] : null }</p>
         </div>
 
-        <div className="adding-window__main__form__line--nutrition-facts">
+        <div className="adding-window__main__form__line--normal">
           <label className="adding-window__main__form__line__label" htmlFor="carbs">Carbs: </label>
           <input
             className="adding-window__main__form__line__input"  
@@ -112,7 +112,7 @@ export default function AddingForm(props) {
           <p className="adding-window__main__form__line__warning">{ props.warning[1] === 'carbs' ? props.warning[0] : null }</p>
         </div>
 
-        <div className="adding-window__main__form__line--nutrition-facts">
+        <div className="adding-window__main__form__line--normal">
           <label className="adding-window__main__form__line__label" htmlFor="kcal">Calories: </label>
           <input
             className="adding-window__main__form__line__input"  
@@ -135,17 +135,19 @@ export default function AddingForm(props) {
 
         <h3 className="adding-window__main__form__title">Options</h3>
 
-        <div className="adding-window__main__form__line">
-        <label className="adding-window__main__form__line__label" htmlFor="list-saving">Save to list</label>
-          <div className="adding-window__main__form__background">
-            <button 
+        <div className="adding-window__main__form__line adding-window__main__form__line--normal">
+        <label className="adding-window__main__form__line__label adding-window__main__form__line__label--options" htmlFor="list-saving">Save to list</label>
+          <button 
+            className="adding-window__main__form__background"
+            id="list-saving"
+            type="button">
+            
+            <div
               className="adding-window__main__form__background__checked" 
-              id="list-saving"
-              type="button"
-              style={ isChecked ? {backgroundColor: "white"} : {backgroundColor: "transparent"}}
+              style={ isChecked ? {backgroundColor: "#7500AF"} : {backgroundColor: "transparent"}}
               onClick={ handleCheckbox }>
-            </button>
-          </div>
+            </div>
+          </button>
         </div>
 
       </section>
