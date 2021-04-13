@@ -17,21 +17,24 @@ export default function AddingForm(props) {
     props.handleAddingWindow();
   }
 
+  const searchForCheckedOptions = (keysArray) => {
+    let checkedOptions = [];
+    keysArray.forEach(key => {
+      if (optionsStates[key])
+        checkedOptions.push(key);
+    });
+
+    return checkedOptions;
+  }
+
   const handleAddButton = (e) => {
     props.handleProductAdding(e);
 
     const keys = Object.keys(optionsStates);
-    console.log(keys);
-    let checkedOptions = [];
 
-    keys.forEach(key => {
-      if (optionsStates[key])
-        checkedOptions.push(key);
-    });
-    console.log(checkedOptions);
+    const checkedOptions = searchForCheckedOptions(keys);
 
     checkedOptions.forEach(checkedKey => {
-      console.log(checkedKey)
 
       switch(checkedKey) {
         case 'list-saving': {
@@ -191,7 +194,7 @@ export default function AddingForm(props) {
             <div 
               className="adding-window__main__form__background__checked" 
               id="list-saving"
-              style={optionsStates['list-saving'] ? {backgroundColor: "#7500AF"} : {backgroundColor: "transparent"}}>
+              style={ optionsStates['list-saving'] ? {backgroundColor: "#7500AF"} : {backgroundColor: "transparent"} }>
             </div>
           </button>
         </div>

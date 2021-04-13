@@ -143,7 +143,8 @@ export default function AddingList(props) {
         );
     });
 
-    props.handlePredefinedProductsAdding(selectedProducts);
+    if (selectedProducts.length !== 0)
+      props.handlePredefinedProductsAdding(selectedProducts);
   }
 
   const getIndexOfProduct = (targetId) => {

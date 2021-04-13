@@ -27,7 +27,8 @@ const ACTIONS = {
   CHANGE_SETTINGS_DATA: 'change-settings-data',
   BACKUP_OLD_SETTINGS: 'backup-old-settings',
   RESTORE_OLD_SETTINGS: 'restore-old-settings',
-  LOAD_SETTINGS: 'load-settings'
+  LOAD_SETTINGS: 'load-settings',
+  SET_CLEAR_ALL_PRODUCTS: 'set-clear-all-products'
 }
 
 
@@ -60,8 +61,7 @@ function App() {
     else
       saveSettingsToLocalStorage(); 
 
-    dispatch({ type: ACTIONS.BACKUP_OLD_SETTINGS });
-
+    backupSettings();
   }, []);
 
   const reducer = (state, action) => {
@@ -138,13 +138,6 @@ function App() {
 
       case ACTIONS.CHANGE_SETTINGS_DATA: {
         switch (action.payload.key) {
-          case 'clearAllProducts': {
-            return {...state, 
-              settingsData: { ...state.settingsData, 
-              nutrition: {...state.settingsData.nutrition,
-              clearAllProducts: action.payload.value }}
-            };
-          };
 
           case 'editMealName': {
             return {...state, 
@@ -175,6 +168,10 @@ function App() {
         return {...state, settingsData: newSettings }
       }
 
+      case ACTIONS.SET_CLEAR_ALL_PRODUCTS: {
+        return { ...state, clearAllProducts: action.payload };
+      }
+
       default: return console.error(`Unknown action type: ${action.type}`);
     }
   }
@@ -198,8 +195,7 @@ function App() {
       nutrition: {
         dailyDemand: { kcal: 2000, proteins: 120, fats: 55, carbs: 240 },
         namesOfMeals: { 0: "Breakfast", 1: "II Breakfast", 2: "Lunch", 3: "Snack", 4: "Dinner", 5: "", 6: "", 7: "", 8: "", 9: "" },
-        numberOfMeals: 5,
-        clearAllProducts: false
+        numberOfMeals: 5
       },
 
       training: {
@@ -207,6 +203,7 @@ function App() {
         numberOfExercises: 6
       }
     },
+    clearAllProducts: false,
     oldSettingsData: {}
   }
 
@@ -242,8 +239,8 @@ function App() {
     else
       newPageTitle = categoryTitle;
 
-    dispatch({type: ACTIONS.CHANGE_PAGE_TITLE, payload: newPageTitle })
-    dispatch({ type: ACTIONS.RESTORE_OLD_SETTINGS });
+    dispatch({type: ACTIONS.CHANGE_PAGE_TITLE, payload: newPageTitle });
+    restoreSettingsFromBackup();
   }
 
   const handleMenu = (categoryTitle) => {
@@ -267,46 +264,37 @@ function App() {
   }
 
   const confirmClearAllProducts = () => {
-    dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: 'clearAllProducts', value: false } });
+    dispatch({ type: ACTIONS.SET_CLEAR_ALL_PRODUCTS, payload: false });
 
     Object.keys(localStorage).forEach(key => {
-      if (key !== "settings")
+      if (key === "settings" || key === "predefined")
+        console.log(key);
+      else
         localStorage.removeItem(key);
     });
-    
-    resetCheckbox("clearAllProducts");
-    updateGauges();
   }
 
   const cancelClearAllProducts = () => {
-    dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: 'clearAllProducts', value: false } });
-    resetCheckbox("clearAllProducts");
-    updateGauges();
+    dispatch({ type: ACTIONS.SET_CLEAR_ALL_PRODUCTS, payload: false });
   }
 
   const handleSettingsSaved = (e) => {
     e.preventDefault();
 
-    saveSettingsToLocalStorage();
+    if (e.target[4].checked === true)
+      dispatch({ type: ACTIONS.SET_CLEAR_ALL_PRODUCTS, payload: true });
 
-    if (e.target[4].checked === true) {
-      dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: 'clearAllProducts', value: true } });
-    }
-
-    else {
-      dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: 'clearAllProducts', value: false } });
-      resetCheckbox("clearAllProducts");
-    }
     backupSettings();
+    restoreSettingsFromBackup();
+    saveSettingsToLocalStorage();
+    resetCheckbox("clearAllProducts");
     updateGauges();
   }
 
   const handleSettingsCanceled = (e) => {
     e.preventDefault();
-
     restoreSettingsFromBackup();
     saveSettingsToLocalStorage();
-
     resetCheckbox("clearAllProducts");
     updateGauges();
   }
@@ -406,7 +394,7 @@ function App() {
 
           <>
 
-          {state.settingsData.nutrition.clearAllProducts && 
+          {state.clearAllProducts && 
             <>
               <div>Remove ALL products?</div>
               <button onClick={ confirmClearAllProducts }>Remove</button>
@@ -482,6 +470,7 @@ function App() {
                   <input 
                     type="text" 
                     id="setMealsNumber"
+                    maxLength="1"
                     value={ state.settingsData.nutrition.numberOfMeals }
                     onChange={ handleSettingOnChange }
                     required />

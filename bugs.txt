@@ -1,0 +1,1 @@
+remove all product state at settings section
