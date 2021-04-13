@@ -99,7 +99,7 @@ export default function AddingList(props) {
       else {
         product.style.background = "#7500AF30";
         productName.style.fontWeight = "bold";
-        updateProductSendForEdit(state.savedProductList[e.target.id]);
+        updateProductSendForEdit(state.savedProductList[getIndexOfProduct(e.target.id)]);
         handleEditingWindow();
       }
     }
@@ -110,7 +110,8 @@ export default function AddingList(props) {
   }
 
   const handleProductEditing = (editedProduct) => {
-    dispatch({ type: ACTIONS.UPDATE_SAVED_PRODUCTS_LIST, payload: { index: editedProduct.id, newProduct: editedProduct }})
+    const indexOfEditedProduct = getIndexOfProduct(editedProduct.id);
+    dispatch({ type: ACTIONS.UPDATE_SAVED_PRODUCTS_LIST, payload: { index: indexOfEditedProduct, newProduct: editedProduct }})
     
     // SAVING CHANGES TO LOCAL STORAGE
     const predefinedProductsList = state.savedProductList;
@@ -143,6 +144,17 @@ export default function AddingList(props) {
     });
 
     props.handlePredefinedProductsAdding(selectedProducts);
+  }
+
+  const getIndexOfProduct = (targetId) => {
+    const productList = state.savedProductList;
+    let returnedIndex = 0;
+
+    productList.forEach((product, index) => {
+      if (product.id === Number(targetId))
+        returnedIndex = index;
+    });
+    return returnedIndex;
   }
 
   return (

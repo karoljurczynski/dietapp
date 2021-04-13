@@ -2,10 +2,14 @@ import { React, useState } from 'react';
 import './styles/productAddingWindow.css';
 
 export default function AddingForm(props) {
+  const initialOptionsStates = {
+    'list-saving': false
+  };
 
-  const [isChecked, setIsChecked] = useState(false);
+  const [optionsStates, setOptionsStates] = useState(initialOptionsStates);
 
   const handleClearButton = () => {
+    setOptionsStates(initialOptionsStates);
     props.handleFormClearing();
   }
 
@@ -13,12 +17,54 @@ export default function AddingForm(props) {
     props.handleAddingWindow();
   }
 
-  const handleCheckbox = () => {
-    setIsChecked(!isChecked);
+  const handleAddButton = (e) => {
+    props.handleProductAdding(e);
+
+    const keys = Object.keys(optionsStates);
+    console.log(keys);
+    let checkedOptions = [];
+
+    keys.forEach(key => {
+      if (optionsStates[key])
+        checkedOptions.push(key);
+    });
+    console.log(checkedOptions);
+
+    checkedOptions.forEach(checkedKey => {
+      console.log(checkedKey)
+
+      switch(checkedKey) {
+        case 'list-saving': {
+
+          const newProduct = {
+            id:       Date.now(), 
+            name:     document.querySelector("#name").value, 
+            weight:   Number(document.querySelector("#weight").value), 
+            proteins: Number(document.querySelector("#proteins").value), 
+            fats:     Number(document.querySelector("#fats").value),
+            carbs:    Number(document.querySelector("#carbs").value),
+            kcal:     Number(document.querySelector("#kcal").value),
+          }
+
+          saveNewProductToList(newProduct);
+        }
+      }
+    });
+  }
+  const saveNewProductToList = (newProduct) => {
+    const newList =  JSON.parse(localStorage.getItem("predefined"));
+    console.log(newList);
+    newList.push(newProduct);
+    console.log(newList);
+    localStorage.setItem("predefined", JSON.stringify(newList));
+  }
+
+  const handleCheckboxOnClick = (e) => {
+    setOptionsStates(prevOptions => { return {...prevOptions, [e.target.id]: !optionsStates[e.target.id]} });
   }
 
   return (
-    <form className="adding-window__main__form" onSubmit={ props.handleProductAdding }>
+    <form className="adding-window__main__form" onSubmit={ handleAddButton }>
 
       <section className="adding-window__main__form adding-window__main__form--product-info">
 
@@ -136,16 +182,16 @@ export default function AddingForm(props) {
         <h3 className="adding-window__main__form__title">Options</h3>
 
         <div className="adding-window__main__form__line adding-window__main__form__line--normal">
-        <label className="adding-window__main__form__line__label adding-window__main__form__line__label--options" htmlFor="list-saving">Save to list</label>
+          <label className="adding-window__main__form__line__label adding-window__main__form__line__label--options" htmlFor="list-saving">Save to list</label>
           <button 
             className="adding-window__main__form__background"
             id="list-saving"
-            type="button">
-            
-            <div
+            type="button"
+            onClick={ handleCheckboxOnClick }>
+            <div 
               className="adding-window__main__form__background__checked" 
-              style={ isChecked ? {backgroundColor: "#7500AF"} : {backgroundColor: "transparent"}}
-              onClick={ handleCheckbox }>
+              id="list-saving"
+              style={optionsStates['list-saving'] ? {backgroundColor: "#7500AF"} : {backgroundColor: "transparent"}}>
             </div>
           </button>
         </div>
@@ -159,7 +205,7 @@ export default function AddingForm(props) {
 
         <div>
           <button className="adding-window__main__form__secondary" type="button" onClick={ handleCancelButton }>Cancel</button>
-          <input className="adding-window__main__form__primary" type="submit" value="Add"></input>
+          <button className="adding-window__main__form__primary" type="submit">Add</button>
         </div>
       
 

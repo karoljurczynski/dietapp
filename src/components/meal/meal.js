@@ -240,7 +240,7 @@ export default function Meal(props) {
 
   const handleProductAdding = (e) => {
     e.preventDefault();
-    dispatch({ type: ACTIONS.ADD_PRODUCT });
+    setTimeout(() => { dispatch({ type: ACTIONS.ADD_PRODUCT }) }, 10);
     dispatch({ type: ACTIONS.NEGATE_ADDING_WINDOW_STATE });
   }
 
