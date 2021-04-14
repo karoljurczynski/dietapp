@@ -240,6 +240,7 @@ function App() {
       newPageTitle = categoryTitle;
 
     dispatch({type: ACTIONS.CHANGE_PAGE_TITLE, payload: newPageTitle });
+    dispatch({ type: ACTIONS.SET_CLEAR_ALL_PRODUCTS, payload: false });
     restoreSettingsFromBackup();
   }
 

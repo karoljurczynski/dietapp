@@ -183,20 +183,27 @@ export default function Meal(props) {
   }, [state.summary]);
 
 
-  // DISABLES BUTTONS IN MEALS WHEN ONE OF FORM WINDOWS IS OPENED 
+  // DISABLES POINTER EVENTS WHEN ONE OF FORM WINDOWS IS OPENED 
   useEffect(() => {
-    const changePointerEventsForMealsButtons = (value) => {
+    const changePointerEvents = (value) => {
       const meals = document.querySelectorAll(".meal");
+      const wrapper = document.querySelector(".wrapper");
+      const center = document.querySelector(".center-section");
 
       meals.forEach(meal => {
         let buttons = meal.querySelector(".meal__buttons-section");
         buttons.style.pointerEvents = value;
+        wrapper.style.pointerEvents = value;
+
+        // DISABLING SCROLL AT CENTER SECTION 
+        value === "none" ? center.style.overflowY = "hidden" : center.style.overflowY = "auto";
       });
     }
 
+
     state.isAddingWindowOpened || state.isRemovingWindowOpened
-    ? changePointerEventsForMealsButtons("none")
-    : changePointerEventsForMealsButtons("auto");
+    ? changePointerEvents("none")
+    : changePointerEvents("auto");
     
   }, [state.isAddingWindowOpened, state.isRemovingWindowOpened]);
 

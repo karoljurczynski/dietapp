@@ -6,7 +6,8 @@ const ACTIONS = {
   SET_PRODUCT_SEND_FOR_EDIT: "set-product-send-for-edit",
   NEGATE_EDIT_WINDOW_STATE: "negate-edit-window-state",
   UPDATE_SAVED_PRODUCTS_LIST: "update-saved-products-list",
-  LOAD_PREDEFINED_PRODUCTS_LIST_FROM_LOCAL_STORAGE: 'load-predefined-products-list-from-local-storage'
+  LOAD_PREDEFINED_PRODUCTS_LIST_FROM_LOCAL_STORAGE: 'load-predefined-products-list-from-local-storage',
+  SET_IS_ADD_BUTTON_DISABLED: 'set-is-add-button-disabled'
 }
 
 const initialState = {
@@ -18,7 +19,8 @@ const initialState = {
     { id: 4, name: "Banana", weight: 100, proteins: 5, fats: 3, carbs: 52, kcal: 173 }],
   
   productSendForEdit: { id: 0, name: '', weight: 0, proteins: 0, fats: 0, carbs: 0, kcal: 0 },
-  isEditWindowOpened: false
+  isEditWindowOpened: false,
+  isAddButtonDisabled: false
 }
 
 export default function AddingList(props) {
@@ -49,10 +51,13 @@ export default function AddingList(props) {
       case ACTIONS.UPDATE_SAVED_PRODUCTS_LIST: {
         const newSavedProductList = state.savedProductList;
         newSavedProductList[action.payload.index] = action.payload.newProduct;
-        console.log(newSavedProductList);
-
         return {...state, savedProductList: newSavedProductList};
       }
+
+      case ACTIONS.SET_IS_ADD_BUTTON_DISABLED: {
+        return {...state, isAddButtonDisabled: action.payload};
+      }
+
 
       default: return console.error(`Unknown action type: ${action.type}`);
     }
@@ -75,6 +80,8 @@ export default function AddingList(props) {
 
    }, []);
 
+  useEffect(() => { handleAddButtonDisabling() }, [])
+
   useEffect(() => {
     const addingWindow = document.querySelector(".adding-window");
 
@@ -83,7 +90,7 @@ export default function AddingList(props) {
     : addingWindow.style.boxShadow = "1px 1px 5px #707070";
 
   }, [state.isEditWindowOpened]);
-
+   
   const handleSelected = (e) => {
     const product = document.getElementById(e.target.id);
     if (e.target.id) {
@@ -93,6 +100,7 @@ export default function AddingList(props) {
       if (productName.style.fontWeight === "bold") {
         product.style.background = "#ffffff";
         productName.style.fontWeight = "normal";
+        handleAddButtonDisabling();
       }
 
       // "SELECTING"
@@ -120,8 +128,36 @@ export default function AddingList(props) {
     handleEditingWindow();
   }
 
-  const handleEditingWindow = () => {
+  const handleEditingWindow = (idOfSelectedProduct = false) => {
+    
+    // UNSELECTING PRODUCT AFTER EDIT CANCELED
+    if (Number.isInteger(idOfSelectedProduct)) {
+      const product = document.getElementById(idOfSelectedProduct);
+      const productName = product.querySelector(".adding-window__main__adding-list__item__name");
+      product.style.background = "#ffffff";
+      productName.style.fontWeight = "normal";
+    }
+    
     dispatch({ type: ACTIONS.NEGATE_EDIT_WINDOW_STATE });
+    handleAddButtonDisabling();
+  }
+
+  const handleAddButtonDisabling = () => {
+    const products = document.querySelectorAll(".adding-window__main__adding-list__item");
+    let returnedBoolean = false;
+   
+    for (let i = 0; i < products.length; i++) {
+      const name = products[i].querySelector(".adding-window__main__adding-list__item__name");
+      if (name.style.fontWeight === "bold") {
+        returnedBoolean = false;
+        break;
+      }
+
+      else
+        returnedBoolean = true;
+    }
+
+    dispatch({type: ACTIONS.SET_IS_ADD_BUTTON_DISABLED, payload: returnedBoolean});
   }
 
   const handleProductsAdding = () => {
@@ -205,7 +241,7 @@ export default function AddingList(props) {
         </button>
         
         <button 
-          className={ !state.productSendForEdit.name 
+          className={ state.isAddButtonDisabled
                       ? "adding-window__main__adding-list__buttons-section__primary adding-window__main__adding-list__buttons-section__primary--disabled" 
                       : "adding-window__main__adding-list__buttons-section__primary"  } 
           onClick={ handleProductsAdding }>

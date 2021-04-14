@@ -74,6 +74,13 @@ export default function EditForm(props) {
     dispatch({ type: ACTIONS.CLEAR_WARNING });
   }
 
+  const handleCancelButton = () => {
+    const idOfSelectedProduct = props.data.id;
+
+    // IF USER CANCEL EDITING, PRODUCT HAS TO BE UNSELECTED
+    props.handleEditingWindow(idOfSelectedProduct);
+  }
+
   const calculateNutritionFacts = (e) => {
     const isNumber = /[0-9]/;
     const isZero = /^[0]{1}/;
@@ -234,7 +241,7 @@ export default function EditForm(props) {
             <button className="adding-window__main__form__tertiary" type="button" onClick={ handleResetingForm }>Reset</button>
             
             <div className="adding-window__main__form__right">
-              <button className="adding-window__main__form__secondary" type="button"  onClick={ props.handleEditingWindow }>Cancel</button>
+              <button className="adding-window__main__form__secondary" type="button" onClick={ handleCancelButton }>Cancel</button>
               <input className="adding-window__main__form__primary" type="submit" value="Save"></input>
             </div>
 

@@ -3,6 +3,7 @@ import './styles/productRemovingWindow.css';
  
 export default function ProductRemovingWindow(props) {
   const [isRemovingAllButtonPressed, setRemovingAllButtonPressed] = useState(false);
+  const [isRemoveButtonDisabled, setIsRemoveButtonDisabled] = useState(false);
 
   useEffect(() => {
     const removingWindow = document.querySelector(".removing-window");
@@ -16,6 +17,25 @@ export default function ProductRemovingWindow(props) {
       removingWindow.style.pointerEvents = "auto";
     }
   }, [isRemovingAllButtonPressed]);
+
+
+  // ENABLE POINTER EVENTS IN REMOVING WINDOW AFTER MOUNTING
+  useEffect(() => { 
+    const removingWindow = document.querySelector(".removing-window");
+    removingWindow.style.pointerEvents = "auto";
+    
+   }, []);
+
+  // ENABLE POINTER EVENTS IN CONFIRM WINDOW AFTER MOUNTING 
+  useEffect(() => {
+    if (isRemovingAllButtonPressed) {
+      const confirmWindow = document.querySelector(".removing-window__confirm");
+      confirmWindow.style.pointerEvents = "auto";
+    }
+
+  },[isRemovingAllButtonPressed]);
+
+  useEffect(() => { handleRemoveButtonDisabling() }, [])
 
   const handleSelected = (e) => {
     const product = document.getElementById(e.target.id);
@@ -33,6 +53,8 @@ export default function ProductRemovingWindow(props) {
         product.style.background = "#7500AF30";
         productName.style.fontWeight = "bold";
       }
+
+      handleRemoveButtonDisabling();
     }
   }
 
@@ -48,6 +70,24 @@ export default function ProductRemovingWindow(props) {
 
     if (selectedIds.length !== 0)
       props.handleProductRemoving(selectedIds);
+  }
+
+  const handleRemoveButtonDisabling = () => {
+    const products = document.querySelectorAll(".removing-window__main__list__item");
+    let returnedBoolean = false;
+   
+    for (let i = 0; i < products.length; i++) {
+      const name = products[i].querySelector(".removing-window__main__list__item__name");
+      if (name.style.fontWeight === "bold") {
+        returnedBoolean = false;
+        break;
+      }
+
+      else
+        returnedBoolean = true;
+    }
+
+    setIsRemoveButtonDisabled(returnedBoolean);
   }
 
   const handleRemovingAllButton = () => {
@@ -118,7 +158,11 @@ export default function ProductRemovingWindow(props) {
             <button className="removing-window__main__list__buttons-section__tertiary" onClick={ handleRemovingAllButton }>Remove all</button>
             <div>
               <button className="removing-window__main__list__buttons-section__secondary" onClick={ props.handleRemovingWindow }>Cancel</button>
-              <button className="removing-window__main__list__buttons-section__primary" onClick={ handleRemoveButton }>Remove</button>
+              <button 
+              className={ isRemoveButtonDisabled
+                          ? "removing-window__main__list__buttons-section__primary removing-window__main__list__buttons-section__primary--disabled" 
+                          : "removing-window__main__list__buttons-section__primary" }
+               onClick={ handleRemoveButton }>Remove</button>
             </div>
           </section>
 

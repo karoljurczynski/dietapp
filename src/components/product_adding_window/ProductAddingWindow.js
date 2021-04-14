@@ -1,9 +1,16 @@
-import { React, useState } from 'react';
+import { React, useState, useEffect } from 'react';
 import AddingForm from './AddingForm';
 import AddingList from './AddingList';
 import './styles/productAddingWindow.css';
 
 export default function ProductAddingWindow(props) {
+
+  // ENABLE POINTER EVENTS IN ADDING WINDOW AFTER MOUNTING
+  useEffect(() => { 
+    const addingWindow = document.querySelector(".adding-window");
+    addingWindow.style.pointerEvents = "auto";
+    
+    }, []);
 
   const [isAddingTypeSetAtFromList, setAddingType] = useState(true);
 

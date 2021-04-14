@@ -42,6 +42,11 @@
   overflow-y: scroll;
   overflow-x: hidden;
   padding: 50px 0;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.center-section::-webkit-scrollbar {
+  display: none;
 }
 .center-section__top {
   display: -webkit-box;

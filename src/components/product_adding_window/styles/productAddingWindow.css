@@ -44,9 +44,7 @@
           transform: translateX(-50%);
   padding: 25px;
   border-radius: 30px;
-  -webkit-backdrop-filter: blur(50px);
-          backdrop-filter: blur(50px);
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: #FFFFFF;
 }
 .adding-window__edit {
   width: 100%;

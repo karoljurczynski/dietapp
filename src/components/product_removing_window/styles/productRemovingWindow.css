@@ -2,7 +2,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Cookie&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap");
-.removing-window__main__list__buttons-section__secondary, .removing-window__confirm__main__list__buttons-section__secondary, .removing-window__main__list__buttons-section__primary, .removing-window__confirm__main__list__buttons-section__primary, .removing-window__main__list__buttons-section__tertiary, .removing-window__confirm__main__list__buttons-section__tertiary {
+.removing-window__main__list__buttons-section__secondary, .removing-window__confirm__main__list__buttons-section__secondary, .removing-window__main__list__buttons-section__primary, .removing-window__main__list__buttons-section__primary--disabled, .removing-window__confirm__main__list__buttons-section__primary, .removing-window__confirm__main__list__buttons-section__primary--disabled, .removing-window__main__list__buttons-section__tertiary, .removing-window__confirm__main__list__buttons-section__tertiary {
   font-family: "Roboto", sans-serif;
   font-weight: 400;
 }
@@ -261,7 +261,7 @@
   -webkit-box-shadow: 0 0 3px #707070;
           box-shadow: 0 0 3px #707070;
 }
-.removing-window__main__list__buttons-section__primary, .removing-window__confirm__main__list__buttons-section__primary {
+.removing-window__main__list__buttons-section__primary, .removing-window__main__list__buttons-section__primary--disabled, .removing-window__confirm__main__list__buttons-section__primary, .removing-window__confirm__main__list__buttons-section__primary--disabled {
   cursor: pointer;
   background: #7500AF;
   color: #FFFFFF;
@@ -269,6 +269,12 @@
   padding: 8px 15px;
   font-size: 1.2rem;
   border-radius: 15px;
+}
+.removing-window__main__list__buttons-section__primary--disabled, .removing-window__main__list__buttons-section__primary--disabled--disabled, .removing-window__confirm__main__list__buttons-section__primary--disabled, .removing-window__confirm__main__list__buttons-section__primary--disabled--disabled {
+  cursor: default;
+  opacity: 0.4;
+  -webkit-box-shadow: 0 0 2px #000000;
+          box-shadow: 0 0 2px #000000;
 }
 .removing-window__main__list__buttons-section__tertiary, .removing-window__confirm__main__list__buttons-section__tertiary {
   cursor: pointer;
