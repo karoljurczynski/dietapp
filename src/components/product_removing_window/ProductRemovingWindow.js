@@ -23,7 +23,7 @@ export default function ProductRemovingWindow(props) {
   useEffect(() => { 
     const removingWindow = document.querySelector(".removing-window");
     removingWindow.style.pointerEvents = "auto";
-    
+
    }, []);
 
   // ENABLE POINTER EVENTS IN CONFIRM WINDOW AFTER MOUNTING 
@@ -38,8 +38,9 @@ export default function ProductRemovingWindow(props) {
   useEffect(() => { handleRemoveButtonDisabling() }, [])
 
   const handleSelected = (e) => {
-    const product = document.getElementById(e.target.id);
-    if(e.target.id) {
+    const product = document.getElementById(e.currentTarget.id);
+    
+    if(e.currentTarget.id) {
       const productName = product.querySelector(".removing-window__main__list__item__name");
 
       // "UNSELECTING"

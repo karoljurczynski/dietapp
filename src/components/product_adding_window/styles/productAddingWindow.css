@@ -2,7 +2,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Cookie&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap");
-.adding-window__main__adding-list__buttons-section__secondary, .adding-window__main__adding-list__buttons-section__primary, .adding-window__main__adding-list__buttons-section__primary--disabled, .adding-window__main__form__primary, .adding-window__main__form__primary--disabled, .adding-window__main__form__secondary, .adding-window__main__form__tertiary {
+.adding-window__main__adding-list__buttons-section__secondary, .adding-window__main__adding-list__buttons-section__primary, .adding-window__main__adding-list__buttons-section__primary--disabled, .adding-window__main__form__primary, .adding-window__main__form__primary--disabled, .adding-window__main__form__secondary, .adding-window__main__form__tertiary, .adding-window__main__form__tertiary--disabled {
   font-family: "Roboto", sans-serif;
   font-weight: 400;
 }
@@ -520,7 +520,7 @@
   -webkit-box-shadow: 0 0 3px #707070;
           box-shadow: 0 0 3px #707070;
 }
-.adding-window__main__form__tertiary {
+.adding-window__main__form__tertiary, .adding-window__main__form__tertiary--disabled {
   cursor: pointer;
   background: #FFFFFF;
   border: 1px solid #7500AF;
@@ -528,5 +528,9 @@
   padding: 8px 15px;
   border-radius: 15px;
   font-size: 1.2rem;
+}
+.adding-window__main__form__tertiary--disabled, .adding-window__main__form__tertiary--disabled--disabled {
+  cursor: default;
+  opacity: 0.4;
 }
 /*# sourceMappingURL=productAddingWindow.css.map */

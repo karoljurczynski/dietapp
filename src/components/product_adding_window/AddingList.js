@@ -92,8 +92,8 @@ export default function AddingList(props) {
   }, [state.isEditWindowOpened]);
    
   const handleSelected = (e) => {
-    const product = document.getElementById(e.target.id);
-    if (e.target.id) {
+    const product = document.getElementById(e.currentTarget.id);
+    if (e.currentTarget.id) {
       const productName = product.querySelector(".adding-window__main__adding-list__item__name");
 
       // "UNSELECTING"
@@ -107,7 +107,7 @@ export default function AddingList(props) {
       else {
         product.style.background = "#7500AF30";
         productName.style.fontWeight = "bold";
-        updateProductSendForEdit(state.savedProductList[getIndexOfProduct(e.target.id)]);
+        updateProductSendForEdit(state.savedProductList[getIndexOfProduct(e.currentTarget.id)]);
         handleEditingWindow();
       }
     }

@@ -1,4 +1,4 @@
-import { React, useReducer} from 'react';
+import { React, useReducer, useEffect, useState } from 'react';
 import './styles/productAddingWindow.css';
 import { warnings } from '../meal/Meal';
 
@@ -10,6 +10,9 @@ const ACTIONS = {
 }
 
 export default function EditForm(props) {
+  const [isFormCompleted, setIsFormCompleted] = useState(false);
+  const [isStateEqualToProps, setIsStateEqualToProps] = useState(true);
+
   const initialState = {
     productData: {
       id: props.data.id,
@@ -51,7 +54,6 @@ export default function EditForm(props) {
       }
 
       case ACTIONS.SET_WARNING: {
-        console.log(action.payload)
         if (action.payload === 'name')
           return { ...state, warning: [warnings.name, action.payload] }
         else 
@@ -68,10 +70,35 @@ export default function EditForm(props) {
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
+    // CHECKING IF FORM IS COMPLETED
+  useEffect(() => { 
+    checkIfFormCompleted();
+    checkIfStateIsEqualToProps();
+    
+  }, [state.productData])
+
+  const checkIfFormCompleted = () => {
+    const name = document.querySelector("#name").value;
+    const weight = document.querySelector("#weight").value;
+
+    if(name && weight)
+      setIsFormCompleted(true);
+    else
+      setIsFormCompleted(false);
+  }
+
   const handleResetingForm = (e) => {
     e.preventDefault();
     dispatch({ type: ACTIONS.RESET_FORM });
     dispatch({ type: ACTIONS.CLEAR_WARNING });
+    setIsStateEqualToProps(true);
+  }
+
+  const checkIfStateIsEqualToProps = () => {
+    Object.keys(props.data).forEach(key => {
+      if (props.data[key] !== state.productData[key])
+        setIsStateEqualToProps(false); 
+      });
   }
 
   const handleCancelButton = () => {
@@ -162,8 +189,7 @@ export default function EditForm(props) {
                 value={ state.productData.name } 
                 onChange={ handleNameChanging }
                 placeholder="Product name"
-                maxLength="32"
-                required>
+                maxLength="32">
               </input>
               <p className="adding-window__main__form__line__warning">{ state.warning[1] === 'name' ? state.warning[0] : null }</p>
             </div>
@@ -177,8 +203,7 @@ export default function EditForm(props) {
                 value={ state.productData.weight } 
                 onChange={ calculateNutritionFacts }
                 placeholder="Weight"
-                maxLength="4"
-                required>
+                maxLength="4">
               </input>
               <span className="adding-window__main__form__line__decoration">g</span>
               <p className="adding-window__main__form__line__warning">{ state.warning[1] === 'weight' ? state.warning[0] : null }</p>
@@ -238,11 +263,23 @@ export default function EditForm(props) {
           <section className="adding-window__main__form adding-window__main__form--buttons-section">
 
 
-            <button className="adding-window__main__form__tertiary" type="button" onClick={ handleResetingForm }>Reset</button>
+            <button 
+              className={ isStateEqualToProps ? "adding-window__main__form__tertiary adding-window__main__form__tertiary--disabled" : "adding-window__main__form__tertiary" } 
+              disabled={ isStateEqualToProps ? true : false } 
+              type="button" 
+              onClick={ handleResetingForm }>
+              Reset</button>
             
             <div className="adding-window__main__form__right">
               <button className="adding-window__main__form__secondary" type="button" onClick={ handleCancelButton }>Cancel</button>
-              <input className="adding-window__main__form__primary" type="submit" value="Save"></input>
+              <button 
+                className={ isFormCompleted
+                            ? "adding-window__main__form__primary"
+                            : "adding-window__main__form__primary adding-window__main__form__primary--disabled"
+                            } 
+                type="submit"
+                disabled={ isFormCompleted ? false : true }>
+                Save</button>
             </div>
 
 

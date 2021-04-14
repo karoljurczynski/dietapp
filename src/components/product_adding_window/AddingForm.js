@@ -1,4 +1,4 @@
-import { React, useState } from 'react';
+import { React, useState, useEffect } from 'react';
 import './styles/productAddingWindow.css';
 
 export default function AddingForm(props) {
@@ -7,14 +7,55 @@ export default function AddingForm(props) {
   };
 
   const [optionsStates, setOptionsStates] = useState(initialOptionsStates);
+  const [isFormCompleted, setIsFormCompleted] = useState(false);
+  const [isStateEqualToProps, setIsStateEqualToProps] = useState(true);
+
 
   const handleClearButton = () => {
     setOptionsStates(initialOptionsStates);
     props.handleFormClearing();
+    setIsStateEqualToProps(true);
   }
 
   const handleCancelButton = () => {
     props.handleAddingWindow();
+  }
+
+  const checkIfStateIsEqualToProps = () => {
+
+    // CHECKING OPTIONS
+    Object.keys(optionsStates).forEach(option => {
+      setIsStateEqualToProps(true);
+      if (optionsStates[option] !== initialOptionsStates[option])
+        setIsStateEqualToProps(false);
+    });
+
+    // CHECKING INPUTS
+    Object.keys(props.data).forEach(key => {
+      if (props.data[key])
+        setIsStateEqualToProps(false);
+    });
+  }
+
+
+  // CHECKING IF FORM IS COMPLETED
+  useEffect(() => { 
+    checkIfFormCompleted();
+    checkIfStateIsEqualToProps();
+  }, [props, optionsStates])
+
+  const checkIfFormCompleted = () => {
+    const name = document.querySelector("#name").value;
+    const weight = document.querySelector("#weight").value;
+    const proteins = document.querySelector("#proteins").value;
+    const fats = document.querySelector("#fats").value;
+    const carbs = document.querySelector("#carbs").value;
+    const kcal = document.querySelector("#kcal").value;
+
+    if(name && weight && proteins && fats && carbs && kcal)
+      setIsFormCompleted(true);
+    else
+      setIsFormCompleted(false);
   }
 
   const searchForCheckedOptions = (keysArray) => {
@@ -29,7 +70,7 @@ export default function AddingForm(props) {
 
   const handleAddButton = (e) => {
     props.handleProductAdding(e);
-
+    
     const keys = Object.keys(optionsStates);
 
     const checkedOptions = searchForCheckedOptions(keys);
@@ -81,8 +122,7 @@ export default function AddingForm(props) {
             value={ props.data.name }
             onChange={ props.handleOnChange }
             placeholder="Product name"
-            maxLength="32"
-            required>
+            maxLength="32">
           </input>
           <p className="adding-window__main__form__line__warning">{ props.warning[1] === 'name' ? props.warning[0] : null }</p>
         </div>
@@ -96,8 +136,7 @@ export default function AddingForm(props) {
             value={ props.data.weight } 
             onChange={ props.handleOnChange }
             placeholder="Weight"
-            maxLength="4"
-            required>
+            maxLength="4">
           </input>
           <span className="adding-window__main__form__line__decoration">g</span>
           <p className="adding-window__main__form__line__warning">{ props.warning[1] === 'weight' ? props.warning[0] : null }</p>
@@ -120,8 +159,7 @@ export default function AddingForm(props) {
             value={ props.data.proteins } 
             onChange={ props.handleOnChange }
             placeholder="Proteins"
-            maxLength="4"
-            required>
+            maxLength="4">
           </input>
           <span className="adding-window__main__form__line__decoration">g</span>
           <p className="adding-window__main__form__line__warning">{ props.warning[1] === 'proteins' ? props.warning[0] : null }</p>
@@ -136,8 +174,7 @@ export default function AddingForm(props) {
             value={ props.data.fats } 
             onChange={ props.handleOnChange }
             placeholder="Fats"
-            maxLength="4"
-            required>
+            maxLength="4">
           </input>
           <span className="adding-window__main__form__line__decoration">g</span>
           <p className="adding-window__main__form__line__warning">{ props.warning[1] === 'fats' ? props.warning[0] : null }</p>
@@ -152,8 +189,7 @@ export default function AddingForm(props) {
             value={ props.data.carbs } 
             onChange={ props.handleOnChange }
             placeholder="Carbohydrates"
-            maxLength="4"
-            required>
+            maxLength="4">
           </input>
           <span className="adding-window__main__form__line__decoration">g</span>
           <p className="adding-window__main__form__line__warning">{ props.warning[1] === 'carbs' ? props.warning[0] : null }</p>
@@ -168,8 +204,7 @@ export default function AddingForm(props) {
             value={ props.data.kcal }
             onChange={ props.handleOnChange }
             placeholder="Calories"
-            maxLength="4"
-            required>
+            maxLength="4">
           </input>
           <span className="adding-window__main__form__line__decoration">kcal</span>
           <p className="adding-window__main__form__line__warning">{ props.warning[1] === 'kcal' ? props.warning[0] : null }</p>
@@ -202,11 +237,21 @@ export default function AddingForm(props) {
       <section className="adding-window__main__form adding-window__main__form--buttons-section">
 
 
-        <button className="adding-window__main__form__tertiary" type="button" onClick={ handleClearButton }>Clear</button>
+        <button 
+          className={ isStateEqualToProps ? "adding-window__main__form__tertiary adding-window__main__form__tertiary--disabled" : "adding-window__main__form__tertiary" } 
+          disabled={ isStateEqualToProps ? true : false }
+          type="button" 
+          onClick={ handleClearButton }>
+          Clear</button>
 
         <div>
           <button className="adding-window__main__form__secondary" type="button" onClick={ handleCancelButton }>Cancel</button>
-          <button className="adding-window__main__form__primary" type="submit">Add</button>
+          <button 
+            className={ isFormCompleted
+                        ? "adding-window__main__form__primary"
+                        : "adding-window__main__form__primary adding-window__main__form__primary--disabled" }
+            type="submit"
+            disabled={ isFormCompleted ? false : true }>Add</button>
         </div>
       
 

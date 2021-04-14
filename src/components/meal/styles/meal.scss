@@ -14,6 +14,7 @@
     @include flexSetup(row, center, space-between);
     width: 100%;
     padding: 20px;
+    cursor: pointer;
 
     &__meal-title {
       @include flexSetup(row, center, flex-start);
