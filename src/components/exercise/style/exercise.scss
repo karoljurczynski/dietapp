@@ -1,0 +1,95 @@
+@forward '../../../styles/config/config';
+//@forward '../styles/media_queries/media';
+@use '../../../styles/config/config' as *;
+
+.exercise {
+  &__top-section {
+
+    &__grade-container {
+      @include flexSetup(row, center, space-around);
+
+      &__point {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: $purple-color;
+        opacity: 0.5;
+        margin-right: 8px;
+
+        &:first-of-type {
+          background-color: $purple-color;
+          opacity: 1;
+        }
+
+        &:last-of-type {
+          margin-right: 0;
+        }
+      }
+    }
+  }
+  &__series-section {
+    padding-top: 15px;
+    padding-bottom: 15px;
+
+    &__list, &__summary {
+      width: 100%;
+      
+      @include flexSetup(column, center, space-between);
+
+      &__item {
+        width: 100%;
+        margin-bottom: 15px;
+
+        @include flexSetup(row, flex-start, space-between);
+        
+
+        & > * {
+          @extend %robotoNormal;
+          @include flexSetup(row, flex-start, flex-start);
+          color: $gray-color;
+          font-size: 1.2rem;
+        }
+
+        &__count {
+          width: 40%;
+        }
+
+        &__weight {
+          width: 20%;
+
+        }
+
+        &__reps {
+          width: 20%;
+          justify-content: flex-end;
+          
+        }
+      }
+    }
+
+    &__summary {
+
+      &__item {
+        border-top: 2px solid $gray-color;
+        padding-top: 15px;
+        margin-bottom: 0;
+
+        & > * {
+          font-weight: bold;
+          color: $black-color;
+        }
+        &:last-of-type {
+          border: none;
+          margin-bottom: 0px;
+          & > * {
+            font-weight: normal;
+          }
+        }
+      }
+    }
+  }
+  &__buttons-section {
+    @include flexSetup(row, center, space-between);
+
+  }
+}

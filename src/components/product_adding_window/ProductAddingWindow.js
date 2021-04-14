@@ -3,7 +3,7 @@ import AddingForm from './AddingForm';
 import AddingList from './AddingList';
 import './styles/productAddingWindow.css';
 
-export default function ProductAddingWindow(props) {
+export default function AddWindow(props) {
 
   // ENABLE POINTER EVENTS IN ADDING WINDOW AFTER MOUNTING
   useEffect(() => { 

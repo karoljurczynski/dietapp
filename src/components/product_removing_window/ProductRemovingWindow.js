@@ -1,7 +1,7 @@
 import { React, useState, useEffect } from 'react';
 import './styles/productRemovingWindow.css';
  
-export default function ProductRemovingWindow(props) {
+export default function RemoveWindow(props) {
   const [isRemovingAllButtonPressed, setRemovingAllButtonPressed] = useState(false);
   const [isRemoveButtonDisabled, setIsRemoveButtonDisabled] = useState(false);
 

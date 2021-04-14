@@ -1,8 +1,8 @@
 // IMPORTS
 
 import { React, useState, useEffect, useReducer } from 'react';
-import ProductAddingWindow from '../product_adding_window/ProductAddingWindow';
-import ProductRemovingWindow from '../product_removing_window/ProductRemovingWindow';
+import AddWindow from '../product_adding_window/ProductAddingWindow';
+import RemoveWindow from '../product_removing_window/ProductRemovingWindow';
 import './styles/meal.css';
 
 export const warnings = {
@@ -364,7 +364,7 @@ export default function Meal(props) {
       ) : null }
       
       <section className="meal__buttons-section" style={ state.isMealOpened ? {display: "flex"} : {display: "none"} }>
-
+        <div>
         <button 
           className={ state.productList.length ? "meal__buttons-section__remove-button" : "meal__buttons-section__remove-button--disabled" } 
           onClick={ state.productList.length ? handleRemovingWindow : null } 
@@ -375,12 +375,13 @@ export default function Meal(props) {
           className="meal__buttons-section__add-button" 
           onClick={ handleAddingWindow } 
           disabled={ state.isAddingWindowOpened || state.isRemovingWindowOpened ? true : false }>
-          Add</button>       
+          Add</button>  
+        </div>     
       
       </section>
 
       { state.isAddingWindowOpened 
-        ? <ProductAddingWindow 
+        ? <AddWindow 
             data={{ 
               isPlaceholderEnabled: isPlaceholderEnabled,
               name: state.newProduct.name, 
@@ -399,7 +400,7 @@ export default function Meal(props) {
         : null }
 
       { state.isRemovingWindowOpened 
-        ? <ProductRemovingWindow
+        ? <RemoveWindow
             productList={ state.productList }
             handleProductRemoving={ handleProductRemoving }
             handleRemovingWindow={ handleRemovingWindow }
