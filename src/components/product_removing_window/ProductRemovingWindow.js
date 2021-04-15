@@ -19,7 +19,7 @@ export default function RemoveWindow(props) {
   }, [isRemovingAllButtonPressed]);
 
 
-  // ENABLE POINTER EVENTS IN REMOVING WINDOW AFTER MOUNTING
+  // ENABLE POINTER EVENTS IN WINDOW AFTER MOUNTING
   useEffect(() => { 
     const removingWindow = document.querySelector(".removing-window");
     removingWindow.style.pointerEvents = "auto";
@@ -38,21 +38,21 @@ export default function RemoveWindow(props) {
   useEffect(() => { handleRemoveButtonDisabling() }, [])
 
   const handleSelected = (e) => {
-    const product = document.getElementById(e.currentTarget.id);
+    const item = document.getElementById(e.currentTarget.id);
     
     if(e.currentTarget.id) {
-      const productName = product.querySelector(".removing-window__main__list__item__name");
+      const itemName = item.querySelector(".removing-window__main__list__item__name");
 
       // "UNSELECTING"
-      if (productName.style.fontWeight === "bold") {
-        product.style.background = "#ffffff";
-        productName.style.fontWeight = "normal";
+      if (itemName.style.fontWeight === "bold") {
+        item.style.background = "#ffffff";
+        itemName.style.fontWeight = "normal";
       }
 
       // "SELECTING"
       else {
-        product.style.background = "#7500AF30";
-        productName.style.fontWeight = "bold";
+        item.style.background = "#7500AF30";
+        itemName.style.fontWeight = "bold";
       }
 
       handleRemoveButtonDisabling();
@@ -61,24 +61,24 @@ export default function RemoveWindow(props) {
 
   const handleRemoveButton = () => {
     const selectedIds = [];
-    const products = document.querySelectorAll(".removing-window__main__list__item");
+    const items = document.querySelectorAll(".removing-window__main__list__item");
 
-    products.forEach(product => {
-      const name = product.querySelector(".removing-window__main__list__item__name")
+    items.forEach(item => {
+      const name = item.querySelector(".removing-window__main__list__item__name")
       if(name.style.fontWeight === "bold")
-        selectedIds.push(Number(product.id));
+        selectedIds.push(Number(item.id));
     });
 
     if (selectedIds.length !== 0)
-      props.handleProductRemoving(selectedIds);
+      props.handleRemoving(selectedIds);
   }
 
   const handleRemoveButtonDisabling = () => {
-    const products = document.querySelectorAll(".removing-window__main__list__item");
+    const items = document.querySelectorAll(".removing-window__main__list__item");
     let returnedBoolean = false;
    
-    for (let i = 0; i < products.length; i++) {
-      const name = products[i].querySelector(".removing-window__main__list__item__name");
+    for (let i = 0; i < items.length; i++) {
+      const name = items[i].querySelector(".removing-window__main__list__item__name");
       if (name.style.fontWeight === "bold") {
         returnedBoolean = false;
         break;
@@ -101,55 +101,75 @@ export default function RemoveWindow(props) {
 
   const handleRemovingAllConfirm = () => {
     const selectedIds = [];
-    const products = document.querySelectorAll(".removing-window__main__list__item");
+    const items = document.querySelectorAll(".removing-window__main__list__item");
 
-    products.forEach(product => {
-      selectedIds.push(Number(product.id))
+    items.forEach(item => {
+      selectedIds.push(Number(item.id))
     });
 
-    props.handleProductRemoving(selectedIds);
+    props.handleRemoving(selectedIds);
   }
   
   return (
     <>
       <section className="removing-window">
 
-        <h1 className="removing-window__title">Remove product</h1>
+        <h1 className="removing-window__title">{ props.type === 'exercises' ? "Remove serie" : "Remove product" }</h1>
 
         <main className="removing-window__main">
 
           <ul className="removing-window__main__list removing-window__main__list--heading">
             <li className="removing-window__main__list__item removing-window__main__list__item--heading">
-              <div className="removing-window__main__list__wrapper">
-                <span className="removing-window__main__list__item__name" style={{color: "white"}}>Product name</span>
-                <span className="removing-window__main__list__item__nutrition-facts">
-                  <p className="removing-window__main__list__item__nutrition-facts__proteins" title="Proteins">P</p>
-                  <p className="removing-window__main__list__item__nutrition-facts__fats" title="Fats">F</p>
-                  <p className="removing-window__main__list__item__nutrition-facts__carbs" title="Carbohydrates">C</p>
-                </span>
-                <span className="removing-window__main__list__item__calories">Calories</span>
-              </div>
+                { props.type === 'exercises'
+                  ? <div className="removing-window__main__list__wrapper">
+                      <span className="removing-window__main__list__item__name removing-window__main__list__item__name--exercises" style={{color: "white"}}>Serie</span>
+                      <span className="removing-window__main__list__item__nutrition-facts">
+                        <p className="removing-window__main__list__item__nutrition-facts__proteins">Weight</p>
+                      </span>
+                      <span className="removing-window__main__list__item__calories">Repetitions</span>
+                    </div>
+
+                  : <div className="removing-window__main__list__wrapper">
+                      <span className="removing-window__main__list__item__name" style={{color: "white"}}>Product name</span>
+                      <span className="removing-window__main__list__item__nutrition-facts">
+                        <p className="removing-window__main__list__item__nutrition-facts__proteins" title="Proteins">P</p>
+                        <p className="removing-window__main__list__item__nutrition-facts__fats" title="Fats">F</p>
+                        <p className="removing-window__main__list__item__nutrition-facts__carbs" title="Carbohydrates">C</p>
+                      </span>
+                      <span className="removing-window__main__list__item__calories">Calories</span>
+                    </div> 
+                }
             </li>
           </ul>
 
           <ul className="removing-window__main__list">
 
-            { props.productList.map(product => {
+            { props.list.map(item => {
               return (
+                props.type === 'exercises'
 
-                <li onClick={ handleSelected } id={ product.id } key={ product.id } className="removing-window__main__list__item">
-                <div className="removing-window__main__list__wrapper">
-                  <span id={ product.id } className="removing-window__main__list__item__name">{ product.name }</span>
-                  <span id={ product.id } className="removing-window__main__list__item__nutrition-facts">
-                    <p id={ product.id } className="removing-window__main__list__item__nutrition-facts__proteins" title="Proteins">{ product.proteins } g</p>
-                    <p id={ product.id } className="removing-window__main__list__item__nutrition-facts__fats" title="Fats">{ product.fats } g</p>
-                    <p id={ product.id } className="removing-window__main__list__item__nutrition-facts__carbs" title="Carbohydrates">{ product.carbs } g</p>
-                  </span>
-                  <span id={ product.id } className="removing-window__main__list__item__calories">{ product.kcal } kcal</span>
-                </div>
-                <span id={ product.id } className="removing-window__main__list__item__weight">{ product.weight } g</span>
-                </li>
+                ? <li onClick={ handleSelected } id={ item.id } key={ item.id } className="removing-window__main__list__item">
+                    <div className="removing-window__main__list__wrapper">
+                      <span id={ item.id } className="removing-window__main__list__item__name removing-window__main__list__item__name--exercises">Serie { item.serieCount }</span>
+                      <span id={ item.id } className="removing-window__main__list__item__nutrition-facts">
+                        <p id={ item.id } className="removing-window__main__list__item__nutrition-facts__proteins" title="Proteins">{ item.weight } kg</p>
+                      </span>
+                      <span id={ item.id } className="removing-window__main__list__item__calories">{ item.reps } reps</span>
+                    </div>
+                  </li>
 
+                : <li onClick={ handleSelected } id={ item.id } key={ item.id } className="removing-window__main__list__item">
+                    <div className="removing-window__main__list__wrapper">
+                      <span id={ item.id } className="removing-window__main__list__item__name">{ item.name }</span>
+                      <span id={ item.id } className="removing-window__main__list__item__nutrition-facts">
+                        <p id={ item.id } className="removing-window__main__list__item__nutrition-facts__proteins" title="Proteins">{ item.proteins } g</p>
+                        <p id={ item.id } className="removing-window__main__list__item__nutrition-facts__fats" title="Fats">{ item.fats } g</p>
+                        <p id={ item.id } className="removing-window__main__list__item__nutrition-facts__carbs" title="Carbohydrates">{ item.carbs } g</p>
+                      </span>
+                      <span id={ item.id } className="removing-window__main__list__item__calories">{ item.kcal } kcal</span>
+                    </div>
+                    <span id={ item.id } className="removing-window__main__list__item__weight">{ item.weight } g</span>
+                  </li>
               )})
             }
 
@@ -176,7 +196,7 @@ export default function RemoveWindow(props) {
 
             <h1 className="removing-window__title">Remove all?</h1> 
 
-            <h3 className="removing-window__confirm__subtitle">Are you sure you want to remove all products in current meal?</h3>
+            <h3 className="removing-window__confirm__subtitle">{props.type === 'exercises' ? "Are you sure you want to remove all series in current exercise?" : "Are you sure you want to remove all products in current meal?"}</h3>
 
             <section className="removing-window__main__list__buttons-section" style={{ justifyContent: "flex-end" }}>
               <div>

@@ -1,1 +1,6 @@
-remove all product state at settings section
+last training/serie data doesn't work
+percent in info about progress doesn't work
+more window is empty
+serie counting has to be done and saved to array
+styles improvements
+

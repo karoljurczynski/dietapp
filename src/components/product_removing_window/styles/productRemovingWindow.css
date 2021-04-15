@@ -2,7 +2,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Cookie&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap");
-.removing-window__main__list__buttons-section__secondary, .removing-window__confirm__main__list__buttons-section__secondary, .removing-window__main__list__buttons-section__primary, .removing-window__main__list__buttons-section__primary--disabled, .removing-window__confirm__main__list__buttons-section__primary, .removing-window__confirm__main__list__buttons-section__primary--disabled, .removing-window__main__list__buttons-section__tertiary, .removing-window__confirm__main__list__buttons-section__tertiary {
+.removing-window__main__list__buttons-section__secondary, .removing-window__main__list__buttons-section--more__secondary, .removing-window__confirm__main__list__buttons-section__secondary, .removing-window__confirm__main__list__buttons-section--more__secondary, .removing-window__main__list__buttons-section__primary, .removing-window__main__list__buttons-section__primary--disabled, .removing-window__main__list__buttons-section__primary--back, .removing-window__main__list__buttons-section--more__primary, .removing-window__main__list__buttons-section--more__primary--disabled, .removing-window__main__list__buttons-section--more__primary--back, .removing-window__confirm__main__list__buttons-section__primary, .removing-window__confirm__main__list__buttons-section__primary--disabled, .removing-window__confirm__main__list__buttons-section__primary--back, .removing-window__confirm__main__list__buttons-section--more__primary, .removing-window__confirm__main__list__buttons-section--more__primary--disabled, .removing-window__confirm__main__list__buttons-section--more__primary--back, .removing-window__main__list__buttons-section__tertiary, .removing-window__main__list__buttons-section--more__tertiary, .removing-window__confirm__main__list__buttons-section__tertiary, .removing-window__confirm__main__list__buttons-section--more__tertiary {
   font-family: "Roboto", sans-serif;
   font-weight: 400;
 }
@@ -15,7 +15,7 @@
   -webkit-box-shadow: 0;
           box-shadow: 0;
   border: none;
-  font-family: "Noto Sans", sans-serif;
+  font-family: "Segoe UI", sans-serif;
   font-weight: normal;
   text-decoration: none;
   font-size: 16px;
@@ -179,6 +179,9 @@
   width: 40%;
   color: black;
 }
+.removing-window__main__list__item__name--exercises, .removing-window__confirm__main__list__item__name--exercises {
+  width: 55%;
+}
 .removing-window__main__list__item__weight, .removing-window__confirm__main__list__item__weight {
   font-size: 0.8rem;
 }
@@ -232,7 +235,7 @@
   width: 20%;
   padding-right: 10px;
 }
-.removing-window__main__list__buttons-section, .removing-window__confirm__main__list__buttons-section {
+.removing-window__main__list__buttons-section, .removing-window__main__list__buttons-section--more, .removing-window__confirm__main__list__buttons-section, .removing-window__confirm__main__list__buttons-section--more {
   margin-top: 20px;
   width: 100%;
   border-top: 2px solid #707070;
@@ -251,7 +254,12 @@
           justify-content: space-between;
   padding-top: 25px;
 }
-.removing-window__main__list__buttons-section__secondary, .removing-window__confirm__main__list__buttons-section__secondary {
+.removing-window__main__list__buttons-section--more, .removing-window__main__list__buttons-section--more--more, .removing-window__confirm__main__list__buttons-section--more, .removing-window__confirm__main__list__buttons-section--more--more {
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+}
+.removing-window__main__list__buttons-section__secondary, .removing-window__main__list__buttons-section--more__secondary, .removing-window__confirm__main__list__buttons-section__secondary, .removing-window__confirm__main__list__buttons-section--more__secondary {
   cursor: pointer;
   background: #FFFFFF;
   color: #7500AF;
@@ -261,7 +269,7 @@
   -webkit-box-shadow: 0 0 3px #707070;
           box-shadow: 0 0 3px #707070;
 }
-.removing-window__main__list__buttons-section__primary, .removing-window__main__list__buttons-section__primary--disabled, .removing-window__confirm__main__list__buttons-section__primary, .removing-window__confirm__main__list__buttons-section__primary--disabled {
+.removing-window__main__list__buttons-section__primary, .removing-window__main__list__buttons-section__primary--disabled, .removing-window__main__list__buttons-section__primary--back, .removing-window__main__list__buttons-section--more__primary, .removing-window__main__list__buttons-section--more__primary--disabled, .removing-window__main__list__buttons-section--more__primary--back, .removing-window__confirm__main__list__buttons-section__primary, .removing-window__confirm__main__list__buttons-section__primary--disabled, .removing-window__confirm__main__list__buttons-section__primary--back, .removing-window__confirm__main__list__buttons-section--more__primary, .removing-window__confirm__main__list__buttons-section--more__primary--disabled, .removing-window__confirm__main__list__buttons-section--more__primary--back {
   cursor: pointer;
   background: #7500AF;
   color: #FFFFFF;
@@ -269,14 +277,19 @@
   padding: 8px 15px;
   font-size: 1.2rem;
   border-radius: 15px;
+  -webkit-box-shadow: 0 0 3px #707070;
+          box-shadow: 0 0 3px #707070;
 }
-.removing-window__main__list__buttons-section__primary--disabled, .removing-window__main__list__buttons-section__primary--disabled--disabled, .removing-window__confirm__main__list__buttons-section__primary--disabled, .removing-window__confirm__main__list__buttons-section__primary--disabled--disabled {
+.removing-window__main__list__buttons-section__primary--disabled, .removing-window__main__list__buttons-section__primary--disabled--disabled, .removing-window__main__list__buttons-section__primary--back--disabled, .removing-window__main__list__buttons-section--more__primary--disabled, .removing-window__main__list__buttons-section--more__primary--disabled--disabled, .removing-window__main__list__buttons-section--more__primary--back--disabled, .removing-window__confirm__main__list__buttons-section__primary--disabled, .removing-window__confirm__main__list__buttons-section__primary--disabled--disabled, .removing-window__confirm__main__list__buttons-section__primary--back--disabled, .removing-window__confirm__main__list__buttons-section--more__primary--disabled, .removing-window__confirm__main__list__buttons-section--more__primary--disabled--disabled, .removing-window__confirm__main__list__buttons-section--more__primary--back--disabled {
   cursor: default;
   opacity: 0.4;
   -webkit-box-shadow: 0 0 2px #000000;
           box-shadow: 0 0 2px #000000;
 }
-.removing-window__main__list__buttons-section__tertiary, .removing-window__confirm__main__list__buttons-section__tertiary {
+.removing-window__main__list__buttons-section__primary--back, .removing-window__main__list__buttons-section__primary--disabled--back, .removing-window__main__list__buttons-section__primary--back--back, .removing-window__main__list__buttons-section--more__primary--back, .removing-window__main__list__buttons-section--more__primary--disabled--back, .removing-window__main__list__buttons-section--more__primary--back--back, .removing-window__confirm__main__list__buttons-section__primary--back, .removing-window__confirm__main__list__buttons-section__primary--disabled--back, .removing-window__confirm__main__list__buttons-section__primary--back--back, .removing-window__confirm__main__list__buttons-section--more__primary--back, .removing-window__confirm__main__list__buttons-section--more__primary--disabled--back, .removing-window__confirm__main__list__buttons-section--more__primary--back--back {
+  margin-left: 0;
+}
+.removing-window__main__list__buttons-section__tertiary, .removing-window__main__list__buttons-section--more__tertiary, .removing-window__confirm__main__list__buttons-section__tertiary, .removing-window__confirm__main__list__buttons-section--more__tertiary {
   cursor: pointer;
   background: #FFFFFF;
   border: 1px solid #7500AF;

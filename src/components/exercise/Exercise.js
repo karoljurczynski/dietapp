@@ -6,6 +6,7 @@ import './../meal/styles/meal.css';
 import '../product_adding_window/styles/productAddingWindow.css';
 import AddWindow from '../product_adding_window/ProductAddingWindow';
 import RemoveWindow from '../product_removing_window/ProductRemovingWindow';
+import MoreWindow from '../MoreWindow/MoreWindow';
 
 const ACTIONS = {
   NEGATE_EXERCISE_OPENED: 'negate-exercise-opened',
@@ -17,6 +18,7 @@ const ACTIONS = {
   SET_WARNING: 'set-warning',
   CLEAR_WARNING: 'clear-warning',
   ADD_SERIE: 'add-serie',
+  REMOVE_SERIE: 'remove-serie',
   ADD_SERIE_TO_SERIESLIST: 'add-serie-to-serieslist',
   CLEAR_SERIESLIST_BEFORE_DAY_CHANGING: 'clear-serieslist-before-day-change'
 }
@@ -41,7 +43,7 @@ export default function Exercise(props) {
     },
     seriesList: [],
     warning: ['', ''],
-    newSerie: { id: 0, exerciseId: props.exerciseId, dateIds: { dayId: 0, monthId: 0, yearId: 0 }, serieCount: '', weight: '', reps:'' }
+    newSerie: { id: 0, exerciseId: props.exerciseId, dateIds: { dayId: 0, monthId: 0, yearId: 0 }, serieCount: 'test', weight: '', reps:'' }
   }
 
   const reducer = (state, action) => {
@@ -70,8 +72,8 @@ export default function Exercise(props) {
         }
       }
 
-      case ACTIONS.EDIT_SERIE_IN_SERIESLIST: {
-        return {...state };
+      case ACTIONS.EDIT_SERIE_COUNT_IN_SERIESLIST: {
+        return {...state};
       }
 
       case ACTIONS.ADD_SERIE: {
@@ -81,6 +83,22 @@ export default function Exercise(props) {
         localStorage.setItem(state.newSerie.id, JSON.stringify(state.newSerie));
         console.log(state.seriesList);
         return {...state, newSerie: { id: 0, exerciseId: props.exerciseId, dateIds: { dayId: 0, monthId: 0, yearId: 0 }, serieCount: '', weight: '', reps: '' }};
+      }
+
+      case ACTIONS.REMOVE_SERIE: {
+        let newSeriesList = state.seriesList;
+        let checkedIdList = action.payload;
+        
+        checkedIdList.forEach(checkedId => {
+          newSeriesList.forEach((serie, index) => {
+            if (Number(serie.id) === Number(checkedId)) {
+              newSeriesList.splice(index, 1);
+              localStorage.removeItem(serie.id);
+            }
+          });
+        });
+
+        return { ...state, seriesList: newSeriesList };
       }
 
       case ACTIONS.SET_WARNING: {
@@ -315,6 +333,11 @@ export default function Exercise(props) {
     setTimeout(() => { dispatch({ type: ACTIONS.ADD_SERIE }) }, 10);
     dispatch({ type: ACTIONS.NEGATE_ADD_WINDOW_STATE });
   }
+
+  const handleSerieRemoving = (checkedIdsList) => {
+    dispatch({ type: ACTIONS.REMOVE_SERIE, payload: checkedIdsList });
+    dispatch({ type: ACTIONS.NEGATE_REMOVE_WINDOW_STATE });
+  }
   
   return (
     <div className="meal exercise" style={ state.isExerciseOpened ? {marginLeft: '-10px'} : {marginLeft: '0px'} }>
@@ -337,7 +360,7 @@ export default function Exercise(props) {
           <ul className="exercise__series-section__list">
             { state.seriesList.map(serie => {
               return (
-              <li className="exercise__series-section__list__item">
+              <li key={ serie.id } className="exercise__series-section__list__item">
                   <p className="exercise__series-section__list__item__count">Serie { countSerieNumber(serie.id) }</p>
                   <p className="exercise__series-section__list__item__weight">{ serie.weight } kg</p>
                   <p className="exercise__series-section__list__item__reps">{ serie.reps } reps</p>
@@ -368,11 +391,26 @@ export default function Exercise(props) {
       
       <section className="meal__buttons-section exercise__buttons-section" style={ state.isExerciseOpened ? {display: "flex"} : {display: "none"} }>
 
-        <button className="adding-window__main__form__tertiary">More</button>
+        <button 
+          className="adding-window__main__form__tertiary" 
+          onClick={ handleMoreWindow }>
+          More
+        </button>
         
         <div>
-          <button className={ state.seriesList.length ? "meal__buttons-section__remove-button" : "meal__buttons-section__remove-button--disabled" }>Remove</button> 
-          <button className="adding-window__main__form__primary" onClick={ handleAddWindow }>Add</button>
+          <button 
+            className={ state.seriesList.length ? "meal__buttons-section__remove-button" : "meal__buttons-section__remove-button--disabled" }
+            onClick={ state.seriesList.length ? handleRemoveWindow : null } 
+            disabled={ state.isAddWindowOpened || state.isRemoveWindowOpened ? true : false }>
+            Remove
+          </button>
+
+          <button 
+            className="adding-window__main__form__primary" 
+            onClick={ handleAddWindow }
+            disabled={ state.isAddWindowOpened || state.isRemoveWindowOpened ? true : false }>
+            Add
+          </button>
         </div>
 
       </section>
@@ -396,14 +434,16 @@ export default function Exercise(props) {
       { state.isRemoveWindowOpened 
         ? <RemoveWindow 
             type="exercises"
+            list={ state.seriesList }
+            handleRemoving={ handleSerieRemoving }
             handleRemoveWindow={ handleRemoveWindow }
           />
         : null }
 
       { state.isMoreWindowOpened 
-        ? <RemoveWindow
+        ? <MoreWindow
             type="exercises"
-            handleRemovingWindow={ handleMoreWindow }
+            handleMoreWindow={ handleMoreWindow }
           />
         : null }
 

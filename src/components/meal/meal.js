@@ -401,8 +401,8 @@ export default function Meal(props) {
 
       { state.isRemovingWindowOpened 
         ? <RemoveWindow
-            productList={ state.productList }
-            handleProductRemoving={ handleProductRemoving }
+            list={ state.productList }
+            handleRemoving={ handleProductRemoving }
             handleRemoveWindow={ handleRemoveWindow }
           />
         : null }

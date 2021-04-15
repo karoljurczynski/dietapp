@@ -78,8 +78,6 @@
         border: 2px solid $purple-color;
         margin: 3px 0;
 
-        
-
         & > * {
           font-size: 1rem;
         }
@@ -95,6 +93,10 @@
         &__name {
           width: 40%;
           color: black;
+          
+          &--exercises {
+            width: 55%;
+          }
         }
 
         &__weight {
@@ -119,12 +121,16 @@
         }
       }
 
-      &__buttons-section {
+      &__buttons-section, &__buttons-section--more {
         margin-top: 20px;
         width: 100%;
         border-top: 2px solid $gray-color;
         @include flexSetup(row, flex-end, space-between);
         padding-top: 25px;
+
+        &--more {
+          justify-content: flex-end;
+        }
 
         &__secondary {
           cursor: pointer;
@@ -137,7 +143,7 @@
           box-shadow: 0 0 3px $gray-color;
         }
     
-        &__primary, &__primary--disabled {
+        &__primary, &__primary--disabled, &__primary--back {
           cursor: pointer;
           background: $purple-color;
           color: $white-color;
@@ -146,11 +152,15 @@
           @extend %robotoNormal;
           font-size: 1.2rem;
           border-radius: 15px;
+          box-shadow: 0 0 3px $gray-color;
 
           &--disabled {
             cursor: default;
             opacity: 0.4;
             box-shadow: 0 0 2px $black-color;
+          }
+          &--back {
+            margin-left: 0;
           }
         }
 
