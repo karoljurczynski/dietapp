@@ -62,7 +62,10 @@
         &__reps {
           width: 20%;
           justify-content: flex-end;
-          
+
+          &--stats {
+            width: 50%;
+          }
         }
       }
     }
@@ -80,6 +83,7 @@
         }
         &:last-of-type {
           border: none;
+          padding-top: 25px;
           margin-bottom: 0px;
           & > * {
             font-weight: normal;

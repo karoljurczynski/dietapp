@@ -236,7 +236,7 @@ export default function AddingList(props) {
       <section className="adding-window__main__adding-list__buttons-section">
         <button 
           className="adding-window__main__adding-list__buttons-section__secondary" 
-          onClick={ props.handleAddingWindow }>
+          onClick={ props.handleAddWindow }>
           Cancel
         </button>
         

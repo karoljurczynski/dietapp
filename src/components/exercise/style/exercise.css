@@ -116,6 +116,9 @@
       -ms-flex-pack: end;
           justify-content: flex-end;
 }
+.exercise__series-section__list__item__reps--stats, .exercise__series-section__summary__item__reps--stats {
+  width: 50%;
+}
 .exercise__series-section__summary__item {
   border-top: 2px solid #707070;
   padding-top: 15px;
@@ -127,6 +130,7 @@
 }
 .exercise__series-section__summary__item:last-of-type {
   border: none;
+  padding-top: 25px;
   margin-bottom: 0px;
 }
 .exercise__series-section__summary__item:last-of-type > * {

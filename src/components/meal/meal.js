@@ -237,11 +237,11 @@ export default function Meal(props) {
     
   }
 
-  const handleAddingWindow = () => {
+  const handleAddWindow = () => {
     dispatch( {type: ACTIONS.NEGATE_ADDING_WINDOW_STATE} );
   }
 
-  const handleRemovingWindow = () => {
+  const handleRemoveWindow = () => {
     dispatch( {type: ACTIONS.NEGATE_REMOVING_WINDOW_STATE} );
   }
 
@@ -367,13 +367,13 @@ export default function Meal(props) {
         <div>
         <button 
           className={ state.productList.length ? "meal__buttons-section__remove-button" : "meal__buttons-section__remove-button--disabled" } 
-          onClick={ state.productList.length ? handleRemovingWindow : null } 
+          onClick={ state.productList.length ? handleRemoveWindow : null } 
           disabled={ state.isAddingWindowOpened || state.isRemovingWindowOpened ? true : false }>
           Remove</button> 
 
         <button 
           className="meal__buttons-section__add-button" 
-          onClick={ handleAddingWindow } 
+          onClick={ handleAddWindow } 
           disabled={ state.isAddingWindowOpened || state.isRemovingWindowOpened ? true : false }>
           Add</button>  
         </div>     
@@ -394,7 +394,7 @@ export default function Meal(props) {
             handleOnChange={ handleOnChange }
             handleFormClearing = { handleFormClearing }
             handleProductAdding={ handleProductAdding }
-            handleAddingWindow={ handleAddingWindow }
+            handleAddWindow={ handleAddWindow }
             handlePredefinedProductsAdding={ handlePredefinedProductsAdding }
           />
         : null }
@@ -403,7 +403,7 @@ export default function Meal(props) {
         ? <RemoveWindow
             productList={ state.productList }
             handleProductRemoving={ handleProductRemoving }
-            handleRemovingWindow={ handleRemovingWindow }
+            handleRemoveWindow={ handleRemoveWindow }
           />
         : null }
 

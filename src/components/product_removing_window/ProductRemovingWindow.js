@@ -158,7 +158,7 @@ export default function RemoveWindow(props) {
           <section className="removing-window__main__list__buttons-section">
             <button className="removing-window__main__list__buttons-section__tertiary" onClick={ handleRemovingAllButton }>Remove all</button>
             <div>
-              <button className="removing-window__main__list__buttons-section__secondary" onClick={ props.handleRemovingWindow }>Cancel</button>
+              <button className="removing-window__main__list__buttons-section__secondary" onClick={ props.handleRemoveWindow }>Cancel</button>
               <button 
               className={ isRemoveButtonDisabled
                           ? "removing-window__main__list__buttons-section__primary removing-window__main__list__buttons-section__primary--disabled" 
