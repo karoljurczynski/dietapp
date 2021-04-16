@@ -13,7 +13,7 @@ const ACTIONS = {
   NEGATE_ADD_WINDOW_STATE: 'negate-add-window-state',
   NEGATE_REMOVE_WINDOW_STATE: 'negate-remove-window-state',
   NEGATE_MORE_WINDOW_STATE: 'negate-more-window-state',
-  EDIT_SERIE_IN_SERIESLIST: 'edit-serie-in-serieslist',
+  SORT_SERIESLIST: 'sort-serieslist',
   CHANGE_NEW_SERIE_DATA: 'change-new-serie-data',
   SET_WARNING: 'set-warning',
   CLEAR_WARNING: 'clear-warning',
@@ -43,7 +43,7 @@ export default function Exercise(props) {
     },
     seriesList: [],
     warning: ['', ''],
-    newSerie: { id: 0, exerciseId: props.exerciseId, dateIds: { dayId: 0, monthId: 0, yearId: 0 }, serieCount: 'test', weight: '', reps:'' }
+    newSerie: { id: 0, exerciseId: props.exerciseId, dateIds: { dayId: 0, monthId: 0, yearId: 0 }, serieCount: '', weight: '', reps:'' }
   }
 
   const reducer = (state, action) => {
@@ -72,33 +72,54 @@ export default function Exercise(props) {
         }
       }
 
-      case ACTIONS.EDIT_SERIE_COUNT_IN_SERIESLIST: {
-        return {...state};
-      }
-
       case ACTIONS.ADD_SERIE: {
+        const updatedSeriesList = state.seriesList;
+        let serieCount = 1;
+        
+        // ADDING SERIE TO SERIESLIST
         state.newSerie.id = Date.now();
         state.newSerie.dateIds = props.dateIds;
-        state.seriesList.push(state.newSerie);
+        updatedSeriesList.push(state.newSerie);
+
+        // SERIE ORDER COUNTING
+        updatedSeriesList.forEach(serie => {
+          serie.serieCount = serieCount;
+          serieCount++;
+        });
+
+        // SAVING CHANGES IN LOCAL STORAGE
         localStorage.setItem(state.newSerie.id, JSON.stringify(state.newSerie));
-        console.log(state.seriesList);
-        return {...state, newSerie: { id: 0, exerciseId: props.exerciseId, dateIds: { dayId: 0, monthId: 0, yearId: 0 }, serieCount: '', weight: '', reps: '' }};
+        
+        return {
+          ...state,
+          newSerie: { id: 0, exerciseId: props.exerciseId, dateIds: { dayId: 0, monthId: 0, yearId: 0 }, serieCount: '', weight: '', reps: '' },
+          seriesList: updatedSeriesList };
       }
 
       case ACTIONS.REMOVE_SERIE: {
-        let newSeriesList = state.seriesList;
+        let updatedSeriesList = state.seriesList;
         let checkedIdList = action.payload;
+        let serieCount = 1;
         
         checkedIdList.forEach(checkedId => {
-          newSeriesList.forEach((serie, index) => {
-            if (Number(serie.id) === Number(checkedId)) {
-              newSeriesList.splice(index, 1);
-              localStorage.removeItem(serie.id);
-            }
+
+          updatedSeriesList.forEach((serie, index) => {
+            localStorage.removeItem(serie.id);
+            if (Number(serie.id) === Number(checkedId))
+              updatedSeriesList.splice(index, 1);
+              
           });
+
         });
 
-        return { ...state, seriesList: newSeriesList };
+        // SERIE ORDER COUNTING
+        updatedSeriesList.forEach(serie => {
+          serie.serieCount = serieCount;
+          localStorage.setItem(serie.id, JSON.stringify(serie));
+          serieCount++;
+        });
+
+        return { ...state, seriesList: updatedSeriesList };
       }
 
       case ACTIONS.SET_WARNING: {
@@ -114,6 +135,23 @@ export default function Exercise(props) {
 
       case ACTIONS.ADD_SERIE_TO_SERIESLIST: {
         return {...state, seriesList: [...state.seriesList, action.payload]};
+      }
+
+      case ACTIONS.SORT_SERIESLIST: {
+        let serieCount = 1;
+        const updatedSeriesList = [];
+
+        while (updatedSeriesList.length !== state.seriesList.length) {
+
+          state.seriesList.forEach(serie => {
+            if (serie.serieCount === serieCount)
+              updatedSeriesList.push(serie);
+          });
+
+          serieCount++;
+        }
+   
+        return {...state, seriesList: updatedSeriesList };
       }
 
       case ACTIONS.CLEAR_SERIESLIST_BEFORE_DAY_CHANGING: {
@@ -139,6 +177,7 @@ export default function Exercise(props) {
   // LOADS DATA FROM LOCAL STORAGE AFTER DAY CHANGE
   useEffect(() => {
     let localStorageKeys = Object.keys(localStorage);
+
     localStorageKeys.forEach(key => {
       let value = JSON.parse(localStorage.getItem(key));
       if (value.exerciseId === props.exerciseId && ((value.dateIds.dayId === props.dateIds.dayId) &&
@@ -146,6 +185,8 @@ export default function Exercise(props) {
                                             (value.dateIds.yearId === props.dateIds.yearId)))
         dispatch({ type: ACTIONS.ADD_SERIE_TO_SERIESLIST, payload: value });
     });
+
+    dispatch({ type: ACTIONS.SORT_SERIESLIST });
 
   }, [props.dateIds]);
 
@@ -171,12 +212,6 @@ export default function Exercise(props) {
 
   }, [props.dateIds]);
 
-  useEffect(() => {
-    state.seriesList.forEach(serie => {
-
-    });
-
-  }, [state.isRemoveWindowOpened]);
 
   // DISABLES POINTER EVENTS WHEN ONE OF FORM WINDOWS IS OPENED 
   useEffect(() => {
@@ -202,12 +237,6 @@ export default function Exercise(props) {
     
   }, [state.isAddWindowOpened, state.isRemoveWindowOpened, state.isMoreWindowOpened]);
 
-  // UPDATES LASTTIMEDATA AFTER CHANGING SERIESLIST
-  useEffect(() => {
-    if (state.seriesList.length !== 0)
-      dispatch({ type: ACTIONS.UPDATE_LASTTIME_DATA });
-
-  }, [state.seriesList]);
 
   const handleExerciseOpening = () => {
     dispatch({ type: ACTIONS.NEGATE_EXERCISE_OPENED });
@@ -257,17 +286,6 @@ export default function Exercise(props) {
 
     else {
       setValueAsNull();
-    }
-  }
-
-  const countSerieNumber = (serieId) => {
-    let serieNumber = 1;
-
-    for (let i = 0; i < state.seriesList.length; i++) {
-      if (state.seriesList[i].id === serieId)
-        return serieNumber;
-      else
-        serieNumber++;
     }
   }
 
@@ -330,12 +348,16 @@ export default function Exercise(props) {
 
   const handleSerieAdding = (e) => {
     e.preventDefault();
-    setTimeout(() => { dispatch({ type: ACTIONS.ADD_SERIE }) }, 10);
+    setTimeout(() => { 
+      dispatch({ type: ACTIONS.ADD_SERIE });
+      console.log(state.seriesList);
+    }, 10);
     dispatch({ type: ACTIONS.NEGATE_ADD_WINDOW_STATE });
   }
 
   const handleSerieRemoving = (checkedIdsList) => {
     dispatch({ type: ACTIONS.REMOVE_SERIE, payload: checkedIdsList });
+    console.log(state.seriesList);
     dispatch({ type: ACTIONS.NEGATE_REMOVE_WINDOW_STATE });
   }
   
@@ -361,7 +383,7 @@ export default function Exercise(props) {
             { state.seriesList.map(serie => {
               return (
               <li key={ serie.id } className="exercise__series-section__list__item">
-                  <p className="exercise__series-section__list__item__count">Serie { countSerieNumber(serie.id) }</p>
+                  <p className="exercise__series-section__list__item__count">Serie { serie.serieCount }</p>
                   <p className="exercise__series-section__list__item__weight">{ serie.weight } kg</p>
                   <p className="exercise__series-section__list__item__reps">{ serie.reps } reps</p>
                 </li> 

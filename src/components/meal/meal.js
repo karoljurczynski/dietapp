@@ -288,6 +288,7 @@ export default function Meal(props) {
     const isNumber = /[0-9]/;
     const isWord = /[a-z\s]/i;
     const isZero = /^[0]{1}/;
+    console.log(state.productList);
 
     const setValueAsZero = () => {
       dispatch({ type: ACTIONS.CHANGE_NEW_PRODUCT_DATA, payload: { key: e.target.id, value: '0' }});

@@ -3,3 +3,7 @@
 @forward '../../../styles/config/config';
 //@forward '../styles/media_queries/media';
 @use '../../../styles/config/config' as *;
+
+h1 {
+  font-family: Arial, Helvetica, sans-serif;
+}
