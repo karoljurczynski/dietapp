@@ -15,6 +15,7 @@ const ACTIONS = {
   NEGATE_MORE_WINDOW_STATE: 'negate-more-window-state',
   SORT_SERIESLIST: 'sort-serieslist',
   CHANGE_NEW_SERIE_DATA: 'change-new-serie-data',
+  UPDATE_LASTTIME_DATA: 'update-lasttime-data',
   SET_WARNING: 'set-warning',
   CLEAR_WARNING: 'clear-warning',
   ADD_SERIE: 'add-serie',
@@ -159,12 +160,38 @@ export default function Exercise(props) {
       }
 
       case ACTIONS.UPDATE_LASTTIME_DATA: {
-        return {...state, lastTimeData: {
-          training: { weight: state.seriesList[state.seriesList.length - 1].weight,
-                      reps: state.seriesList[state.seriesList.length - 1].reps },
+        let maxSerieCount = 0;
+        let indexOfLastSerie = 0;
+        let updatedLastSerieData = { weight: "", reps: "" };
 
-          serie: { weight: state.seriesList[state.seriesList.length - 1].weight,
-                   reps: state.seriesList[state.seriesList.length - 1].reps }
+        // SEARCHING FOR LAST SERIE NUMBER
+        if (state.seriesList.length !== 0) {
+
+          state.seriesList.forEach((serie, index) => {
+            if (serie.serieCount > maxSerieCount) {
+              maxSerieCount = serie.serieCount;
+              indexOfLastSerie = index;
+            }
+          });
+
+          updatedLastSerieData = { 
+            weight: state.seriesList[indexOfLastSerie].weight,
+            reps: state.seriesList[indexOfLastSerie].reps 
+          };
+        }
+
+        else {
+          updatedLastSerieData = { 
+            weight: "First serie",
+            reps: "First serie" 
+          };
+        }
+      
+        return {...state, lastTimeData: {
+          training: { weight: 0,
+                      reps: 0 },
+
+          serie: updatedLastSerieData
         }}
       }
       
@@ -173,6 +200,7 @@ export default function Exercise(props) {
   }
 
   const [state, dispatch] = useReducer(reducer, initialState);
+
 
   // LOADS DATA FROM LOCAL STORAGE AFTER DAY CHANGE
   useEffect(() => {
@@ -187,6 +215,7 @@ export default function Exercise(props) {
     });
 
     dispatch({ type: ACTIONS.SORT_SERIESLIST });
+    dispatch({ type: ACTIONS.UPDATE_LASTTIME_DATA });
 
   }, [props.dateIds]);
 
@@ -236,6 +265,14 @@ export default function Exercise(props) {
     : changePointerEvents("auto");
     
   }, [state.isAddWindowOpened, state.isRemoveWindowOpened, state.isMoreWindowOpened]);
+
+
+  // UPDATES LAST TIME DATA AFTER OPENING CHANGING WINDOWS
+  useEffect(() => {
+    dispatch({ type: ACTIONS.UPDATE_LASTTIME_DATA });
+    console.log(state.lastTimeData);
+
+  }, [state.isAddWindowOpened, state.isRemoveWindowOpened]);
 
 
   const handleExerciseOpening = () => {
@@ -348,16 +385,12 @@ export default function Exercise(props) {
 
   const handleSerieAdding = (e) => {
     e.preventDefault();
-    setTimeout(() => { 
-      dispatch({ type: ACTIONS.ADD_SERIE });
-      console.log(state.seriesList);
-    }, 10);
+    setTimeout(() => { dispatch({ type: ACTIONS.ADD_SERIE }) }, 10);
     dispatch({ type: ACTIONS.NEGATE_ADD_WINDOW_STATE });
   }
 
   const handleSerieRemoving = (checkedIdsList) => {
     dispatch({ type: ACTIONS.REMOVE_SERIE, payload: checkedIdsList });
-    console.log(state.seriesList);
     dispatch({ type: ACTIONS.NEGATE_REMOVE_WINDOW_STATE });
   }
   

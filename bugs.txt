@@ -1,7 +1,6 @@
 last training/serie data doesn't work
 percent in info about progress doesn't work
 more window is empty
-serie counting has to be done and saved to array
 exercise difficulty level
 rendering of exercises has to depend of current date
 labels for forms (!)
