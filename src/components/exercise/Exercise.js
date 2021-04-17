@@ -238,9 +238,8 @@ export default function Exercise(props) {
 
         let currentlyAddingSerieNumber = 0;
         let indexOfLastSerie = 0;
-        let updatedLastSerieData = { weight: "", reps: "" };
-        let updatedLastTrainingData = { weight: "", reps: "" };
-        let potentialPreviousDateIds = { dayId: 0, monthId: 0, yearId: 0 };
+        let updatedLastSerieData = { weight: "First serie", reps: "First serie" };
+        let updatedLastTrainingData = { weight: "First training", reps: "First training" };
 
         // LAST SERIE DATA
 
@@ -259,15 +258,7 @@ export default function Exercise(props) {
             reps: state.seriesList[indexOfLastSerie].reps 
           };
         }
-
-        // OR IF IT'S A FIRST INPUT DISPLAY MESSAGE
-        else {
-          updatedLastSerieData = { 
-            weight: "First serie",
-            reps: "First serie" 
-          };
-        }
-
+      
         // LAST TRAINING DATA
 
         const potentialSeries = [];
@@ -282,44 +273,44 @@ export default function Exercise(props) {
 
             if (value.exerciseId === props.exerciseId) {
               if (value.serieCount === currentlyAddingSerieNumber + 1) {
-                potentialSeries.push(value);
+                if (
+                  (value.dateIds.dayId < props.dateIds.dayId) && (value.dateIds.monthId === props.dateIds.monthId) && (value.dateIds.yearId === props.dateIds.yearId) ||
+                  (value.dateIds.dayId > props.dateIds.dayId) && (value.dateIds.monthId < props.dateIds.monthId) && (value.dateIds.yearId === props.dateIds.yearId) ||
+                  (value.dateIds.dayId > props.dateIds.dayId) && (value.dateIds.monthId > props.dateIds.monthId) && (value.dateIds.yearId < props.dateIds.yearId)
+                  )
+                  potentialSeries.push(value);
               }
             }
           });
 
+          console.log(potentialSeries);
+
           if (potentialSeries.length !== 0) {
-            while (previousTrainingSerie) {
+            while (true) {
               previousDateIds = getPreviousTrainingDate(previousDateIds);
+              console.log(previousDateIds);
   
               potentialSeries.forEach(serie => {
                 if (JSON.stringify(previousDateIds) === JSON.stringify(serie.dateIds))
                   previousTrainingSerie = serie;
+                console.log(previousTrainingSerie);
+                console.log(serie.dateIds);
               });
   
-              if (previousTrainingSerie)
+              if (previousTrainingSerie.weight !== undefined) {
+                updatedLastTrainingData = { 
+                  weight: previousTrainingSerie.weight,
+                  reps: previousTrainingSerie.reps 
+                };
                 break;
+              }
             }
-
-            updatedLastTrainingData = { 
-              weight: previousTrainingSerie.weight,
-              reps: previousTrainingSerie.reps 
-            };
-          }
-
-          else {
-            updatedLastTrainingData = { 
-              weight: "First time",
-              reps: "First time"
-            };
           }
         }
-
-        else {
-          updatedLastTrainingData = { 
-            weight: "First time",
-            reps: "First time"
-          };
-        }
+        console.log(potentialSeries.length);
+        console.log(potentialSeries);
+        console.log(previousTrainingSerie);
+        console.log(updatedLastTrainingData);
 
         return {...state, 
           lastTimeData: {
@@ -410,7 +401,6 @@ export default function Exercise(props) {
   // UPDATES LAST TIME DATA AFTER OPENING CHANGING WINDOWS
   useEffect(() => {
     dispatch({ type: ACTIONS.UPDATE_LASTTIME_DATA });
-    console.log(state.lastTimeData);
 
   }, [state.isAddWindowOpened, state.isRemoveWindowOpened]);
 
