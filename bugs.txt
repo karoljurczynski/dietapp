@@ -5,5 +5,5 @@ exercise difficulty level
 rendering of exercises has to depend of current date
 labels for forms (!)
 styles improvements
-
+trainingId depends of date
 

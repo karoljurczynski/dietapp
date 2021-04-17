@@ -44,7 +44,82 @@ export default function Exercise(props) {
     },
     seriesList: [],
     warning: ['', ''],
-    newSerie: { id: 0, exerciseId: props.exerciseId, dateIds: { dayId: 0, monthId: 0, yearId: 0 }, serieCount: '', weight: '', reps:'' }
+    newSerie: { id: 0, exerciseId: props.exerciseId, trainingId: 0, dateIds: { dayId: 0, monthId: 0, yearId: 0 }, serieCount: '', weight: '', reps:'' }
+  }
+
+  const getPreviousTrainingDate = (previousDateIds) => {
+    const isLeapYear = () => {
+      if (((previousDateIds.yearId % 4 === 0) && (previousDateIds.yearId % 100 !== 0)) || previousDateIds.yearId % 400 === 0)
+         return true;
+      
+      else
+         return false;
+    }
+    const isDayFirstInMonth = () => {
+      if(previousDateIds.dayId === 1)
+        return true;
+      else
+        return false;
+    }
+    const isDayFirstInJanuary = () => {
+      if ((previousDateIds.dayId === 1) && (previousDateIds.monthId === 1))
+        return true;
+      
+      else
+        return false;
+    }
+    const isDayFirstInMarch = () => {
+      if ((previousDateIds.dayId === 1) && (previousDateIds.monthId === 3))
+        return true;
+      
+      else
+        return false;
+    }
+    const isDayFirstIn30DayMonths = () => {
+      if ((previousDateIds.dayId === 1) && ((previousDateIds.monthId === 4) || (previousDateIds.monthId === 6) || (previousDateIds.monthId === 8) || (previousDateIds.monthId === 9) || (previousDateIds.monthId === 11)))
+        return true;
+      
+      else
+        return false;
+    }
+
+    let potentialPreviousDateIds = { dayId: 0, monthId: 0, yearId: 0 };
+
+    if (isDayFirstInJanuary()) {
+      potentialPreviousDateIds.dayId = 31;
+      potentialPreviousDateIds.monthId = 12;
+      potentialPreviousDateIds.yearId = previousDateIds.yearId - 1;
+    }
+
+    else if (isDayFirstInMarch()) {
+      if(isLeapYear())
+        potentialPreviousDateIds.dayId = 29;
+      else
+        potentialPreviousDateIds.dayId = 28;
+      
+      potentialPreviousDateIds.monthId = 2;
+      potentialPreviousDateIds.yearId = previousDateIds.yearId;
+    }
+
+    else if (isDayFirstIn30DayMonths()) {
+      potentialPreviousDateIds.dayId = 31;
+      potentialPreviousDateIds.monthId = previousDateIds.monthId - 1;
+      potentialPreviousDateIds.yearId = previousDateIds.yearId;
+    }
+
+    else if (isDayFirstInMonth()) {
+      potentialPreviousDateIds.dayId = 30
+      potentialPreviousDateIds.monthId = previousDateIds.monthId - 1;
+      potentialPreviousDateIds.yearId = previousDateIds.yearId;
+    }
+    
+    else {
+      potentialPreviousDateIds.dayId = previousDateIds.dayId - 1;
+      potentialPreviousDateIds.monthId = previousDateIds.monthId;
+      potentialPreviousDateIds.yearId = previousDateIds.yearId;
+    }
+
+    return potentialPreviousDateIds;
   }
 
   const reducer = (state, action) => {
@@ -160,16 +235,21 @@ export default function Exercise(props) {
       }
 
       case ACTIONS.UPDATE_LASTTIME_DATA: {
-        let maxSerieCount = 0;
+
+        let currentlyAddingSerieNumber = 0;
         let indexOfLastSerie = 0;
         let updatedLastSerieData = { weight: "", reps: "" };
+        let updatedLastTrainingData = { weight: "", reps: "" };
+        let potentialPreviousDateIds = { dayId: 0, monthId: 0, yearId: 0 };
+
+        // LAST SERIE DATA
 
         // SEARCHING FOR LAST SERIE NUMBER
         if (state.seriesList.length !== 0) {
 
           state.seriesList.forEach((serie, index) => {
-            if (serie.serieCount > maxSerieCount) {
-              maxSerieCount = serie.serieCount;
+            if (serie.serieCount > currentlyAddingSerieNumber) {
+              currentlyAddingSerieNumber = serie.serieCount;
               indexOfLastSerie = index;
             }
           });
@@ -180,19 +260,73 @@ export default function Exercise(props) {
           };
         }
 
+        // OR IF IT'S A FIRST INPUT DISPLAY MESSAGE
         else {
           updatedLastSerieData = { 
             weight: "First serie",
             reps: "First serie" 
           };
         }
-      
-        return {...state, lastTimeData: {
-          training: { weight: 0,
-                      reps: 0 },
 
-          serie: updatedLastSerieData
-        }}
+        // LAST TRAINING DATA
+
+        const potentialSeries = [];
+        let previousTrainingSerie = {};
+        let previousDateIds = props.dateIds;
+      
+        // FILTERING LOCAL STORAGE TO SEARCH A EXERCISE WITH CORRECT EXERCISEID AND NUMBER OF SERIE
+        if (Object.keys(localStorage).length !== 0) {
+
+          Object.keys(localStorage).forEach(key => {
+            let value = JSON.parse(localStorage.getItem(key));
+
+            if (value.exerciseId === props.exerciseId) {
+              if (value.serieCount === currentlyAddingSerieNumber + 1) {
+                potentialSeries.push(value);
+              }
+            }
+          });
+
+          if (potentialSeries.length !== 0) {
+            while (previousTrainingSerie) {
+              previousDateIds = getPreviousTrainingDate(previousDateIds);
+  
+              potentialSeries.forEach(serie => {
+                if (JSON.stringify(previousDateIds) === JSON.stringify(serie.dateIds))
+                  previousTrainingSerie = serie;
+              });
+  
+              if (previousTrainingSerie)
+                break;
+            }
+
+            updatedLastTrainingData = { 
+              weight: previousTrainingSerie.weight,
+              reps: previousTrainingSerie.reps 
+            };
+          }
+
+          else {
+            updatedLastTrainingData = { 
+              weight: "First time",
+              reps: "First time"
+            };
+          }
+        }
+
+        else {
+          updatedLastTrainingData = { 
+            weight: "First time",
+            reps: "First time"
+          };
+        }
+
+        return {...state, 
+          lastTimeData: {
+            training: updatedLastTrainingData,
+            serie: updatedLastSerieData
+          }
+        }
       }
       
       default: return console.error(`Unknown action type: ${action.type}`);
@@ -223,6 +357,12 @@ export default function Exercise(props) {
   // CLEARS SERIESLIST AFTER DAY CHANGE
   useEffect(() => { 
     return () => dispatch({ type: ACTIONS.CLEAR_SERIESLIST_BEFORE_DAY_CHANGING });
+
+  }, [props.dateIds]);
+
+
+  // 
+  useEffect(() => { 
 
   }, [props.dateIds]);
 
@@ -273,7 +413,6 @@ export default function Exercise(props) {
     console.log(state.lastTimeData);
 
   }, [state.isAddWindowOpened, state.isRemoveWindowOpened]);
-
 
   const handleExerciseOpening = () => {
     dispatch({ type: ACTIONS.NEGATE_EXERCISE_OPENED });
