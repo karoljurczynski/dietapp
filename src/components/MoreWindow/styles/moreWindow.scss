@@ -4,6 +4,68 @@
 //@forward '../styles/media_queries/media';
 @use '../../../styles/config/config' as *;
 
-h1 {
-  font-family: Arial, Helvetica, sans-serif;
+.more-window {
+  max-height: 600px;
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  
+  &::-webkit-scrollbar {
+    display: none;
+  }
+      
+  &__section {
+    width: 100%;
+    margin-bottom: 30px;
+
+    &--horizontal {
+      @include flexSetup(row, flex-start, flex-start);
+      margin: 15px 0;
+
+      &__left {
+        width: 50%;
+        @include flexSetup(column, center, space-around);
+      }
+      &__right {
+        border-left: 2px solid $gray-color;
+        width: 50%;
+        @include flexSetup(column, center, center);
+      }
+    }
+
+    &:first-of-type {
+      border-top: 2px solid $gray-color;
+      padding-top: 15px;
+    }
+
+    &:nth-of-type(3) {
+      margin-top: 30px;
+      padding-top: 15px;
+      margin-bottom: 0;
+    }
+  
+    &__title {
+      font-size: 1.2rem;
+      color: $black-color;
+      @include flexSetup(row, flex-start, flex-start);
+      margin-bottom: 15px;
+    }
+
+    &__paragraph {
+      font-size: 1rem;
+      color: $gray-color;
+      line-height: 1.7;
+    }
+
+    &__list {
+      list-style-type: none;
+      width: 100%;
+      
+      &__item {
+        color: $gray-color;
+        text-align: center;
+        width: 100%;
+      }
+    }
+  }
 }

@@ -43,7 +43,7 @@
   opacity: 0.5;
   margin-right: 8px;
 }
-.exercise__top-section__grade-container__point:first-of-type {
+.exercise__top-section__grade-container__point--filled {
   background-color: #7500AF;
   opacity: 1;
 }
@@ -106,6 +106,22 @@
 }
 .exercise__series-section__list__item__count, .exercise__series-section__summary__item__count {
   width: 40%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+}
+.exercise__series-section__list__item__count > *, .exercise__series-section__summary__item__count > * {
+  font-size: 1.1rem;
 }
 .exercise__series-section__list__item__weight, .exercise__series-section__summary__item__weight {
   width: 20%;
@@ -118,6 +134,7 @@
 }
 .exercise__series-section__list__item__reps--stats, .exercise__series-section__summary__item__reps--stats {
   width: 50%;
+  font-size: 1.1rem;
 }
 .exercise__series-section__summary__item {
   border-top: 2px solid #707070;

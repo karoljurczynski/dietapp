@@ -203,7 +203,6 @@ function App() {
         numberOfExercises: 6
       }
     },
-    trainingDays: [1, 3, 5],
     clearAllProducts: false,
     oldSettingsData: {}
   }
@@ -378,7 +377,7 @@ function App() {
 
           Object.values(state.settingsData.training.namesOfExercises).map((exercise, index) => {
             if (state.settingsData.training.numberOfExercises > index)
-              return <Exercise key={ index } name={ exercise } exerciseId={ index } dateIds={ state.dateIds } trainingDays={ state.trainingDays } />
+              return <Exercise key={ index } name={ exercise } difficulty={ 2 } exerciseId={ index } dateIds={ state.dateIds } />
             })
 
         }

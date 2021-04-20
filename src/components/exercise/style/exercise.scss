@@ -16,7 +16,7 @@
         opacity: 0.5;
         margin-right: 8px;
 
-        &:first-of-type {
+        &--filled {
           background-color: $purple-color;
           opacity: 1;
         }
@@ -52,6 +52,12 @@
 
         &__count {
           width: 40%;
+          @include flexSetup(column, flex-start, flex-start);
+
+          & > * {
+            font-size: 1.1rem;
+          }
+
         }
 
         &__weight {
@@ -65,6 +71,7 @@
 
           &--stats {
             width: 50%;
+            font-size: 1.1rem;
           }
         }
       }

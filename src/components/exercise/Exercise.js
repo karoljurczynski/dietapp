@@ -274,27 +274,23 @@ export default function Exercise(props) {
             if (value.exerciseId === props.exerciseId) {
               if (value.serieCount === currentlyAddingSerieNumber + 1) {
                 if (
+                  (value.dateIds.dayId < props.dateIds.dayId) && (value.dateIds.monthId < props.dateIds.monthId) && (value.dateIds.yearId === props.dateIds.yearId) ||
                   (value.dateIds.dayId < props.dateIds.dayId) && (value.dateIds.monthId === props.dateIds.monthId) && (value.dateIds.yearId === props.dateIds.yearId) ||
-                  (value.dateIds.dayId > props.dateIds.dayId) && (value.dateIds.monthId < props.dateIds.monthId) && (value.dateIds.yearId === props.dateIds.yearId) ||
-                  (value.dateIds.dayId > props.dateIds.dayId) && (value.dateIds.monthId > props.dateIds.monthId) && (value.dateIds.yearId < props.dateIds.yearId)
-                  )
+                  (value.dateIds.dayId >= props.dateIds.dayId) && (value.dateIds.monthId < props.dateIds.monthId) && (value.dateIds.yearId === props.dateIds.yearId) ||
+                  (value.dateIds.dayId >= props.dateIds.dayId) && (value.dateIds.monthId >= props.dateIds.monthId) && (value.dateIds.yearId < props.dateIds.yearId)
+                )
                   potentialSeries.push(value);
               }
             }
           });
 
-          console.log(potentialSeries);
-
           if (potentialSeries.length !== 0) {
             while (true) {
               previousDateIds = getPreviousTrainingDate(previousDateIds);
-              console.log(previousDateIds);
   
               potentialSeries.forEach(serie => {
                 if (JSON.stringify(previousDateIds) === JSON.stringify(serie.dateIds))
                   previousTrainingSerie = serie;
-                console.log(previousTrainingSerie);
-                console.log(serie.dateIds);
               });
   
               if (previousTrainingSerie.weight !== undefined) {
@@ -307,10 +303,6 @@ export default function Exercise(props) {
             }
           }
         }
-        console.log(potentialSeries.length);
-        console.log(potentialSeries);
-        console.log(previousTrainingSerie);
-        console.log(updatedLastTrainingData);
 
         return {...state, 
           lastTimeData: {
@@ -340,7 +332,6 @@ export default function Exercise(props) {
     });
 
     dispatch({ type: ACTIONS.SORT_SERIESLIST });
-    dispatch({ type: ACTIONS.UPDATE_LASTTIME_DATA });
 
   }, [props.dateIds]);
 
@@ -400,9 +391,11 @@ export default function Exercise(props) {
 
   // UPDATES LAST TIME DATA AFTER OPENING CHANGING WINDOWS
   useEffect(() => {
-    dispatch({ type: ACTIONS.UPDATE_LASTTIME_DATA });
+    if (state.isAddWindowOpened)
+      dispatch({ type: ACTIONS.UPDATE_LASTTIME_DATA });
+    countProgress();
 
-  }, [state.isAddWindowOpened, state.isRemoveWindowOpened]);
+  }, [state.isAddWindowOpened]);
 
   const handleExerciseOpening = () => {
     dispatch({ type: ACTIONS.NEGATE_EXERCISE_OPENED });
@@ -420,6 +413,83 @@ export default function Exercise(props) {
     dispatch({ type: ACTIONS.NEGATE_MORE_WINDOW_STATE });
   }
 
+  const countProgress = () => {
+    const potentialTrainings = [];
+    const lastTrainingData = [];
+    let message = {};
+    let percentValue = 0;
+    let progressValue = 0;
+    let previousDateIds = props.dateIds;
+  
+    // FILTERING LOCAL STORAGE TO SEARCH A EXERCISE WITH CORRECT EXERCISEID AND NUMBER OF SERIE
+    if (Object.keys(localStorage).length !== 0) {
+
+      Object.keys(localStorage).forEach(key => {
+        let value = JSON.parse(localStorage.getItem(key));
+
+        if (value.exerciseId === props.exerciseId) {
+          if (
+            (value.dateIds.dayId < props.dateIds.dayId) && (value.dateIds.monthId < props.dateIds.monthId) && (value.dateIds.yearId === props.dateIds.yearId) ||
+            (value.dateIds.dayId < props.dateIds.dayId) && (value.dateIds.monthId === props.dateIds.monthId) && (value.dateIds.yearId === props.dateIds.yearId) ||
+            (value.dateIds.dayId >= props.dateIds.dayId) && (value.dateIds.monthId < props.dateIds.monthId) && (value.dateIds.yearId === props.dateIds.yearId) ||
+            (value.dateIds.dayId >= props.dateIds.dayId) && (value.dateIds.monthId >= props.dateIds.monthId) && (value.dateIds.yearId < props.dateIds.yearId)
+          )
+            potentialTrainings.push(value);
+        }
+      });
+
+      if (potentialTrainings.length !== 0) {
+        while (true) {
+          previousDateIds = getPreviousTrainingDate(previousDateIds);
+
+          potentialTrainings.forEach(training => {
+            if (JSON.stringify(previousDateIds) === JSON.stringify(training.dateIds))
+              lastTrainingData.push(training); 
+          });
+
+          if (lastTrainingData.length !== 0)
+            break;
+        }
+      }
+    }
+
+    const lastTrainingTotal = countTotalWeight(lastTrainingData);
+    const currentTrainingTotal = countTotalWeight(state.seriesList);
+  
+    progressValue = currentTrainingTotal - lastTrainingTotal;
+
+    if (lastTrainingTotal)
+      percentValue = ((progressValue / lastTrainingTotal) * 100).toFixed(2);
+    else 
+      percentValue = '';
+      
+    if (lastTrainingTotal > 0) {
+
+      if (progressValue > 0) {
+        message.top = `${progressValue.toFixed(2)} kg more`;
+        message.bottom = `${percentValue}% more than last time`;
+      }
+      else if (progressValue === 0) {
+        message.top = "The same result as last time";
+        message.bottom = "";
+      }
+
+      else {
+        progressValue *= -1;
+        percentValue  *= -1;
+        message.top = `${progressValue.toFixed(2)} kg less`;
+        message.bottom = `${percentValue}% less than last time`;
+      }
+    }
+
+    else {
+      message.top = "First training, don't give up!";
+      message.bottom = "";
+    }
+  
+    return message;
+  }
+
   const handleFormClearing = () => {
     dispatch({ type: ACTIONS.CHANGE_NEW_SERIE_DATA, payload: { key: 'weight', value: '' }});
     dispatch({ type: ACTIONS.CHANGE_NEW_SERIE_DATA, payload: { key: 'reps', value: '' }});
@@ -429,7 +499,6 @@ export default function Exercise(props) {
     // const newReg = /^[1-9]{1,}[.]{1}[0-9]{1,3}/
     const isNumber = /[0-9]/;
     const isZero = /^[0]{1}/;
-    getLastTrainingData(23);
 
     const setValueAsNull = () => {
       dispatch({ type: ACTIONS.CHANGE_NEW_SERIE_DATA, payload: { key: e.target.id, value: "" } });
@@ -479,39 +548,6 @@ export default function Exercise(props) {
     return (countTotalWeight(seriesList) / countTotalReps(seriesList)).toFixed(2);
   }
 
-  const checkIfDateIdsIsDifferent = (firstDateIds, secondDateIds) => {
-    if (firstDateIds.dayId !== secondDateIds.dayId)
-      return true;
-    if (firstDateIds.monthId !== secondDateIds.monthId)
-      return true;
-    if (firstDateIds.yearId !== secondDateIds.yearId)
-      return true;
-    else
-      return false;
-  }
-  
-  const getLastTrainingData = (serie) => {
-    const keys = Object.keys(localStorage);
-    keys.forEach(key => {
-      let value = JSON.parse(localStorage.getItem(key));
-
-      if (value.exerciseId === props.exerciseId) {
-
-        if (checkIfDateIdsIsDifferent(value.dateIds, props.dateIds)) {
-
-          if (value.id < Date.now()) {
-
-            if (value.serieCount === serie.serieCount) {
-
-              return { weight: value.weight, reps: value.reps}
-            }
-          }
-        }  
-      }
-    });
-
-  }
-
   const handleSerieAdding = (e) => {
     e.preventDefault();
     setTimeout(() => { dispatch({ type: ACTIONS.ADD_SERIE }) }, 10);
@@ -530,10 +566,10 @@ export default function Exercise(props) {
 
         <h2 className="meal__top-section__meal-title">{ props.name }</h2>
 
-        <div className="exercise__top-section__grade-container">
-          <span className="exercise__top-section__grade-container__point"></span>
-          <span className="exercise__top-section__grade-container__point"></span>
-          <span className="exercise__top-section__grade-container__point"></span>
+        <div className="exercise__top-section__grade-container" title="Exercise difficulty">
+          <span className="exercise__top-section__grade-container__point exercise__top-section__grade-container__point--filled"></span>
+          <span className={ props.difficulty >= 2 ? "exercise__top-section__grade-container__point exercise__top-section__grade-container__point--filled" : "exercise__top-section__grade-container__point" }></span>
+          <span className={ props.difficulty === 3 ? "exercise__top-section__grade-container__point exercise__top-section__grade-container__point--filled" : "exercise__top-section__grade-container__point" }></span>
         </div>
 
       </section>
@@ -563,7 +599,10 @@ export default function Exercise(props) {
             </li>
 
             <li className="exercise__series-section__summary__item">
-              <p className="exercise__series-section__list__item__count">5% more than last time</p>
+              <p className="exercise__series-section__list__item__count">
+                <span>{ countProgress().top }</span>
+                <span>{ countProgress().bottom }</span>
+              </p>
               <p className="exercise__series-section__list__item__reps exercise__series-section__list__item__reps--stats">{ countWeightPerRepsRatio(state.seriesList) } kg per rep</p>
             </li>
 
@@ -627,6 +666,16 @@ export default function Exercise(props) {
       { state.isMoreWindowOpened 
         ? <MoreWindow
             type="exercises"
+            title={ props.name }
+            description={ `The bench press is an upper-body weight training exercise in which the trainee
+              presses a weight upwards while lying on a weight training bench. 
+              The exercise uses the pectoralis major, the anterior deltoids, and the triceps,
+              among other stabilizing muscles. A barbell is generally used to hold the weight, 
+              but a pair of dumbbells can also be used. ` }
+            difficulty={ props.difficulty }
+            typeOfExercise= { "Compound exercise" }
+            muscles={ ["Pectoralis major", "Anterior deltoids", "Triceps"] }
+            properFormLink={ "https://www.youtube.com/embed/XSza8hVTlmM" }
             handleMoreWindow={ handleMoreWindow }
           />
         : null }
