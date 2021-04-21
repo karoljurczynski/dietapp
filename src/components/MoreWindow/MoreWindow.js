@@ -29,7 +29,7 @@ export default function MoreWindow(props) {
         <section className="more-window__section more-window__section--horizontal">
           <div className="more-window__section--horizontal__left">
             <h3 className="more-window__section__title">Difficulty</h3>
-            <div className="exercise__top-section__grade-container" style={{marginBottom: "15px"}}>
+            <div className="exercise__top-section__grade-container" style={{ marginBottom: "15px" }}>
               <span className="exercise__top-section__grade-container__point exercise__top-section__grade-container__point--filled"></span>
               <span className={ props.difficulty >= 2 ? "exercise__top-section__grade-container__point exercise__top-section__grade-container__point--filled" : "exercise__top-section__grade-container__point" }></span>
               <span className={ props.difficulty === 3 ? "exercise__top-section__grade-container__point exercise__top-section__grade-container__point--filled" : "exercise__top-section__grade-container__point" }></span>

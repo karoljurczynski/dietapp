@@ -258,6 +258,7 @@
   -webkit-box-pack: end;
       -ms-flex-pack: end;
           justify-content: flex-end;
+  margin-bottom: 25px;
 }
 .removing-window__main__list__buttons-section__secondary, .removing-window__main__list__buttons-section--more__secondary, .removing-window__confirm__main__list__buttons-section__secondary, .removing-window__confirm__main__list__buttons-section--more__secondary {
   cursor: pointer;

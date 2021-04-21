@@ -24,10 +24,10 @@
 
       &__left {
         width: 50%;
+        border-right: 2px solid $gray-color;
         @include flexSetup(column, center, space-around);
       }
       &__right {
-        border-left: 2px solid $gray-color;
         width: 50%;
         @include flexSetup(column, center, center);
       }

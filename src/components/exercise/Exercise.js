@@ -667,15 +667,11 @@ export default function Exercise(props) {
         ? <MoreWindow
             type="exercises"
             title={ props.name }
-            description={ `The bench press is an upper-body weight training exercise in which the trainee
-              presses a weight upwards while lying on a weight training bench. 
-              The exercise uses the pectoralis major, the anterior deltoids, and the triceps,
-              among other stabilizing muscles. A barbell is generally used to hold the weight, 
-              but a pair of dumbbells can also be used. ` }
+            description={ props.description }
             difficulty={ props.difficulty }
-            typeOfExercise= { "Compound exercise" }
-            muscles={ ["Pectoralis major", "Anterior deltoids", "Triceps"] }
-            properFormLink={ "https://www.youtube.com/embed/XSza8hVTlmM" }
+            typeOfExercise= { props.typeOfExercise}
+            muscles={ props.muscles }
+            properFormLink={ props.properFormLink }
             handleMoreWindow={ handleMoreWindow }
           />
         : null }

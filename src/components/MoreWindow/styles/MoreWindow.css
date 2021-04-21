@@ -47,6 +47,7 @@
 }
 .more-window__section--horizontal__left {
   width: 50%;
+  border-right: 2px solid #707070;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -61,7 +62,6 @@
       justify-content: space-around;
 }
 .more-window__section--horizontal__right {
-  border-left: 2px solid #707070;
   width: 50%;
   display: -webkit-box;
   display: -ms-flexbox;
