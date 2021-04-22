@@ -8,6 +8,7 @@ import DateChanger from './components/center/DateChanger';
 import Meal from './components/meal/Meal';
 import Gauge from './components/right/Gauge';
 import Exercise from './components/exercise/Exercise';
+import Settings from './components/settings/Settings';
 import { exercises } from './exercisesList';
 
 import './styles/index/index.css';
@@ -25,12 +26,7 @@ const ACTIONS = {
   COUNT_GAUGES_DATA: 'count-gauges-data',
   CHANGE_DATE: 'change-date',
   CHANGE_PAGE_TITLE: 'change-page-title',
-  CHANGE_SETTINGS_DATA: 'change-settings-data',
-  LOAD_SETTINGS: 'load-settings',
-  SET_CLEAR_ALL_PRODUCTS: 'set-clear-all-products',
-  ADD_EXERCISE_TO_SELECTEDEXERCISES: 'add-exercise-to-selectedexercises',
-  REMOVE_EXERCISE_FROM_SELECTEDEXERCISES: 'remove-exercise-from-selectedexercises',
-  SET_SETTINGS_CHANGED_STATE: 'set-settings-changed-state'
+  LOAD_SETTINGS: 'load-settings'
 }
 
 
@@ -54,16 +50,6 @@ const countAmountOfIngredientLeft = (eatenAmount, maxAmount) => {
 // COMPONENTS
 
 function App() {
-
-  // EFFECT WHICH CHECKS IS SETTINGS ARE SAVED IN LOCAL STORAGE
-  useEffect(() => {
-
-    if (Object.keys(localStorage).length !== 0)
-      dispatch({ type: ACTIONS.LOAD_SETTINGS });   
-    else
-      saveSettingsToLocalStorage(); 
-
-  }, []);
 
   const reducer = (state, action) => {
     switch (action.type) {
@@ -128,76 +114,10 @@ function App() {
       case ACTIONS.CHANGE_PAGE_TITLE: {
         return {...state, pageTitle: action.payload};
       }
-
-      case ACTIONS.BACKUP_OLD_SETTINGS: {
-        return {...state, oldSettingsData: state.settingsData};
-      }
-
-      case ACTIONS.RESTORE_OLD_SETTINGS: {
-        return {...state, settingsData: state.oldSettingsData};
-      }
-
-      case ACTIONS.CHANGE_SETTINGS_DATA: {
-        switch (action.payload.key) {
-
-          case 'editMealName': {
-            return {...state, 
-              settingsData: { ...state.settingsData, 
-              nutrition: {...state.settingsData.nutrition,
-              namesOfMeals: {...state.settingsData.nutrition.namesOfMeals, [action.payload.index]: action.payload.value }}}
-            };
-          };
-
-          case 'setMealsNumber': {
-            return {...state, 
-              settingsData: { ...state.settingsData, 
-              nutrition: {...state.settingsData.nutrition,
-              numberOfMeals: action.payload.value }}
-            };
-          };
-
-          default: return {...state, 
-                           settingsData: { ...state.settingsData, 
-                           nutrition: {...state.settingsData.nutrition, 
-                           dailyDemand: {...state.settingsData.nutrition.dailyDemand, 
-                           [action.payload.key]: action.payload.value }}}};
-        }
-      }
-
+      
       case ACTIONS.LOAD_SETTINGS: {
         let newSettings = JSON.parse(localStorage.getItem("settings"));
         return {...state, settingsData: newSettings }
-      }
-
-      case ACTIONS.SET_CLEAR_ALL_PRODUCTS: {
-        return { ...state, clearAllProducts: action.payload };
-      }
-
-      case ACTIONS.ADD_EXERCISE_TO_SELECTEDEXERCISES: {
-        const updatedSelectedExercises = state.settingsData.training.selectedExercises;
-        updatedSelectedExercises.push(action.payload);
-
-        return {...state, 
-          settingsData: { ...state.settingsData, 
-          training: {...state.settingsData.training,
-          selectedExercises: updatedSelectedExercises }}
-        };
-      }
-
-      case ACTIONS.REMOVE_EXERCISE_FROM_SELECTEDEXERCISES: {
-        const updatedSelectedExercises = state.settingsData.training.selectedExercises;
-        const indexOfExerciseToRemoving = updatedSelectedExercises.indexOf(action.payload);
-        updatedSelectedExercises.splice(indexOfExerciseToRemoving, 1);
-
-        return {...state, 
-          settingsData: { ...state.settingsData, 
-          training: {...state.settingsData.training,
-          selectedExercises: updatedSelectedExercises }}
-        }
-      }
-
-      case ACTIONS.SET_SETTINGS_CHANGED_STATE: {
-        return { ...state, isSettingsChanged: action.payload };
       }
 
       default: return console.error(`Unknown action type: ${action.type}`);
@@ -215,17 +135,18 @@ function App() {
       fats: { eaten: 0, left: 0, max: 0, percent: 0 },
       carbs: { eaten: 0, left: 0, max: 0, percent: 0 }
     },
+
     settingsData: {
       main: {
-
+  
       },
-
+  
       nutrition: {
         dailyDemand: { kcal: 2000, proteins: 120, fats: 55, carbs: 240 },
         namesOfMeals: { 0: "Breakfast", 1: "II Breakfast", 2: "Lunch", 3: "Snack", 4: "Dinner", 5: "", 6: "", 7: "", 8: "", 9: "" },
         numberOfMeals: 5
       },
-
+  
       training: {
         selectedExercises: [0, 1, 2, 3, 5]
       }
@@ -239,16 +160,16 @@ function App() {
 
   useEffect(() => { updateGauges() }, [ state.dateIds ]);
 
+  // EFFECT WHICH CHECKS IS SETTINGS ARE SAVED IN LOCAL STORAGE
   useEffect(() => {
-    const localStorageSettings = localStorage.getItem("settings");
-    const currentSettings = JSON.stringify(state.settingsData);
 
-    if (localStorageSettings === currentSettings)
-      dispatch({ type: ACTIONS.SET_SETTINGS_CHANGED_STATE, payload: false });
+    if (Object.keys(localStorage).length !== 0)
+      dispatch({ type: ACTIONS.LOAD_SETTINGS });   
     else
-      dispatch({ type: ACTIONS.SET_SETTINGS_CHANGED_STATE, payload: true});
+      saveSettingsToLocalStorage(); 
 
-  }, [ state.settingsData ]);
+    updateGauges();
+  }, []);
 
   const updateMealSummary = (object, mealId) => {
     dispatch({ type: ACTIONS.UPDATE_MEALS_INGREDIENTS_SUMMARY, payload: {data: object, mealId: mealId} });
@@ -279,89 +200,16 @@ function App() {
       newPageTitle = categoryTitle;
 
     dispatch({type: ACTIONS.CHANGE_PAGE_TITLE, payload: newPageTitle });
-    dispatch({ type: ACTIONS.SET_CLEAR_ALL_PRODUCTS, payload: false });
-    restoreSettingFromLocalStorage();
+    dispatch({ type: ACTIONS.LOAD_SETTINGS });
+    updateGauges();
   }
 
   const handleMenu = (categoryTitle) => {
     changePageTitle(categoryTitle);
   }
 
-  const resetCheckbox = (idOfCheckbox) => {
-    document.querySelector("#" + idOfCheckbox).checked = false;
-  }
-
   const saveSettingsToLocalStorage = () => {
     localStorage.setItem("settings", JSON.stringify(state.settingsData));
-  }
-
-  const restoreSettingFromLocalStorage = () => {
-    dispatch({ type: ACTIONS.LOAD_SETTINGS });
-  }
-
-  const confirmClearAllProducts = () => {
-    dispatch({ type: ACTIONS.SET_CLEAR_ALL_PRODUCTS, payload: false });
-
-    Object.keys(localStorage).forEach(key => {
-      if (key === "settings" || key === "predefined")
-        console.log(key);
-      else
-        localStorage.removeItem(key);
-    });
-  }
-
-  const cancelClearAllProducts = () => {
-    dispatch({ type: ACTIONS.SET_CLEAR_ALL_PRODUCTS, payload: false });
-  }
-
-  const handleSettingsSaved = (e) => {
-    e.preventDefault();
-
-    if (e.target[4].checked === true)
-      dispatch({ type: ACTIONS.SET_CLEAR_ALL_PRODUCTS, payload: true });
-
-    dispatch({ type: ACTIONS.SET_SETTINGS_CHANGED_STATE, payload: false });
-    saveSettingsToLocalStorage();
-    resetCheckbox("clearAllProducts");
-    updateGauges();
-  }
-
-  const handleSettingsCanceled = (e) => {
-    e.preventDefault();
-    restoreSettingFromLocalStorage();
-    resetCheckbox("clearAllProducts");
-    updateGauges();
-  }
-
-  const handleExerciseChoosing = (e) => {
-    if (e.target.checked)
-      dispatch({ type: ACTIONS.ADD_EXERCISE_TO_SELECTEDEXERCISES, payload: Number(e.target.id[e.target.id.length - 1]) });
-    else
-      dispatch({ type: ACTIONS.REMOVE_EXERCISE_FROM_SELECTEDEXERCISES, payload: Number(e.target.id[e.target.id.length - 1]) });
-  }
-
-  const handleSettingOnChange = (e) => {
-    const isNumber = /[0-9]/;
-    const isZero = /^[0]{1}/;
-
-    e.preventDefault();
-  
-    if (e.target.id === 'editMealName') {
-      dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: e.target.id, index: Number(e.target.attributes["data-key"].value), value: e.target.value }})
-    }
-    
-    if (isNumber.test(e.target.value[e.target.value.length - 1])) {
-
-      if (isZero.test(e.target.value))
-        dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: e.target.id, value: 1 }});
-      else
-        dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: e.target.id, value: e.target.value }});
-    }
-
-    else
-      dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: e.target.id, value: "" }});
-
-    updateGauges();
   }
 
   return (
@@ -444,163 +292,9 @@ function App() {
 
           <>
 
-          {state.clearAllProducts && 
-            <>
-              <div>Remove ALL products?</div>
-              <button onClick={ confirmClearAllProducts }>Remove</button>
-              <button onClick={ cancelClearAllProducts }>Cancel</button>
-            </>
-          }
-          <section className="center-section__main__settings">
-
-            <form className="center-section__main__settings__form" onSubmit={ handleSettingsSaved }>
-
-              <section className="center-section__main__settings__form__section">
-
-                <h2 className="center-section__main__settings__form__section__title">Nutrition</h2>
-
-                <label htmlFor="setDailyDemand">Set daily demand: </label>
-
-                <section id="setDailyDemand" className="center-section__main__settings__form__section__daily-demand">
-                  <span className="center-section__main__settings__form__section__input">
-                    <label htmlFor="kcal">Kcal: </label>
-                    <input 
-                      type="text" 
-                      id="kcal"
-                      value={ state.settingsData.nutrition.dailyDemand.kcal }
-                      maxLength={5}
-                      onChange={ handleSettingOnChange }
-                      required />
-                  </span>
-                  
-                  <span className="center-section__main__settings__form__section__input">
-                    <label htmlFor="proteins">Proteins: </label>
-                    <input 
-                      type="text" 
-                      id="proteins"
-                      value={ state.settingsData.nutrition.dailyDemand.proteins }
-                      maxLength={4}
-                      onChange={ handleSettingOnChange }
-                      required />
-                  </span>
-
-                  <span className="center-section__main__settings__form__section__input">
-                    <label htmlFor="fats">Fats: </label>
-                    <input 
-                      type="text" 
-                      id="fats"
-                      value={ state.settingsData.nutrition.dailyDemand.fats }
-                      maxLength={4}
-                      onChange={ handleSettingOnChange }
-                      required />
-                  </span>
-
-                  <span className="center-section__main__settings__form__section__input">
-                    <label htmlFor="carbs">Carbs: </label>
-                    <input 
-                      type="text" 
-                      id="carbs"
-                      value={ state.settingsData.nutrition.dailyDemand.carbs }
-                      maxLength={4}
-                      onChange={ handleSettingOnChange } 
-                      required />
-                  </span>
-
-                </section>
-
-                <span className="center-section__main__settings__form__section__input">
-                  <label htmlFor="clearAllProducts">Clear all products: </label>
-                  <input 
-                    type="checkbox" 
-                    id="clearAllProducts" />
-                </span>
-
-                <span className="center-section__main__settings__form__section__input">
-                  <label htmlFor="setMealsNumber">Set number of meals: </label>
-                  <input 
-                    type="text" 
-                    id="setMealsNumber"
-                    maxLength="1"
-                    value={ state.settingsData.nutrition.numberOfMeals }
-                    onChange={ handleSettingOnChange }
-                    required />
-                </span>
-
-                
-                { Object.values(state.settingsData.nutrition.namesOfMeals).map((meal, index) => {
-                  if (state.settingsData.nutrition.numberOfMeals > index) {
-                    return (
-                      <span key={ index } className="center-section__main__settings__form__section__input">
-                        <label htmlFor="editMealName">Set meal name: </label>
-                        <input
-                          data-key={ index }
-                          type="text" 
-                          id="editMealName"
-                          value={ state.settingsData.nutrition.namesOfMeals[index] } 
-                          onChange={ handleSettingOnChange }
-                          required />
-                      </span>
-                    ) 
-                  }
-
-                  else {
-                    return (
-                      null
-                    )
-                  }
-                })}
-                
-              </section>
-
-              <section className="center-section__main__settings__form__section">
-
-                <h2 className="center-section__main__settings__form__section__title">Training</h2>
-
-                <label htmlFor="chooseExercises">Choose exercises: </label>
-
-                <section id="chooseExercises" className="center-section__main__settings__form__section__daily-demand">
-                  { exercises.map(exercise => {
-                    return (
-                      <span key={ exercise.id } className="center-section__main__settings__form__section__input">
-                        <label htmlFor={"exercise"+ exercise.id }>{ exercise.name }: </label>
-                        <input 
-                          type="checkbox"
-                          checked={ state.settingsData.training.selectedExercises.includes(exercise.id) ? true : false } 
-                          id={"exercise"+ exercise.id }
-                          onChange={ handleExerciseChoosing }
-                          />
-                      </span>
-                    )}) 
-                  }
-                  
-                </section>
-
-                <span className="center-section__main__settings__form__section__input">
-                  <label htmlFor="clearAllSeries">Clear all series: </label>
-                  <input 
-                    type="checkbox" 
-                    id="clearAllSeries" />
-                </span>
-
-              </section>
-
-              <input 
-                className="center-section__main__settings__form__submit-button"
-                type="submit" 
-                value="Save" 
-                id="saveSettings"/>
-
-              <button 
-                className="center-section__main__settings__form__cancel-button"
-                onClick={ handleSettingsCanceled }
-                type="button" 
-                disabled={ state.isSettingsChanged ? false : true }>
-                Cancel
-              </button>
-
-            </form>
-
-          </section>
+          <Settings category="Account" updateGauges={ updateGauges } pageTitle={ state.pageTitle } />
+          <Settings category="Nutrition" initialData={ initialState.settingsData.nutrition } updateGauges={ updateGauges } pageTitle={ state.pageTitle } />
+          <Settings category="Training" initialData={ initialState.settingsData.training } updateGauges={ updateGauges } pageTitle={ state.pageTitle } />
 
           </>
 

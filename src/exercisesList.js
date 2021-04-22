@@ -72,7 +72,7 @@ export const exercises = [
                   or simply the press, is a weight training exercise with many variations. It is typically performed
                   while either standing or sitting sometimes also when squatting, in which a weight is pressed straight
                   upwards from racking position until the arms are locked out overhead, while the legs, lower back and
-                  abs maintain balance.[1] The exercise helps build muscular shoulders with bigger arms, and is one
+                  abs maintain balance. The exercise helps build muscular shoulders with bigger arms, and is one
                   of the most difficult compound upper-body exercises.`,
     difficulty: 2, 
     typeOfExercise: "Compound exercise",
