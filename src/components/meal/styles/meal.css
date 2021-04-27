@@ -2,7 +2,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Cookie&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap");
-.meal__top-section__meal-title, .meal__products-section__product__info__title, .meal__products-section__product__info__weight {
+.meal__top-section__meal-title, .meal__products-section__product__title, .meal__products-section__product__stats-list__item--kcal {
   font-family: "Roboto", sans-serif;
   font-weight: 700;
 }
@@ -48,6 +48,14 @@
   background: #FFFFFF;
   -webkit-box-shadow: 1px 1px 5px #707070;
           box-shadow: 1px 1px 5px #707070;
+}
+.meal__paragraph {
+  padding: 0px 20px 20px;
+  line-height: 1.8;
+}
+.meal__copyright {
+  padding: 20px;
+  color: #707070;
 }
 .meal__top-section {
   display: -webkit-box;
@@ -132,6 +140,10 @@
   margin: 0 20px;
   padding: 10px 0;
 }
+.meal__products-section--settings {
+  padding-bottom: 0;
+  border-bottom: none;
+}
 .meal__products-section__product {
   width: 100%;
   display: -webkit-box;
@@ -164,12 +176,13 @@
       -ms-flex-pack: start;
           justify-content: flex-start;
 }
-.meal__products-section__product__info__title {
+.meal__products-section__product__title {
   font-size: 1.1rem;
   color: #707070;
+  margin-bottom: 2px;
 }
-.meal__products-section__product__info__weight {
-  letter-spacing: -1px;
+.meal__products-section__product__weight {
+  font-family: 0.9rem;
   color: #707070;
   font-size: 0.9rem;
 }
@@ -181,21 +194,24 @@
   -webkit-box-direction: normal;
       -ms-flex-direction: row;
           flex-direction: row;
-  -webkit-box-align: start;
-      -ms-flex-align: start;
-          align-items: flex-start;
+  -webkit-box-align: end;
+      -ms-flex-align: end;
+          align-items: flex-end;
   -webkit-box-pack: start;
       -ms-flex-pack: start;
           justify-content: flex-start;
   list-style-type: none;
 }
 .meal__products-section__product__stats-list__item {
-  margin-left: 10px;
+  margin-left: 15px;
   font-size: 1.2rem;
+  color: #000000;
+  text-align: right;
 }
 .meal__products-section__product__stats-list__item--kcal {
-  margin-left: 15px;
+  margin-left: 25px;
   font-weight: 700;
+  color: #000000;
 }
 .meal__products-section__product:last-of-type {
   margin-bottom: 0;
@@ -216,6 +232,12 @@
           justify-content: flex-end;
   width: calc(100% - 40px);
   margin: 20px;
+}
+.meal__buttons-section--settings {
+  border-top: 2px solid #707070;
+  width: 100%;
+  padding: 20px 0;
+  margin: 0;
 }
 .meal__buttons-section__remove-button, .meal__buttons-section__remove-button--disabled {
   cursor: pointer;

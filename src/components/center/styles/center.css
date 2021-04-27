@@ -15,7 +15,7 @@
   -webkit-box-shadow: 0;
           box-shadow: 0;
   border: none;
-  font-family: "Noto Sans", sans-serif;
+  font-family: "Segoe UI", sans-serif;
   font-weight: normal;
   text-decoration: none;
   font-size: 16px;
@@ -41,7 +41,7 @@
   border: 2px 0 2px 0 solid white;
   overflow-y: scroll;
   overflow-x: hidden;
-  padding: 50px 0;
+  padding: 50px 0 0 0;
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
@@ -63,13 +63,16 @@
       -ms-flex-pack: justify;
           justify-content: space-between;
   width: 100%;
+  position: relative;
   padding: 0 40px 20px;
+  margin-bottom: 30px;
 }
 .center-section__top__title {
   display: block;
+  position: absolute;
+  top: 0;
   width: 50%;
-  font-size: 2rem;
-  letter-spacing: -1px;
+  font-size: 1.3rem;
 }
 .center-section__top__date-changer {
   display: -webkit-box;
@@ -85,12 +88,16 @@
   -webkit-box-pack: end;
       -ms-flex-pack: end;
           justify-content: flex-end;
+  position: absolute;
+  top: 0;
+  right: 40px;
   width: 50%;
 }
 .center-section__top__date-changer__previous-button {
   display: block;
+  cursor: pointer;
   width: 20px;
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   background: none;
 }
 .center-section__top__date-changer__previous-button > * {
@@ -98,14 +105,14 @@
 }
 .center-section__top__date-changer__current-date {
   display: block;
-  font-size: 1.6rem;
-  letter-spacing: -1px;
-  margin: 0 20px;
+  font-size: 1.1rem;
+  margin: 0 15px;
 }
 .center-section__top__date-changer__next-button {
+  cursor: pointer;
   display: block;
   background: none;
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   width: 20px;
 }
 .center-section__top__date-changer__next-button > * {

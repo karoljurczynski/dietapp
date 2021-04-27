@@ -9,6 +9,7 @@ import Meal from './components/meal/Meal';
 import Gauge from './components/right/Gauge';
 import Exercise from './components/exercise/Exercise';
 import Settings from './components/settings/Settings';
+import About from './components/about/About';
 import { exercises } from './exercisesList';
 
 import './styles/index/index.css';
@@ -302,7 +303,7 @@ function App() {
 
         { state.pageTitle === 'About' &&
 
-          <h2>About</h2>
+          <About />
         
         }
 

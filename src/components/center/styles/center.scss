@@ -10,7 +10,7 @@
   border: 2px 0 2px 0 solid white;
   overflow-y: scroll;
   overflow-x: hidden;
-  padding: 50px 0;
+  padding: 50px 0 0 0;
   -ms-overflow-style: none;
   scrollbar-width: none;
       
@@ -21,24 +21,32 @@
   &__top {
     @include flexSetup(row, center, space-between);
     width: 100%;
+    position: relative;
     padding: 0 40px 20px;
+    margin-bottom: 30px;
   
     &__title {
       display: block;
+      position: absolute;
+      top: 0;
       width: 50%;
-      font-size: 2rem;
+      font-size: 1.3rem;
       @extend %robotoBold;
-      letter-spacing: -1px;
+      
     }
 
     &__date-changer {
       @include flexSetup(row, center, flex-end);
+      position: absolute;
+      top: 0;
+      right: 40px;
       width: 50%;
 
       &__previous-button {
         display: block;
+        cursor: pointer;
         width: 20px;
-        font-size: 1.4rem;
+        font-size: 1.3rem;
         background: none;
         & > * {
           width: 100%;
@@ -47,16 +55,16 @@
 
       &__current-date {
         display: block;
-        font-size: 1.6rem;
+        font-size: 1.1rem;
         @extend %robotoBold;
-        letter-spacing: -1px;
-        margin: 0 20px;
+        margin: 0 15px;
       }
 
       &__next-button {
+        cursor: pointer;
         display: block;
         background: none;
-        font-size: 1.4rem;
+        font-size: 1.3rem;
         width: 20px;
         & > * {
           width: 100%;

@@ -160,7 +160,7 @@ export default function AddingForm(props) {
 
             <div className="adding-window__main__form__line--normal">
               <label className="adding-window__main__form__line__label" htmlFor="weight">Weight: </label>
-              <input 
+              <input
                 className="adding-window__main__form__line__input" 
                 type="text" 
                 id="weight"
@@ -223,15 +223,14 @@ export default function AddingForm(props) {
             <div className="adding-window__main__form__line adding-window__main__form__line--long">
               <label className="adding-window__main__form__line__label" htmlFor="name">Product name: </label>
               <input
-                className="adding-window__main__form__line__input" 
+                className="adding-window__main__form__line__input "
                 type="text"
                 id="name"
                 value={ props.data.name }
                 onChange={ props.handleOnChange }
-                placeholder="Product name"
+                placeholder={ props.warning[1] === 'name' ? props.warning[0] : null }
                 maxLength="32">
               </input>
-              <p className="adding-window__main__form__line__warning">{ props.warning[1] === 'name' ? props.warning[0] : null }</p>
             </div>
 
             <div className="adding-window__main__form__line adding-window__main__form__line--short">
@@ -242,11 +241,10 @@ export default function AddingForm(props) {
                 id="weight"
                 value={ props.data.weight } 
                 onChange={ props.handleOnChange }
-                placeholder="Weight"
+                placeholder={ props.warning[1] === 'weight' ? props.warning[0] : null }
                 maxLength="4">
               </input>
               <span className="adding-window__main__form__line__decoration">g</span>
-              <p className="adding-window__main__form__line__warning">{ props.warning[1] === 'weight' ? props.warning[0] : null }</p>
             </div>
 
 
@@ -265,11 +263,10 @@ export default function AddingForm(props) {
                 id="proteins"
                 value={ props.data.proteins } 
                 onChange={ props.handleOnChange }
-                placeholder="Proteins"
+                placeholder={ props.warning[1] === 'proteins' ? props.warning[0] : null }
                 maxLength="4">
               </input>
               <span className="adding-window__main__form__line__decoration">g</span>
-              <p className="adding-window__main__form__line__warning">{ props.warning[1] === 'proteins' ? props.warning[0] : null }</p>
             </div>
 
             <div className="adding-window__main__form__line--normal">
@@ -280,11 +277,10 @@ export default function AddingForm(props) {
                 id="fats"
                 value={ props.data.fats } 
                 onChange={ props.handleOnChange }
-                placeholder="Fats"
+                placeholder={ props.warning[1] === 'fats' ? props.warning[0] : null }
                 maxLength="4">
               </input>
               <span className="adding-window__main__form__line__decoration">g</span>
-              <p className="adding-window__main__form__line__warning">{ props.warning[1] === 'fats' ? props.warning[0] : null }</p>
             </div>
 
             <div className="adding-window__main__form__line--normal">
@@ -295,11 +291,10 @@ export default function AddingForm(props) {
                 id="carbs"
                 value={ props.data.carbs } 
                 onChange={ props.handleOnChange }
-                placeholder="Carbohydrates"
+                placeholder={ props.warning[1] === 'carbs' ? props.warning[0] : null }
                 maxLength="4">
               </input>
               <span className="adding-window__main__form__line__decoration">g</span>
-              <p className="adding-window__main__form__line__warning">{ props.warning[1] === 'carbs' ? props.warning[0] : null }</p>
             </div>
 
             <div className="adding-window__main__form__line--normal">
@@ -310,11 +305,10 @@ export default function AddingForm(props) {
                 id="kcal"
                 value={ props.data.kcal }
                 onChange={ props.handleOnChange }
-                placeholder="Calories"
+                placeholder={ props.warning[1] === 'kcal' ? props.warning[0] : null }
                 maxLength="4">
               </input>
               <span className="adding-window__main__form__line__decoration">kcal</span>
-              <p className="adding-window__main__form__line__warning">{ props.warning[1] === 'kcal' ? props.warning[0] : null }</p>
             </div>
 
 
@@ -324,7 +318,7 @@ export default function AddingForm(props) {
 
             <h3 className="adding-window__main__form__title">Options</h3>
 
-            <div className="adding-window__main__form__line adding-window__main__form__line--normal">
+            <div className="adding-window__main__form__line adding-window__main__form__line--checkbox">
               <label className="adding-window__main__form__line__label adding-window__main__form__line__label--options" htmlFor="list-saving">Save to list</label>
               <button 
                 className="adding-window__main__form__background"

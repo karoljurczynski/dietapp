@@ -12,7 +12,7 @@
   left: 50%;
   transform: translateX(-50%);
   background-color: $white-color;
-  padding: 25px;
+  padding: 20px;
   border-radius: 30px;
   box-shadow: 1px 1px 5px $gray-color;
   transition: 0.3s ease-out;
@@ -126,11 +126,10 @@
         width: 100%;
         border-top: 2px solid $gray-color;
         @include flexSetup(row, flex-end, space-between);
-        padding-top: 25px;
+        padding-top: 20px;
 
         &--more {
           justify-content: flex-end;
-          margin-bottom: 25px;
         }
 
         &__secondary {

@@ -433,7 +433,7 @@ function Product(props) {
         <li className="meal__products-section__product__stats-list__item">{props.proteins} g</li>
         <li className="meal__products-section__product__stats-list__item">{props.fats} g</li>
         <li className="meal__products-section__product__stats-list__item">{props.carbs} g</li>
-        <li className="meal__products-section__product__stats-list__item">{props.kcal} kcal</li>
+        <li className="meal__products-section__product__stats-list__item meal__products-section__product__stats-list__item--kcal">{props.kcal} kcal</li>
       </ul>
     </div>
   )
