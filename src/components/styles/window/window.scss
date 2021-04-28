@@ -13,11 +13,7 @@
   border-radius: 25px;
   box-shadow: 1px 1px 3px $white-color;
   
-  &--login {
-    width: 300px;
-  }
-
-  &--logout {
+  &--login, &--logout {
     width: 300px;
   }
 
@@ -96,6 +92,13 @@
           font-size: 0.8rem;
           color: $purple-color;
         } 
+      }
+    }
+
+    &__section {
+      &__iframe {
+        transition: 0.3s ease;
+        opacity: 0;
       }
     }
   }

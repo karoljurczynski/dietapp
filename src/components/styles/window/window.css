@@ -46,10 +46,7 @@
   -webkit-box-shadow: 1px 1px 3px #FFFFFF;
           box-shadow: 1px 1px 3px #FFFFFF;
 }
-.window--login {
-  width: 300px;
-}
-.window--logout {
+.window--login, .window--logout {
   width: 300px;
 }
 .window__header {
@@ -166,6 +163,11 @@
 .window__main__login-options__line__link {
   font-size: 0.8rem;
   color: #7500AF;
+}
+.window__main__section__iframe {
+  -webkit-transition: 0.3s ease;
+  transition: 0.3s ease;
+  opacity: 0;
 }
 .window__bottom {
   display: -webkit-box;

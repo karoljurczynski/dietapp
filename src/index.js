@@ -139,6 +139,9 @@ function App() {
     dateIds: { dayId: 0, monthId: 0, yearId: 0 },
     pageTitle: 'Dashboard',
     isLoginWindowsEnabled: false,
+    isAddWindowsEnabled: false,
+    isRemoveWindowsEnabled: false,
+    isMoreWindowsEnabled: false,
     userStatus: "Log in",
     mealsIngredientsSummary: [],
     dailyIngredientsSummary: { kcal: 0, proteins: 0, fats: 0, carbs: 0 },
@@ -262,7 +265,8 @@ function App() {
           <Login 
             setUserStatus={ setUserStatus } 
             disableLoginWindows={ disableLoginWindows } 
-            isLogout={ state.userStatus === "Logged" ? true : false }/> 
+            isLogout={ state.userStatus === "Logged" ? true : false }
+          /> 
     }
 
     <div className="wrapper">

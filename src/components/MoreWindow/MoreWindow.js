@@ -1,65 +1,78 @@
 import { React, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import './../product_removing_window/styles/productRemovingWindow.css';
-import './styles/moreWindow.css';
+import '../styles/window/window.css';
  
 export default function MoreWindow(props) {
   // ENABLE POINTER EVENTS IN WINDOW AFTER MOUNTING
-  useEffect(() => { 
+  /*useEffect(() => { 
     const removingWindow = document.querySelector(".removing-window");
     removingWindow.style.pointerEvents = "auto";
 
-   }, []);
+   }, []);*/
+   useEffect(() => {
+    const wrapper = document.querySelector("#root");
+    const iframe = document.querySelector(".window__main__section__iframe");
+    wrapper.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
+    wrapper.style.pointerEvents = "none";
+    setTimeout(() => { iframe.style.opacity = "1" }, 500);
+  
+    return (() => {
+      wrapper.style.filter = "blur(0px) opacity(100%) grayscale(0%)";
+      wrapper.style.pointerEvents = "auto";
+    })
+
+  }, []);
 
   const handleBackButton = () => {
     props.handleMoreWindow();
   }
 
-  return (
-    <section className="removing-window more-window">
+  return ReactDOM.createPortal(
+    <div className="window window--more">
 
-      <h1 className="removing-window__title">{ props.title }</h1>
+      <header className="window__header">
+        <h2 className="window__header__heading">{ props.title }</h2>
+      </header>
 
-      <main className="removing-window__main">
+      <main className="window__main">
 
-        <section className="more-window__section">
-          <h3 className="more-window__section__title">Description</h3>
-          <p className="more-window__section__paragraph">{ props.description }</p>
+        <section className="window__main__section"> 
+          <h3 className="window__main__section__title">Description</h3>
+          <p className="window__main__section__text">{ props.description }</p>
         </section>
 
-        <section className="more-window__section more-window__section--horizontal">
-          <div className="more-window__section--horizontal__left">
-            <h3 className="more-window__section__title">Difficulty</h3>
+        <section className="window__main__section">
+          <aside className="window__main__section__split-left">
+            <h3 className="window__main__section__title">Difficulty</h3>
             <div className="exercise__top-section__grade-container" style={{ marginBottom: "15px" }}>
               <span className="exercise__top-section__grade-container__point exercise__top-section__grade-container__point--filled"></span>
               <span className={ props.difficulty >= 2 ? "exercise__top-section__grade-container__point exercise__top-section__grade-container__point--filled" : "exercise__top-section__grade-container__point" }></span>
               <span className={ props.difficulty === 3 ? "exercise__top-section__grade-container__point exercise__top-section__grade-container__point--filled" : "exercise__top-section__grade-container__point" }></span>
             </div>
-            <p className="more-window__section__paragraph">{ props.typeOfExercise }</p>
-          </div>
-
-          <div className="more-window__section--horizontal__right">
-            <h3 className="more-window__section__title">Muscles</h3>
-            <ul className="more-window__section__list">
-              { props.muscles.map( muscle => { return <li className="more-window__section__list__item">{ muscle }</li> }) } 
+            <p className="window__main__section__content">{ props.typeOfExercise }</p>
+          </aside>
+          <aside className="window__main__section__split-right">
+            <h3 className="window__main__section__title">Muscles</h3>
+            <ul className="window__main__section__list">
+              { props.muscles.map((muscle, index) => { return <li key={ index } className="window__main__section__list__item">{ muscle }</li> }) } 
             </ul>
-          </div>
+          </aside>
         </section>
 
-        <section className="more-window__section">
-          <h3 className="more-window__section__title">Proper form</h3>
-          <iframe allowFullScreen width="100%" height="300px" src={ props.properFormLink }></iframe>
-        </section>
-
-        <section className="removing-window__main__list__buttons-section removing-window__main__list__buttons-section--more">
-          <button 
-            className={ "removing-window__main__list__buttons-section__primary" }
-            onClick={ handleBackButton }>
-            Back
-          </button>
+        <section className="window__main__section">
+          <h3 className="window__main__section__title">Proper form</h3>
+          <iframe className="window__main__section__iframe" allowFullScreen width="100%" height="300px" src={ props.properFormLink }></iframe>
         </section>
 
       </main>
 
-    </section>
+      <section className="window__bottom">
+        <div></div>
+        <button className="window__bottom__primary-button" type="button" onClick={ handleBackButton }>Back</button>
+      </section>
+
+    </div>,
+    document.getElementById('portal')
   )
 }
