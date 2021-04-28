@@ -24,8 +24,11 @@ body {
 
 .wrapper {
   @include flexSetup(row, center, center);
+  position: relative;
+  background: transparent;
   width: 80vw;
   min-width: 900px; 
   min-height: 600px;
   height: 44vw;
+  transition: filter 0.3s linear;
 }

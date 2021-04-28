@@ -37,6 +37,7 @@
           justify-content: flex-start;
   width: 55%;
   height: 100%;
+  position: relative;
   background: rgba(255, 255, 255, 0.6);
   border: 2px 0 2px 0 solid white;
   overflow-y: scroll;
@@ -69,6 +70,7 @@
 }
 .center-section__top__title {
   display: block;
+  color: #000000;
   position: absolute;
   top: 0;
   width: 50%;

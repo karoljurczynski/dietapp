@@ -6,6 +6,7 @@
   @include flexSetup(column, center, flex-start);
   width: 55%;
   height: 100%;
+  position: relative;
   background: $center-section-background;
   border: 2px 0 2px 0 solid white;
   overflow-y: scroll;
@@ -27,6 +28,7 @@
   
     &__title {
       display: block;
+      color: $black-color;
       position: absolute;
       top: 0;
       width: 50%;

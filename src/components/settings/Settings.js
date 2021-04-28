@@ -314,7 +314,7 @@ export default function Settings(props) {
 
   return (
     <>
-    <div className="meal" style={ state.isCategoryOpened ? {marginLeft: '-10px'} : {marginLeft: '0px'} }>
+    <div className="meal" style={ state.isCategoryOpened ? {left: '-10px'} : {left: '0px'} }>
       <section className="meal__top-section" onClick={ handleOpening }>
         
         <h2 className="meal__top-section__meal-title">{ props.category }</h2>        

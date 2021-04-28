@@ -329,7 +329,7 @@ export default function Meal(props) {
   }
 
   return (
-    <div className="meal" style={ state.isMealOpened ? {marginLeft: '-10px'} : {marginLeft: '0px'} }>
+    <div className="meal" style={ state.isMealOpened ? {left: '-10px'} : {left: '0px'} }>
       <section className="meal__top-section" onClick={ handleMealOpening }>
         
         <h2 className="meal__top-section__meal-title">{props.name}</h2>        

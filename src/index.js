@@ -10,6 +10,7 @@ import Gauge from './components/right/Gauge';
 import Exercise from './components/exercise/Exercise';
 import Settings from './components/settings/Settings';
 import About from './components/about/About';
+import Login from './components/login/Login';
 import { exercises } from './exercisesList';
 
 import './styles/index/index.css';
@@ -20,14 +21,15 @@ import './components/right/styles/right.css';
 
 // GLOBALS
 
-const MENU_CATEGORIES= ["Log in", "Nutrition", "Training", "Settings", "About"];
 const ACTIONS = {
   UPDATE_MEALS_INGREDIENTS_SUMMARY: 'update-meals-ingredients-summary',
   UPDATE_DAILY_INGREDIENTS_SUMMARY: 'update-daily-ingredients-summary',
   COUNT_GAUGES_DATA: 'count-gauges-data',
   CHANGE_DATE: 'change-date',
   CHANGE_PAGE_TITLE: 'change-page-title',
-  LOAD_SETTINGS: 'load-settings'
+  LOAD_SETTINGS: 'load-settings',
+  SET_LOGIN_WINDOW: 'set-login-window',
+  SET_USER_STATUS: 'set-user-status'
 }
 
 
@@ -121,6 +123,14 @@ function App() {
         return {...state, settingsData: newSettings }
       }
 
+      case ACTIONS.SET_LOGIN_WINDOW: {
+        return {...state, isLoginWindowsEnabled: action.payload}
+      }
+
+      case ACTIONS.SET_USER_STATUS: {
+        return {...state, userStatus: action.payload}
+      }
+
       default: return console.error(`Unknown action type: ${action.type}`);
     }
   }
@@ -128,6 +138,8 @@ function App() {
   const initialState = {
     dateIds: { dayId: 0, monthId: 0, yearId: 0 },
     pageTitle: 'Dashboard',
+    isLoginWindowsEnabled: false,
+    userStatus: "Log in",
     mealsIngredientsSummary: [],
     dailyIngredientsSummary: { kcal: 0, proteins: 0, fats: 0, carbs: 0 },
     gaugesData: {
@@ -159,6 +171,8 @@ function App() {
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  const MENU_CATEGORIES = [state.userStatus, "Nutrition", "Training", "Settings", "About"];
+
   useEffect(() => { updateGauges() }, [ state.dateIds ]);
 
   // EFFECT WHICH CHECKS IS SETTINGS ARE SAVED IN LOCAL STORAGE
@@ -171,6 +185,20 @@ function App() {
 
     updateGauges();
   }, []);
+
+  useEffect(() => {
+    const wrapper = document.querySelector(".wrapper");
+    if (state.isLoginWindowsEnabled) {
+      wrapper.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
+      wrapper.style.pointerEvents = "none";
+    }
+
+    else {
+      wrapper.style.filter = "blur(0px) opacity(100%) grayscale(0%)";
+      wrapper.style.pointerEvents = "auto";
+    }
+
+  }, [state.isLoginWindowsEnabled]);
 
   const updateMealSummary = (object, mealId) => {
     dispatch({ type: ACTIONS.UPDATE_MEALS_INGREDIENTS_SUMMARY, payload: {data: object, mealId: mealId} });
@@ -206,14 +234,37 @@ function App() {
   }
 
   const handleMenu = (categoryTitle) => {
-    changePageTitle(categoryTitle);
+    if (categoryTitle === state.userStatus) {
+      dispatch({ type: ACTIONS.SET_LOGIN_WINDOW, payload: true });
+    }
+
+    else {
+      changePageTitle(categoryTitle);
+    }
   }
 
   const saveSettingsToLocalStorage = () => {
     localStorage.setItem("settings", JSON.stringify(state.settingsData));
   }
 
+  const disableLoginWindows = () => {
+    dispatch({ type: ACTIONS.SET_LOGIN_WINDOW, payload: false }); 
+  }
+
+  const setUserStatus = (newStatus) => {
+    dispatch({ type: ACTIONS.SET_USER_STATUS, payload: newStatus });
+  }
+
   return (
+    <>
+
+    { state.isLoginWindowsEnabled &&
+          <Login 
+            setUserStatus={ setUserStatus } 
+            disableLoginWindows={ disableLoginWindows } 
+            isLogout={ state.userStatus === "Logged" ? true : false }/> 
+    }
+
     <div className="wrapper">
 
       <aside className="left-section">
@@ -241,7 +292,6 @@ function App() {
 
       <main className="center-section">
 
-
         <section className="center-section__top">
         
           <h3 className="center-section__top__title">{ state.pageTitle }</h3>
@@ -254,13 +304,6 @@ function App() {
 
       
         <section className="center-section__main">
-
-
-        { state.pageTitle === 'Log in' &&
-
-          <h2>Log in</h2>
-        
-        }
 
         { state.pageTitle === 'Training' &&
 
@@ -344,6 +387,7 @@ function App() {
 
 
     </div>
+    </>
   )
 }
 

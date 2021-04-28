@@ -1,0 +1,139 @@
+@forward '../../../styles/config/config';
+//@forward '../styles/media_queries/media';
+@use '../../../styles/config/config' as *;
+
+.window {
+  @include flexSetup(column, flex-start, flex-start);
+  z-index: 8;
+  width: 600px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 25px;
+  box-shadow: 1px 1px 3px $white-color;
+  
+  &--login {
+    width: 300px;
+  }
+
+  &--logout {
+    width: 300px;
+  }
+
+  &__header {
+    @include flexSetup(column, flex-start, flex-start);
+    width: 100%;
+    padding: 20px;
+    border-radius: 25px 25px 0 0;
+    border-top: 1px solid $white-color;
+    border-left: 1px solid $white-color;
+    background-color: rgba(255,255,255, 0.9);
+
+    &__heading {
+      color: $purple-color;
+      font-size: 1.6rem;
+      font-family: 'Segoe UI', sans-serif;
+      font-weight: 700;
+    }
+  }
+
+  &__main {
+    @include flexSetup(column, flex-start, flex-end);
+    width: 100%;
+    padding: 20px;
+    border-left: 1px solid $white-color;
+    background-color: rgba(255,255,255, 0.3);
+
+    &__input-line {
+      @include flexSetup(column, flex-start, flex-start);
+      width: 100%;
+      margin-bottom: 12px;
+    
+      &__label {
+        margin-left: 17px;
+        margin-bottom: 3px;
+        font-size: 0.9rem;
+        color: $gray-color
+      }
+
+      &__input {
+        width: 100%;
+        padding: 10px 15px;
+        border: 2px solid $purple-color;
+        border-radius: 25px;
+        font-size: 1.1rem;
+        color: $black-color;
+        font-weight: 600;
+      }
+
+      &__link {
+        margin-left: 17px;
+        font-size: 0.9rem;
+        color: $purple-color;
+      }
+
+      &:last-of-type {
+        margin-bottom: 0;
+      }
+    }
+
+    &__message {
+      padding: 0 0 20px 0;
+      font-size: 1.1rem;
+    }
+
+    &__login-options {
+      @include flexSetup(column, flex-end, flex-end);
+      width: 100%;
+      margin-top: 40px;
+
+      &__line {
+        font-size: 0.8rem;
+        color: $black-color;
+
+        &__link {
+          font-size: 0.8rem;
+          color: $purple-color;
+        } 
+      }
+    }
+  }
+
+  &__bottom {
+    @include flexSetup(row, center, space-between);
+    width: 100%;
+    padding: 20px;
+    border-radius: 0 0 25px 25px;
+    border-left: 1px solid $white-color;
+    background-color: $purple-color;
+
+    &__primary-button,
+    &__secondary-button,
+    &__tertiary-button {
+      cursor: pointer;
+      padding: 8px 20px;
+      border-radius: 12px;
+      @extend %robotoNormal;
+      font-size: 1.1rem;
+    }
+    
+    &__primary-button {
+      background: $white-color;
+      color: $black-color;
+      box-shadow: 0 0 3px $white-color;
+    }
+
+    &__secondary-button {
+      background: $purple-color2;
+      color: $white-color;
+      box-shadow: 0 0 3px $purple-color2;
+    }
+
+    &__tertiary-button {
+      background: $purple-color;
+      color: $white-color;
+      border: 1px solid $purple-color2;
+    }
+  }
+}

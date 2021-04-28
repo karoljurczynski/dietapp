@@ -560,7 +560,7 @@ export default function Exercise(props) {
   }
   
   return (
-    <div className="meal exercise" style={ state.isExerciseOpened ? {marginLeft: '-10px'} : {marginLeft: '0px'} }>
+    <div className="meal exercise" style={ state.isExerciseOpened ? {left: '-10px'} : {left: '0px'} }>
       
       <section className="meal__top-section exercise__top-section" onClick={ handleExerciseOpening }>
 

@@ -3,6 +3,7 @@
 
 .meal {
   @include flexSetup(column, flex-start, center);
+  position: relative;
   width: 100%;
   margin-bottom: 20px;
   border-radius: 30px;
@@ -13,8 +14,8 @@
   &__paragraph {
     padding: 0px 20px 20px;
     line-height: 1.8;
-
   }
+  
   &__copyright {
     padding: 20px;
     color: $gray-color;

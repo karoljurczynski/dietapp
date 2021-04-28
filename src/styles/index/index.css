@@ -10,7 +10,7 @@
   -webkit-box-shadow: 0;
           box-shadow: 0;
   border: none;
-  font-family: "Noto Sans", sans-serif;
+  font-family: "Segoe UI", sans-serif;
   font-weight: normal;
   text-decoration: none;
   font-size: 16px;
@@ -63,9 +63,15 @@ body {
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
+  position: relative;
+  background: transparent;
   width: 80vw;
   min-width: 900px;
   min-height: 600px;
   height: 44vw;
+  -webkit-transition: -webkit-filter 0.3s linear;
+  transition: -webkit-filter 0.3s linear;
+  transition: filter 0.3s linear;
+  transition: filter 0.3s linear, -webkit-filter 0.3s linear;
 }
 /*# sourceMappingURL=index.css.map */
