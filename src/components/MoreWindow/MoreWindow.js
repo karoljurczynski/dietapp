@@ -1,18 +1,13 @@
 import { React, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import './../product_removing_window/styles/productRemovingWindow.css';
 import '../styles/window/window.css';
  
 export default function MoreWindow(props) {
-  // ENABLE POINTER EVENTS IN WINDOW AFTER MOUNTING
-  /*useEffect(() => { 
-    const removingWindow = document.querySelector(".removing-window");
-    removingWindow.style.pointerEvents = "auto";
-
-   }, []);*/
-   useEffect(() => {
+  // BACKGROUND EFFECTS
+  useEffect(() => {
     const wrapper = document.querySelector("#root");
     const iframe = document.querySelector(".window__main__section__iframe");
+
     wrapper.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
     wrapper.style.pointerEvents = "none";
     setTimeout(() => { iframe.style.opacity = "1" }, 500);
@@ -42,7 +37,7 @@ export default function MoreWindow(props) {
           <p className="window__main__section__text">{ props.description }</p>
         </section>
 
-        <section className="window__main__section">
+        <section className="window__main__section window__main__section--halfed">
           <aside className="window__main__section__split-left">
             <h3 className="window__main__section__title">Difficulty</h3>
             <div className="exercise__top-section__grade-container" style={{ marginBottom: "15px" }}>
@@ -50,7 +45,7 @@ export default function MoreWindow(props) {
               <span className={ props.difficulty >= 2 ? "exercise__top-section__grade-container__point exercise__top-section__grade-container__point--filled" : "exercise__top-section__grade-container__point" }></span>
               <span className={ props.difficulty === 3 ? "exercise__top-section__grade-container__point exercise__top-section__grade-container__point--filled" : "exercise__top-section__grade-container__point" }></span>
             </div>
-            <p className="window__main__section__content">{ props.typeOfExercise }</p>
+            <p className="window__main__section__text">{ props.typeOfExercise }</p>
           </aside>
           <aside className="window__main__section__split-right">
             <h3 className="window__main__section__title">Muscles</h3>
