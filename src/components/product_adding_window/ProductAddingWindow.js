@@ -1,16 +1,24 @@
 import { React, useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import AddingForm from './AddingForm';
 import AddingList from './AddingList';
-import './styles/productAddingWindow.css';
+import '../styles/window/window.css';
 
 export default function AddWindow(props) {
   const [isAddingTypeSetAtLeftOption, setAddingType] = useState(true);
+  
+  // BACKGROUND EFFECTS
+  useEffect(() => {
+    const wrapper = document.querySelector("#root");
 
-  // ENABLE POINTER EVENTS IN ADDING WINDOW AFTER MOUNTING
-  useEffect(() => { 
-    const addingWindow = document.querySelector(".adding-window");
-    addingWindow.style.pointerEvents = "auto";
-    
+    wrapper.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
+    wrapper.style.pointerEvents = "none";
+  
+    return (() => {
+      wrapper.style.filter = "blur(0px) opacity(100%) grayscale(0%)";
+      wrapper.style.pointerEvents = "auto";
+    })
+
   }, []);
 
   // CLEARING FORM AFTER EACH CHANGE OF SWITCH OPTION
@@ -22,96 +30,96 @@ export default function AddWindow(props) {
     setAddingType(!isAddingTypeSetAtLeftOption);
   }
 
-  return (
-    <>
-      <div className="adding-window__background-blur"></div>
+  return ReactDOM.createPortal ( 
+    <div className="window window--add">
+      
+      <header className="window__header">
+        
+        <h2 className="window__header__heading" >{ props.type === 'exercises' ? "Add serie" : "Add product" }</h2>
+    
+        <button className="window__header__switch" onClick={ changeAddingType }>
+          <h3 
+            className={ isAddingTypeSetAtLeftOption 
+                        ? "window__header__switch__left window__header__switch__left--selected"
+                        : "window__header__switch__left" }>
+            { props.type === 'exercises' ? "Last training" : "From list" }
+          </h3>
+          <h3 
+            className={ isAddingTypeSetAtLeftOption 
+                        ? "window__header__switch__right"
+                        : "window__header__switch__right window__header__switch__right--selected" }>
+            { props.type === 'exercises' ? "Last serie" : "Your own" }
+          </h3>
+        </button>
 
-      <section className="adding-window">
+      </header>
 
-        <h1 className="adding-window__title">{ props.type === 'exercises' ? "Add serie" : "Add product" }</h1>
+      { props.type === 'exercises'
 
-        <button className="adding-window__switch" onClick={ changeAddingType }>
-            <h3 
-              className={ isAddingTypeSetAtLeftOption 
-                          ? "adding-window__switch__left adding-window__switch__left--selected"
-                          : "adding-window__switch__left" }>
-              { props.type === 'exercises' ? "Last training" : "From list" }
-            </h3>
-            <h3 
-              className={ isAddingTypeSetAtLeftOption 
-                          ? "adding-window__switch__right"
-                          : "adding-window__switch__right adding-window__switch__right--selected" }>
-              { props.type === 'exercises' ? "Last serie" : "Your own" }
-            </h3>
-          </button>
+        ? <main className="window__form">
+          { isAddingTypeSetAtLeftOption
 
-        { props.type === 'exercises'
+            ? <AddingForm 
+                type="last-training"
+                data={{ 
+                  weight: props.data.weight,
+                  reps: props.data.reps
+                }}
+                warning={ props.warning }
+                handleOnChange={ props.handleOnChange }
+                handleSerieAdding={ props.handleSerieAdding }
+                handleFormClearing={ props.handleFormClearing }
+                handleAddWindow={ props.handleAddWindow }
+                lastTimeData={ props.lastTimeData }
+              />
 
-          ? <main className="adding-window__main">
-            { isAddingTypeSetAtLeftOption
+            : <AddingForm 
+                type="last-serie"
+                data={{ 
+                  weight: props.data.weight,
+                  reps: props.data.reps
+                }}
+                warning={ props.warning }
+                handleOnChange={ props.handleOnChange }
+                handleSerieAdding={ props.handleSerieAdding }
+                handleFormClearing={ props.handleFormClearing }
+                handleAddWindow={ props.handleAddWindow }
+                lastTimeData={ props.lastTimeData }
+              />
+          }
+        </main>
 
-              ? <AddingForm 
-                  type="last-training"
-                  data={{ 
-                    weight: props.data.weight,
-                    reps: props.data.reps
-                  }}
-                  warning={ props.warning }
-                  handleOnChange={ props.handleOnChange }
-                  handleSerieAdding={ props.handleSerieAdding }
-                  handleFormClearing={ props.handleFormClearing }
-                  handleAddWindow={ props.handleAddWindow }
-                  lastTimeData={ props.lastTimeData }
-                />
+        : <main className="window__form">
+          { isAddingTypeSetAtLeftOption
 
-              : <AddingForm 
-                  type="last-serie"
-                  data={{ 
-                    weight: props.data.weight,
-                    reps: props.data.reps
-                  }}
-                  warning={ props.warning }
-                  handleOnChange={ props.handleOnChange }
-                  handleSerieAdding={ props.handleSerieAdding }
-                  handleFormClearing={ props.handleFormClearing }
-                  handleAddWindow={ props.handleAddWindow }
-                  lastTimeData={ props.lastTimeData }
-                />
-            }
-          </main>
+            ? <AddingList 
+                warning={ props.warning }
+                handleAddWindow={ props.handleAddWindow }
+                handlePredefinedProductsAdding={ props.handlePredefinedProductsAdding }
+              />
+              
+            : <AddingForm
+                type="nutrition"
+                data={{ 
+                  isPlaceholderEnabled: props.data.isPlaceholderEnabled,
+                  name: props.data.name, 
+                  weight: props.data.weight,
+                  proteins: props.data.proteins,
+                  fats: props.data.fats,
+                  carbs: props.data.carbs,
+                  kcal: props.data.kcal }}
+                warning={ props.warning }
+                handleOnChange={ props.handleOnChange }
+                handleFormClearing={ props.handleFormClearing }
+                handleProductAdding={ props.handleProductAdding }
+                handleAddWindow={ props.handleAddWindow }
+              />
+          }
+        </main>
+      
+      }
 
-          : <main className="adding-window__main">
-            { isAddingTypeSetAtLeftOption
-
-              ? <AddingList 
-                  warning={ props.warning }
-                  handleAddWindow={ props.handleAddWindow }
-                  handlePredefinedProductsAdding={ props.handlePredefinedProductsAdding }
-                />
-                
-              : <AddingForm
-                  type="nutrition"
-                  data={{ 
-                    isPlaceholderEnabled: props.data.isPlaceholderEnabled,
-                    name: props.data.name, 
-                    weight: props.data.weight,
-                    proteins: props.data.proteins,
-                    fats: props.data.fats,
-                    carbs: props.data.carbs,
-                    kcal: props.data.kcal }}
-                  warning={ props.warning }
-                  handleOnChange={ props.handleOnChange }
-                  handleFormClearing={ props.handleFormClearing }
-                  handleProductAdding={ props.handleProductAdding }
-                  handleAddWindow={ props.handleAddWindow }
-                />
-            }
-          </main>
-
-        }
-
-      </section>
-
-    </>
+    </div>,
+    document.getElementById('portal')
   )
 }

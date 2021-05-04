@@ -16,7 +16,12 @@ const initialState = {
     { id: 1, name: "Skyr", weight: 100, proteins: 20, fats: 0, carbs: 12, kcal: 100 },
     { id: 2, name: "Potatos", weight: 100, proteins: 9, fats: 2, carbs: 80, kcal: 126 },
     { id: 3, name: "Coca Cola", weight: 100, proteins: 0, fats: 0, carbs: 100, kcal: 400 },
-    { id: 4, name: "Banana", weight: 100, proteins: 5, fats: 3, carbs: 52, kcal: 173 }],
+    { id: 4, name: "Banana", weight: 100, proteins: 5, fats: 3, carbs: 52, kcal: 173 },
+    { id: 5, name: "Cottage cheese", weight: 100, proteins: 20, fats: 10, carbs: 15, kcal: 250 },
+    { id: 6, name: "Skyr", weight: 100, proteins: 20, fats: 0, carbs: 12, kcal: 100 },
+    { id: 7, name: "Potatos", weight: 100, proteins: 9, fats: 2, carbs: 80, kcal: 126 },
+    { id: 8, name: "Coca Cola", weight: 100, proteins: 0, fats: 0, carbs: 100, kcal: 400 },
+    { id: 9, name: "Banana", weight: 100, proteins: 5, fats: 3, carbs: 52, kcal: 173 }],
   
   productSendForEdit: { id: 0, name: '', weight: 0, proteins: 0, fats: 0, carbs: 0, kcal: 0 },
   isEditWindowOpened: false,
@@ -82,14 +87,14 @@ export default function AddingList(props) {
 
   useEffect(() => { handleAddButtonDisabling() }, [])
 
-  useEffect(() => {
+  /*useEffect(() => {
     const addingWindow = document.querySelector(".adding-window");
 
     state.isEditWindowOpened
     ? addingWindow.style.boxShadow = "none"
     : addingWindow.style.boxShadow = "1px 1px 5px #707070";
 
-  }, [state.isEditWindowOpened]);
+  }, [state.isEditWindowOpened]);*/
    
   const handleSelected = (e) => {
     const product = document.getElementById(e.currentTarget.id);
@@ -195,37 +200,37 @@ export default function AddingList(props) {
   }
 
   return (
-    <> 
-      <ul className="adding-window__main__adding-list adding-window__main__adding-list--heading">
-        <li className="adding-window__main__adding-list__item adding-window__main__adding-list__item--heading">
-        <div className="adding-window__main__adding-list__wrapper">
-            <span className="adding-window__main__adding-list__item__name" style={{ color: "white" }}>Product name</span>
-            <span className="adding-window__main__adding-list__item__nutrition-facts">
-              <p className="adding-window__main__adding-list__item__nutrition-facts__proteins" title="Proteins">P</p>
-              <p className="adding-window__main__adding-list__item__nutrition-facts__fats" title="Fats">F</p>
-              <p className="adding-window__main__adding-list__item__nutrition-facts__carbs" title="Carbohydrates">C</p>
+    <>
+      <ul className="window__main__section__large-list window__main__section__large-list--heading">
+        <li className="window__main__section__large-list__item window__main__section__large-list__item--heading">
+          <div className="window__main__section__large-list__wrapper">
+            <span className="window__main__section__large-list__item__name" style={{ color: "white" }}>Product name</span>
+            <span className="window__main__section__large-list__item__nutrition-facts">
+              <p className="window__main__section__large-list__item__nutrition-facts__proteins" title="Proteins">P</p>
+              <p className="window__main__section__large-list__item__nutrition-facts__fats" title="Fats">F</p>
+              <p className="window__main__section__large-list__item__nutrition-facts__carbs" title="Carbohydrates">C</p>
             </span>
-            <span className="adding-window__main__adding-list__item__calories">Calories</span>
+            <span className="window__main__section__large-list__item__calories">Calories</span>
           </div>
         </li>
       </ul>
 
-      <ul className="adding-window__main__adding-list">
+      <ul className="window__main__section__large-list">
 
         { state.savedProductList.map(product => {
           return (
-            <li id={ product.id } key={ product.id } className="adding-window__main__adding-list__item" onClick={ handleSelected }>
-              <div className="adding-window__main__adding-list__wrapper">
-                <span id={ product.id } className="adding-window__main__adding-list__item__name">{ product.name }</span>
-                <span id={ product.id } className="adding-window__main__adding-list__item__nutrition-facts">
-                  <p id={ product.id } className="adding-window__main__adding-list__item__nutrition-facts__proteins" title="Proteins">{ product.proteins } g</p>
-                  <p id={ product.id } className="adding-window__main__adding-list__item__nutrition-facts__fats" title="Fats">{ product.fats } g</p>
-                  <p id={ product.id } className="adding-window__main__adding-list__item__nutrition-facts__carbs" title="Carbohydrates">{ product.carbs } g</p>
+            <li id={ product.id } key={ product.id } className="window__main__section__large-list__item" onClick={ handleSelected }>
+              <div className="window__main__section__large-list__wrapper">
+                <span id={ product.id } className="window__main__section__large-list__item__name">{ product.name }</span>
+                <span id={ product.id } className="window__main__section__large-list__item__nutrition-facts">
+                  <p id={ product.id } className="window__main__section__large-list__item__nutrition-facts__proteins" title="Proteins">{ product.proteins } g</p>
+                  <p id={ product.id } className="window__main__section__large-list__item__nutrition-facts__fats" title="Fats">{ product.fats } g</p>
+                  <p id={ product.id } className="window__main__section__large-list__item__nutrition-facts__carbs" title="Carbohydrates">{ product.carbs } g</p>
                 </span>
-                <span id={ product.id } className="adding-window__main__adding-list__item__calories">{ product.kcal } kcal</span>
+                <span id={ product.id } className="window__main__section__large-list__item__calories">{ product.kcal } kcal</span>
               
               </div>
-              <span id={ product.id } className="adding-window__main__adding-list__item__weight">{ product.weight } g</span>
+              <span id={ product.id } className="window__main__section__large-list__item__weight">{ product.weight } g</span>
             </li>
           )
         })
@@ -233,20 +238,23 @@ export default function AddingList(props) {
 
       </ul>
       
-      <section className="adding-window__main__adding-list__buttons-section">
-        <button 
-          className="adding-window__main__adding-list__buttons-section__secondary" 
-          onClick={ props.handleAddWindow }>
-          Cancel
-        </button>
-        
-        <button 
-          className={ state.isAddButtonDisabled
-                      ? "adding-window__main__adding-list__buttons-section__primary adding-window__main__adding-list__buttons-section__primary--disabled" 
-                      : "adding-window__main__adding-list__buttons-section__primary"  } 
-          onClick={ handleProductsAdding }>
-          Add
-        </button>
+      <section className="window__bottom">
+        <div></div>
+        <div>
+          <button 
+            className="window__bottom__secondary-button" 
+            onClick={ props.handleAddWindow }>
+            Cancel
+          </button>
+          
+          <button 
+            className={ state.isAddButtonDisabled
+                        ? "window__bottom__primary-button window__bottom__primary-button--disabled" 
+                        : "window__bottom__primary-button" } 
+            onClick={ handleProductsAdding }>
+            Add
+          </button>
+        </div>
       </section>
 
       { state.isEditWindowOpened 
@@ -266,6 +274,6 @@ export default function AddingList(props) {
           />
 
         :  null }
-    </>
+    </> 
   )
 }

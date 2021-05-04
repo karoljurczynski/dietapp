@@ -10,17 +10,18 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  border: 1px solid $white-color;
+  border-right: none;
   border-radius: 25px;
   box-shadow: 1px 1px 3px $white-color;
   overflow-y: scroll;
   max-height: 650px;
   -ms-overflow-style: none;
   scrollbar-width: none;
-  
+
   &::-webkit- scrollbar {
     display: none;
   }
-  
   
   &--login, &--logout {
     width: 300px;
@@ -31,8 +32,6 @@
     width: 100%;
     padding: 20px;
     border-radius: 25px 25px 0 0;
-    border-top: 1px solid $white-color;
-    border-left: 1px solid $white-color;
     background-color: rgba(255,255,255, 0.9);
 
     &__heading {
@@ -41,20 +40,53 @@
       font-family: 'Segoe UI', sans-serif;
       font-weight: 700;
     }
+
+    &__switch {
+      @include flexSetup(row, center, space-around);
+      border-radius: 25px;
+      border: 1px solid $purple-color;
+      background: white;
+      margin-top: 20px;
+      cursor: pointer;
+
+      &__left, &__right {
+        color: $gray-color;
+        padding: 8px 24px;
+        font-size: 1rem;
+
+        &--selected {
+          color: $white-color;
+          background: $purple-color;
+          border-radius: 30px;
+        }
+      }
+
+      &__right {
+        margin-left: -10px;
+      }
+    }
+  }
+
+  &__form {
+    width: 100%;
   }
 
   &__main {
     @include flexSetup(column, flex-start, flex-end);
     width: 100%;
     padding: 20px;
-    border-left: 1px solid $white-color;
     background-color: rgba(255,255,255, 0.3);
 
+    &--add {
+      padding: 0;
+    }
+
     &__input-line {
+      position: relative;
       @include flexSetup(column, flex-start, flex-start);
       width: 100%;
       margin-bottom: 12px;
-    
+      
       &__label {
         margin-left: 17px;
         margin-bottom: 3px;
@@ -69,7 +101,22 @@
         border-radius: 25px;
         font-size: 1.1rem;
         color: $black-color;
+        background: $white-color;
         font-weight: 600;
+      }
+
+      &__unit {
+        position: absolute;
+        border-radius: 0 30px 30px 0;
+        padding-right: 3px;
+        width: 50px;
+        @include flexSetup(row, center, center);
+        color: $white-color;
+        right: 0;
+        bottom: 1px;
+        height: calc(30px + 0.9rem);
+        background: $purple-color;
+        font-size: 0.8rem;
       }
 
       &__link {
@@ -109,12 +156,22 @@
       margin-bottom: 20px;
       width: 100%;
 
+      &--form {
+        padding: 0 20px;
+        margin-bottom: 40px;
+        
+        &:first-of-type {
+          padding-top: 20px;
+        }
+      }
+
       &:last-of-type {
         margin-bottom: 0;
       }
 
       &--halfed {
         flex-direction: row;
+        margin-bottom: 40px;
       }
 
       &__split-left, &__split-right {
@@ -144,6 +201,76 @@
         }
       }
 
+      &__large-list {
+        @include flexSetup(column, flex-start, flex-start);
+        padding: 0 20px;
+        width: 100%;
+
+        &__wrapper {
+          @include flexSetup(row, center, space-between);
+          width: 100%;
+        }
+
+        &__item {
+          cursor: pointer;
+          @include flexSetup(column, flex-start, flex-start);
+          width: 100%;
+          padding: 8px 20px;
+          color: $gray-color;
+          border-radius: 30px;
+          border: 2px solid $purple-color;
+          position: relative;
+          margin-bottom: 5px;
+          background: $white-color;
+
+          &:last-of-type {
+            margin-bottom: 20px;
+          }
+
+          & > * {
+            font-size: 1rem;
+          }
+
+          &--heading {
+            cursor: default;
+            margin-top: 20px;
+            background: $purple-color;
+            color: white;
+            border-radius: 30px;
+          }
+
+          &__name {
+            width: 40%;
+            color: black;
+          }
+
+          &__weight {
+            font-size: 0.8rem;    
+          }
+
+          &__nutrition-facts {
+            @include flexSetup(row, center, flex-start);
+            width: 35%;
+
+            & > * {
+              @include flexSetup(row, center, flex-start);
+              width: calc(100% / 3);
+              font-size: 1rem;
+            }
+
+            &__calories {
+              @include flexSetup(row, center, flex-end);
+              width: 20%;
+              padding-right: 10px;
+            }
+          }
+        }
+
+        &--heading {
+          overflow: hidden;
+        }
+      }
+
       &__iframe {
         transition: 0.3s ease;
         opacity: 0;
@@ -156,7 +283,6 @@
     width: 100%;
     padding: 20px;
     border-radius: 0 0 25px 25px;
-    border-left: 1px solid $white-color;
     background-color: $purple-color;
 
     &__primary-button,
@@ -167,12 +293,23 @@
       border-radius: 12px;
       @extend %robotoNormal;
       font-size: 1.1rem;
+
+      &--disabled {
+        cursor: default;
+        opacity: 0.6;
+        filter: brightness(80%);   
+      }
     }
     
     &__primary-button {
       background: $white-color;
       color: $black-color;
       box-shadow: 0 0 3px $white-color;
+      margin-left: 10px;
+      
+      &--disabled {
+        color: $gray-color;
+      }
     }
 
     &__secondary-button {

@@ -1,5 +1,6 @@
 import { React, useState, useEffect } from 'react';
 import './styles/productAddingWindow.css';
+import '../styles/window/window.css';
 
 export default function AddingForm(props) {
   const initialOptionsStates = {
@@ -126,85 +127,83 @@ export default function AddingForm(props) {
   return (
     <>
     { props.type !== 'nutrition' 
-      ? <form className="adding-window__main__form" onSubmit={ handleAddSerie }>
+      ? <form className="window__main window__main--add" onSubmit={ handleAddSerie }>
 
-          <section className="adding-window__main__form adding-window__main__form--product-info">
+          <section className="window__main__section window__main__section--form">
 
-            <h3 className="adding-window__main__form__title">Last time</h3>
+            <h3 className="window__main__section__title">Last time</h3>
 
-            <div className="adding-window__main__form__line--normal">
-              <label className="adding-window__main__form__line__label" htmlFor="oldWeight">Weight: </label>
+            <div className="window__main__input-line">
+              <label className="window__main__input-line__label" htmlFor="oldWeight">Weight: </label>
               <p 
-                className="adding-window__main__form__line__input" 
+                className="window__main__input-line__input" 
                 id="oldWeight">
                 { props.type === 'last-training' ? props.lastTimeData.training.weight : props.lastTimeData.serie.weight }
               </p>
-              <span className="adding-window__main__form__line__decoration">kg</span>
+              <span className="window__main__input-line__unit">kg</span>
             </div>
 
-            <div className="adding-window__main__form__line--normal">
-              <label className="adding-window__main__form__line__label" htmlFor="oldReps">Reps: </label>
+            <div className="window__main__input-line">
+              <label className="window__main__input-line__label" htmlFor="oldReps">Reps: </label>
               <p 
-                className="adding-window__main__form__line__input" 
+                className="window__main__input-line__input" 
                 id="oldReps">
                 { props.type === 'last-training' ? props.lastTimeData.training.reps : props.lastTimeData.serie.reps }
               </p>
-              <span className="adding-window__main__form__line__decoration">reps</span>
+              <span className="window__main__input-line__unit">reps</span>
             </div>
           
           </section>
 
-          <section className="adding-window__main__form adding-window__main__form--nutrition-facts">
+          <section className="window__main__section window__main__section--form">
 
-            <h3 className="adding-window__main__form__title">New serie</h3>
+            <h3 className="window__main__section__title">New serie</h3>
 
-            <div className="adding-window__main__form__line--normal">
-              <label className="adding-window__main__form__line__label" htmlFor="weight">Weight: </label>
+            <div className="window__main__input-line">
+              <label className="window__main__input-line__label" htmlFor="weight">Weight: </label>
               <input
-                className="adding-window__main__form__line__input" 
+                className="window__main__input-line__input" 
                 type="text" 
                 id="weight"
                 value={ props.data.weight } 
                 onChange={ props.handleOnChange }
-                placeholder="Weight"
+                placeholder={ props.warning[1] === 'weight' ? props.warning[0] : null }
                 maxLength="3">
               </input>
-              <span className="adding-window__main__form__line__decoration">kg</span>
-              <p className="adding-window__main__form__line__warning">{ props.warning[1] === 'weight' ? props.warning[0] : null }</p>
+              <span className="window__main__input-line__unit">kg</span>
             </div>
 
-            <div className="adding-window__main__form__line--normal">
-              <label className="adding-window__main__form__line__label" htmlFor="reps">Reps: </label>
+            <div className="window__main__input-line">
+              <label className="window__main__input-line__label" htmlFor="reps">Reps: </label>
               <input 
-                className="adding-window__main__form__line__input" 
+                className="window__main__input-line__input" 
                 type="text" 
                 id="reps"
                 value={ props.data.reps } 
                 onChange={ props.handleOnChange }
-                placeholder="Reps"
+                placeholder={ props.warning[1] === 'reps' ? props.warning[0] : null }
                 maxLength="2">
               </input>
-              <span className="adding-window__main__form__line__decoration">reps</span>
-              <p className="adding-window__main__form__line__warning">{ props.warning[1] === 'reps' ? props.warning[0] : null }</p>
+              <span className="window__main__input-line__unit">reps</span>
             </div>
             
           </section>
 
-          <section className="adding-window__main__form adding-window__main__form--buttons-section">
+          <section className="window__bottom">
 
             <button 
-              className={ isStateEqualToProps ? "adding-window__main__form__tertiary adding-window__main__form__tertiary--disabled" : "adding-window__main__form__tertiary" } 
+              className={ isStateEqualToProps ? "window__bottom__tertiary-button window__bottom__tertiary-button--disabled" : "window__bottom__tertiary-button" } 
               disabled={ isStateEqualToProps ? true : false }
               type="button" 
               onClick={ handleClearButton }>
               Clear</button>
 
             <div>
-              <button className="adding-window__main__form__secondary" type="button" onClick={ handleCancelButton }>Cancel</button>
+              <button className="window__bottom__secondary-button" type="button" onClick={ handleCancelButton }>Cancel</button>
               <button 
                 className={ isFormCompleted
-                            ? "adding-window__main__form__primary"
-                            : "adding-window__main__form__primary adding-window__main__form__primary--disabled" }
+                            ? "window__bottom__primary-button"
+                            : "window__bottom__primary-button window__bottom__primary-button--disabled" }
                 type="submit"
                 disabled={ isFormCompleted ? false : true }>Add</button>
             </div>
@@ -213,17 +212,16 @@ export default function AddingForm(props) {
 
         </form>
 
-      : <form className="adding-window__main__form" onSubmit={ handleAddProduct }>
+      : <form className="window__main window__main--add" onSubmit={ handleAddProduct }>
 
-          <section className="adding-window__main__form adding-window__main__form--product-info">
+          <section className="window__main__section window__main__section--form">
 
-
-            <h3 className="adding-window__main__form__title">Product info</h3>
+            <h3 className="window__main__section__title">Product info</h3>
             
-            <div className="adding-window__main__form__line adding-window__main__form__line--long">
-              <label className="adding-window__main__form__line__label" htmlFor="name">Product name: </label>
+            <div className="window__main__input-line">
+              <label className="window__main__input-line__label" htmlFor="name">Product name: </label>
               <input
-                className="adding-window__main__form__line__input "
+                className="window__main__input-line__input"
                 type="text"
                 id="name"
                 value={ props.data.name }
@@ -233,10 +231,10 @@ export default function AddingForm(props) {
               </input>
             </div>
 
-            <div className="adding-window__main__form__line adding-window__main__form__line--short">
-              <label className="adding-window__main__form__line__label" htmlFor="weight">Product weight: </label>
+            <div className="window__main__input-line">
+              <label className="window__main__input-line__label" htmlFor="weight">Product weight: </label>
               <input 
-                className="adding-window__main__form__line__input"
+                className="window__main__input-line__input"
                 type="text"
                 id="weight"
                 value={ props.data.weight } 
@@ -244,21 +242,20 @@ export default function AddingForm(props) {
                 placeholder={ props.warning[1] === 'weight' ? props.warning[0] : null }
                 maxLength="4">
               </input>
-              <span className="adding-window__main__form__line__decoration">g</span>
+              <span className="window__main__input-line__unit">g</span>
             </div>
 
 
           </section>
 
-          <section className="adding-window__main__form adding-window__main__form--nutrition-facts">
+          <section className="window__main__section window__main__section--form">
             
-
-            <h3 className="adding-window__main__form__title">Nutrition facts</h3>
+            <h3 className="window__main__section__title">Nutrition facts</h3>
             
-            <div className="adding-window__main__form__line--normal">
-              <label className="adding-window__main__form__line__label" htmlFor="proteins">Proteins: </label>
+            <div className="window__main__input-line">
+              <label className="window__main__input-line__label" htmlFor="proteins">Proteins: </label>
               <input 
-                className="adding-window__main__form__line__input" 
+                className="window__main__input-line__input" 
                 type="text" 
                 id="proteins"
                 value={ props.data.proteins } 
@@ -266,13 +263,13 @@ export default function AddingForm(props) {
                 placeholder={ props.warning[1] === 'proteins' ? props.warning[0] : null }
                 maxLength="4">
               </input>
-              <span className="adding-window__main__form__line__decoration">g</span>
+              <span className="window__main__input-line__unit">g</span>
             </div>
 
-            <div className="adding-window__main__form__line--normal">
-              <label className="adding-window__main__form__line__label" htmlFor="fats">Fats: </label>
+            <div className="window__main__input-line">
+              <label className="window__main__input-line__label" htmlFor="fats">Fats: </label>
               <input
-                className="adding-window__main__form__line__input"  
+                className="window__main__input-line__input"  
                 type="text" 
                 id="fats"
                 value={ props.data.fats } 
@@ -280,13 +277,13 @@ export default function AddingForm(props) {
                 placeholder={ props.warning[1] === 'fats' ? props.warning[0] : null }
                 maxLength="4">
               </input>
-              <span className="adding-window__main__form__line__decoration">g</span>
+              <span className="window__main__input-line__unit">g</span>
             </div>
 
-            <div className="adding-window__main__form__line--normal">
-              <label className="adding-window__main__form__line__label" htmlFor="carbs">Carbs: </label>
+            <div className="window__main__input-line">
+              <label className="window__main__input-line__label" htmlFor="carbs">Carbs: </label>
               <input
-                className="adding-window__main__form__line__input"  
+                className="window__main__input-line__input"  
                 type="text" 
                 id="carbs"
                 value={ props.data.carbs } 
@@ -294,13 +291,13 @@ export default function AddingForm(props) {
                 placeholder={ props.warning[1] === 'carbs' ? props.warning[0] : null }
                 maxLength="4">
               </input>
-              <span className="adding-window__main__form__line__decoration">g</span>
+              <span className="window__main__input-line__unit">g</span>
             </div>
 
-            <div className="adding-window__main__form__line--normal">
-              <label className="adding-window__main__form__line__label" htmlFor="kcal">Calories: </label>
+            <div className="window__main__input-line">
+              <label className="window__main__input-line__label" htmlFor="kcal">Calories: </label>
               <input
-                className="adding-window__main__form__line__input"  
+                className="window__main__input-line__input"  
                 type="text" 
                 id="kcal"
                 value={ props.data.kcal }
@@ -308,25 +305,25 @@ export default function AddingForm(props) {
                 placeholder={ props.warning[1] === 'kcal' ? props.warning[0] : null }
                 maxLength="4">
               </input>
-              <span className="adding-window__main__form__line__decoration">kcal</span>
+              <span className="window__main__input-line__unit">kcal</span>
             </div>
 
 
           </section>
 
-          <section className="adding-window__main__form adding-window__main__form--options">
+          <section className="window__main__section window__main__section--form">
 
-            <h3 className="adding-window__main__form__title">Options</h3>
+            <h3 className="window__main__section__title">Options</h3>
 
-            <div className="adding-window__main__form__line adding-window__main__form__line--checkbox">
-              <label className="adding-window__main__form__line__label adding-window__main__form__line__label--options" htmlFor="list-saving">Save to list</label>
+            <div className="window__main__input-line">
+              <label className="window__main__input-line__label" htmlFor="list-saving">Save to list</label>
               <button 
-                className="adding-window__main__form__background"
+                className="window__main__input-line__input"
                 id="list-saving"
                 type="button"
                 onClick={ handleCheckboxOnClick }>
                 <div 
-                  className="adding-window__main__form__background__checked" 
+                  className="window__main__input-line__input" 
                   id="list-saving"
                   style={ optionsStates['list-saving'] ? {backgroundColor: "#7500AF"} : {backgroundColor: "transparent"} }>
                 </div>
@@ -335,21 +332,21 @@ export default function AddingForm(props) {
 
           </section>
 
-          <section className="adding-window__main__form adding-window__main__form--buttons-section">
+          <section className="window__bottom">
 
             <button 
-              className={ isStateEqualToProps ? "adding-window__main__form__tertiary adding-window__main__form__tertiary--disabled" : "adding-window__main__form__tertiary" } 
+              className={ isStateEqualToProps ? "window__bottom__tertiary-button window__bottom__tertiary-button--disabled" : "window__bottom__tertiary-button" } 
               disabled={ isStateEqualToProps ? true : false }
               type="button" 
               onClick={ handleClearButton }>
               Clear</button>
 
             <div>
-              <button className="adding-window__main__form__secondary" type="button" onClick={ handleCancelButton }>Cancel</button>
+              <button className="window__bottom__secondary-button" type="button" onClick={ handleCancelButton }>Cancel</button>
               <button 
                 className={ isFormCompleted
-                            ? "adding-window__main__form__primary"
-                            : "adding-window__main__form__primary adding-window__main__form__primary--disabled" }
+                            ? "window__bottom__primary-button"
+                            : "window__bottom__primary-button window__bottom__primary-button--disabled" }
                 type="submit"
                 disabled={ isFormCompleted ? false : true }>Add</button>
             </div>

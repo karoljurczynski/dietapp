@@ -23,7 +23,7 @@ export default function MoreWindow(props) {
     props.handleMoreWindow();
   }
 
-  return ReactDOM.createPortal(
+  return ReactDOM.createPortal (
     <div className="window window--more">
 
       <header className="window__header">
