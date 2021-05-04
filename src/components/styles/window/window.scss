@@ -18,8 +18,9 @@
   max-height: 650px;
   -ms-overflow-style: none;
   scrollbar-width: none;
+  transition: filter 0.5s ease-out;
 
-  &::-webkit- scrollbar {
+  &::-webkit-scrollbar {
     display: none;
   }
   
@@ -77,7 +78,7 @@
     padding: 20px;
     background-color: rgba(255,255,255, 0.3);
 
-    &--add {
+    &--add, &--list {
       padding: 0;
     }
 
@@ -156,6 +157,10 @@
       margin-bottom: 20px;
       width: 100%;
 
+      &:last-of-type {
+        margin-bottom: 0;
+      }
+
       &--form {
         padding: 0 20px;
         margin-bottom: 40px;
@@ -163,10 +168,10 @@
         &:first-of-type {
           padding-top: 20px;
         }
-      }
 
-      &:last-of-type {
-        margin-bottom: 0;
+        &:last-of-type {
+          margin-bottom: 40px;
+        }
       }
 
       &--halfed {
@@ -202,12 +207,12 @@
       }
 
       &__large-list {
-        @include flexSetup(column, flex-start, flex-start);
+        @include flexSetup(column, center, flex-start);
         padding: 0 20px;
         width: 100%;
 
         &__wrapper {
-          @include flexSetup(row, center, space-between);
+          @include flexSetup(row, center, flex-start);
           width: 100%;
         }
 
@@ -240,11 +245,12 @@
           }
 
           &__name {
-            width: 40%;
+            width: 50%;
             color: black;
           }
 
           &__weight {
+            margin-top: 3px;
             font-size: 0.8rem;    
           }
 
@@ -257,12 +263,15 @@
               width: calc(100% / 3);
               font-size: 1rem;
             }
-
-            &__calories {
-              @include flexSetup(row, center, flex-end);
-              width: 20%;
-              padding-right: 10px;
+            
+            &__weight {
+              width: 100%;
             }
+          }
+
+          &__calories {
+            @include flexSetup(row, center, flex-end);
+            width: 20%;
           }
         }
 

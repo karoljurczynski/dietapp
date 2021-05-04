@@ -1,6 +1,5 @@
 import { React, useReducer, useEffect } from 'react';
 import EditForm from './EditForm';
-import './styles/productAddingWindow.css';
 
 const ACTIONS = {
   SET_PRODUCT_SEND_FOR_EDIT: "set-product-send-for-edit",
@@ -86,20 +85,11 @@ export default function AddingList(props) {
    }, []);
 
   useEffect(() => { handleAddButtonDisabling() }, [])
-
-  /*useEffect(() => {
-    const addingWindow = document.querySelector(".adding-window");
-
-    state.isEditWindowOpened
-    ? addingWindow.style.boxShadow = "none"
-    : addingWindow.style.boxShadow = "1px 1px 5px #707070";
-
-  }, [state.isEditWindowOpened]);*/
    
   const handleSelected = (e) => {
     const product = document.getElementById(e.currentTarget.id);
     if (e.currentTarget.id) {
-      const productName = product.querySelector(".adding-window__main__adding-list__item__name");
+      const productName = product.querySelector(".window__main__section__large-list__item__name");
 
       // "UNSELECTING"
       if (productName.style.fontWeight === "bold") {
@@ -138,7 +128,7 @@ export default function AddingList(props) {
     // UNSELECTING PRODUCT AFTER EDIT CANCELED
     if (Number.isInteger(idOfSelectedProduct)) {
       const product = document.getElementById(idOfSelectedProduct);
-      const productName = product.querySelector(".adding-window__main__adding-list__item__name");
+      const productName = product.querySelector(".window__main__section__large-list__item__name");
       product.style.background = "#ffffff";
       productName.style.fontWeight = "normal";
     }
@@ -148,11 +138,11 @@ export default function AddingList(props) {
   }
 
   const handleAddButtonDisabling = () => {
-    const products = document.querySelectorAll(".adding-window__main__adding-list__item");
+    const products = document.querySelectorAll(".window__main__section__large-list__item");
     let returnedBoolean = false;
    
     for (let i = 0; i < products.length; i++) {
-      const name = products[i].querySelector(".adding-window__main__adding-list__item__name");
+      const name = products[i].querySelector(".window__main__section__large-list__item__name");
       if (name.style.fontWeight === "bold") {
         returnedBoolean = false;
         break;
@@ -167,10 +157,10 @@ export default function AddingList(props) {
 
   const handleProductsAdding = () => {
     const selectedProducts = [];
-    const products = document.querySelectorAll(".adding-window__main__adding-list__item");
+    const products = document.querySelectorAll(".window__main__section__large-list__item");
 
     products.forEach((product, index) => {
-      const name = product.querySelector(".adding-window__main__adding-list__item__name");
+      const name = product.querySelector(".window__main__section__large-list__item__name");
       if (name.style.fontWeight === "bold")
         selectedProducts.push(
           { 
@@ -201,6 +191,24 @@ export default function AddingList(props) {
 
   return (
     <>
+       { state.isEditWindowOpened 
+        ? <EditForm 
+          data={{
+            id: state.productSendForEdit.id,
+            name: state.productSendForEdit.name,
+            weight: state.productSendForEdit.weight,
+            proteins: state.productSendForEdit.proteins,
+            fats: state.productSendForEdit.fats,
+            carbs: state.productSendForEdit.carbs,
+            kcal: state.productSendForEdit.kcal
+          }}
+          warning={ props.warning }
+          handleProductEditing={ handleProductEditing }
+          handleEditingWindow={ handleEditingWindow }
+          />
+
+        :  null }
+        
       <ul className="window__main__section__large-list window__main__section__large-list--heading">
         <li className="window__main__section__large-list__item window__main__section__large-list__item--heading">
           <div className="window__main__section__large-list__wrapper">
@@ -256,24 +264,6 @@ export default function AddingList(props) {
           </button>
         </div>
       </section>
-
-      { state.isEditWindowOpened 
-        ? <EditForm 
-          data={{
-            id: state.productSendForEdit.id,
-            name: state.productSendForEdit.name,
-            weight: state.productSendForEdit.weight,
-            proteins: state.productSendForEdit.proteins,
-            fats: state.productSendForEdit.fats,
-            carbs: state.productSendForEdit.carbs,
-            kcal: state.productSendForEdit.kcal
-          }}
-          warning={ props.warning }
-          handleProductEditing={ handleProductEditing }
-          handleEditingWindow={ handleEditingWindow }
-          />
-
-        :  null }
     </> 
   )
 }

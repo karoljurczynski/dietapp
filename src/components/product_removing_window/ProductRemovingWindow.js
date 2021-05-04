@@ -1,47 +1,49 @@
 import { React, useState, useEffect } from 'react';
-import './styles/productRemovingWindow.css';
- 
+import ReactDOM from 'react-dom';
+import '../styles/window/window.css';
+
+
 export default function RemoveWindow(props) {
   const [isRemovingAllButtonPressed, setRemovingAllButtonPressed] = useState(false);
   const [isRemoveButtonDisabled, setIsRemoveButtonDisabled] = useState(false);
 
+  // WINDOW EFFECTS
   useEffect(() => {
-    const removingWindow = document.querySelector(".removing-window");
+    const removingWindow = document.querySelector(".window");
 
     if (isRemovingAllButtonPressed) {
-      removingWindow.style.filter = "blur(4px)";
+      removingWindow.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
       removingWindow.style.pointerEvents = "none";
     }
     else {
-      removingWindow.style.filter = "none";
+      removingWindow.style.filter = "blur(0px) opacity(100%) grayscale(0%)";
       removingWindow.style.pointerEvents = "auto";
     }
   }, [isRemovingAllButtonPressed]);
 
-
-  // ENABLE POINTER EVENTS IN WINDOW AFTER MOUNTING
-  useEffect(() => { 
-    const removingWindow = document.querySelector(".removing-window");
-    removingWindow.style.pointerEvents = "auto";
-
-   }, []);
-
-  // ENABLE POINTER EVENTS IN CONFIRM WINDOW AFTER MOUNTING 
+  // BACKGROUND EFFECTS
   useEffect(() => {
-    if (isRemovingAllButtonPressed) {
-      const confirmWindow = document.querySelector(".removing-window__confirm");
-      confirmWindow.style.pointerEvents = "auto";
-    }
+    const wrapper = document.querySelector("#root");
 
-  },[isRemovingAllButtonPressed]);
+    wrapper.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
+    wrapper.style.pointerEvents = "none";
+  
+    return (() => {
+      wrapper.style.filter = "blur(0px) opacity(100%) grayscale(0%)";
+      wrapper.style.pointerEvents = "auto";
+    })
 
-  useEffect(() => { handleRemoveButtonDisabling() }, [])
+  }, []);
+
+  useEffect(() => { 
+    handleRemoveButtonDisabling() 
+  }, []);
 
   const handleSelected = (e) => {
     const item = document.getElementById(e.currentTarget.id);
     
     if(e.currentTarget.id) {
-      const itemName = item.querySelector(".removing-window__main__list__item__name");
+      const itemName = item.querySelector(".window__main__section__large-list__item__name");
 
       // "UNSELECTING"
       if (itemName.style.fontWeight === "bold") {
@@ -61,10 +63,10 @@ export default function RemoveWindow(props) {
 
   const handleRemoveButton = () => {
     const selectedIds = [];
-    const items = document.querySelectorAll(".removing-window__main__list__item");
+    const items = document.querySelectorAll(".window__main__section__large-list__item");
 
     items.forEach(item => {
-      const name = item.querySelector(".removing-window__main__list__item__name")
+      const name = item.querySelector(".window__main__section__large-list__item__name")
       if(name.style.fontWeight === "bold")
         selectedIds.push(Number(item.id));
     });
@@ -74,20 +76,19 @@ export default function RemoveWindow(props) {
   }
 
   const handleRemoveButtonDisabling = () => {
-    const items = document.querySelectorAll(".removing-window__main__list__item");
+    const items = document.querySelectorAll(".window__main__section__large-list__item");
     let returnedBoolean = false;
    
     for (let i = 0; i < items.length; i++) {
-      const name = items[i].querySelector(".removing-window__main__list__item__name");
+      const name = items[i].querySelector(".window__main__section__large-list__item__name");
       if (name.style.fontWeight === "bold") {
         returnedBoolean = false;
         break;
       }
-
+      
       else
         returnedBoolean = true;
     }
-
     setIsRemoveButtonDisabled(returnedBoolean);
   }
 
@@ -101,7 +102,7 @@ export default function RemoveWindow(props) {
 
   const handleRemovingAllConfirm = () => {
     const selectedIds = [];
-    const items = document.querySelectorAll(".removing-window__main__list__item");
+    const items = document.querySelectorAll(".window__main__section__large-list__item");
 
     items.forEach(item => {
       selectedIds.push(Number(item.id))
@@ -110,103 +111,107 @@ export default function RemoveWindow(props) {
     props.handleRemoving(selectedIds);
   }
   
-  return (
+  return ReactDOM.createPortal (
     <>
-      <section className="removing-window">
+    <section className="window">
 
-        <h1 className="removing-window__title">{ props.type === 'exercises' ? "Remove serie" : "Remove product" }</h1>
+      <header className="window__header">
+        <h1 className="window__header__heading">{ props.type === 'exercises' ? "Remove serie" : "Remove product" }</h1>
+      </header>
 
-        <main className="removing-window__main">
+      <main className="window__main window__main--list">
 
-          <ul className="removing-window__main__list removing-window__main__list--heading">
-            <li className="removing-window__main__list__item removing-window__main__list__item--heading">
-                { props.type === 'exercises'
-                  ? <div className="removing-window__main__list__wrapper">
-                      <span className="removing-window__main__list__item__name removing-window__main__list__item__name--exercises" style={{color: "white"}}>Serie</span>
-                      <span className="removing-window__main__list__item__nutrition-facts">
-                        <p className="removing-window__main__list__item__nutrition-facts__proteins">Weight</p>
-                      </span>
-                      <span className="removing-window__main__list__item__calories">Repetitions</span>
-                    </div>
+        <ul className="window__main__section__large-list window__main__section__large-list--heading">
+          <li className="window__main__section__large-list__item window__main__section__large-list__item--heading">
+              { props.type === 'exercises'
+                ? <div className="window__main__section__large-list__wrapper">
+                    <span className="window__main__section__large-list__item__name" style={{color: "white"}}>Serie</span>
+                    <span className="window__main__section__large-list__item__nutrition-facts">
+                      <p className="window__main__section__large-list__item__nutrition-facts__weight">Weight</p>
+                    </span>
+                    <span className="window__main__section__large-list__item__calories">Repetitions</span>
+                  </div>
 
-                  : <div className="removing-window__main__list__wrapper">
-                      <span className="removing-window__main__list__item__name" style={{color: "white"}}>Product name</span>
-                      <span className="removing-window__main__list__item__nutrition-facts">
-                        <p className="removing-window__main__list__item__nutrition-facts__proteins" title="Proteins">P</p>
-                        <p className="removing-window__main__list__item__nutrition-facts__fats" title="Fats">F</p>
-                        <p className="removing-window__main__list__item__nutrition-facts__carbs" title="Carbohydrates">C</p>
-                      </span>
-                      <span className="removing-window__main__list__item__calories">Calories</span>
-                    </div> 
-                }
-            </li>
-          </ul>
+                : <div className="window__main__section__large-list__wrapper">
+                    <span className="window__main__section__large-list__item__name" style={{color: "white"}}>Product name</span>
+                    <span className="window__main__section__large-list__item__nutrition-facts">
+                      <p className="window__main__section__large-list__item__nutrition-facts__proteins" title="Proteins">P</p>
+                      <p className="window__main__section__large-list__item__nutrition-facts__fats" title="Fats">F</p>
+                      <p className="window__main__section__large-list__item__nutrition-facts__carbs" title="Carbohydrates">C</p>
+                    </span>
+                    <span className="window__main__section__large-list__item__calories">Calories</span>
+                  </div> 
+              }
+          </li>
+        </ul>
 
-          <ul className="removing-window__main__list">
+        <ul className="window__main__section__large-list">
 
-            { props.list.map(item => {
-              return (
-                props.type === 'exercises'
+          { props.list.map(item => {
+            return (
+              props.type === 'exercises'
 
-                ? <li onClick={ handleSelected } id={ item.id } key={ item.id } className="removing-window__main__list__item">
-                    <div className="removing-window__main__list__wrapper">
-                      <span id={ item.id } className="removing-window__main__list__item__name removing-window__main__list__item__name--exercises">Serie { item.serieCount }</span>
-                      <span id={ item.id } className="removing-window__main__list__item__nutrition-facts">
-                        <p id={ item.id } className="removing-window__main__list__item__nutrition-facts__proteins" title="Proteins">{ item.weight } kg</p>
-                      </span>
-                      <span id={ item.id } className="removing-window__main__list__item__calories">{ item.reps } reps</span>
-                    </div>
-                  </li>
+              ? <li onClick={ handleSelected } id={ item.id } key={ item.id } className="window__main__section__large-list__item">
+                  <div className="window__main__section__large-list__wrapper">
+                    <span id={ item.id } className="window__main__section__large-list__item__name">Serie { item.serieCount }</span>
+                    <span id={ item.id } className="window__main__section__large-list__item__nutrition-facts">
+                      <p id={ item.id } className="window__main__section__large-list__item__nutrition-facts__weight" title="Weight">{ item.weight } kg</p>
+                    </span>
+                    <span id={ item.id } className="window__main__section__large-list__item__calories">{ item.reps } reps</span>
+                  </div>
+                </li>
 
-                : <li onClick={ handleSelected } id={ item.id } key={ item.id } className="removing-window__main__list__item">
-                    <div className="removing-window__main__list__wrapper">
-                      <span id={ item.id } className="removing-window__main__list__item__name">{ item.name }</span>
-                      <span id={ item.id } className="removing-window__main__list__item__nutrition-facts">
-                        <p id={ item.id } className="removing-window__main__list__item__nutrition-facts__proteins" title="Proteins">{ item.proteins } g</p>
-                        <p id={ item.id } className="removing-window__main__list__item__nutrition-facts__fats" title="Fats">{ item.fats } g</p>
-                        <p id={ item.id } className="removing-window__main__list__item__nutrition-facts__carbs" title="Carbohydrates">{ item.carbs } g</p>
-                      </span>
-                      <span id={ item.id } className="removing-window__main__list__item__calories">{ item.kcal } kcal</span>
-                    </div>
-                    <span id={ item.id } className="removing-window__main__list__item__weight">{ item.weight } g</span>
-                  </li>
-              )})
-            }
+              : <li onClick={ handleSelected } id={ item.id } key={ item.id } className="window__main__section__large-list__item">
+                  <div className="window__main__section__large-list__wrapper">
+                    <span id={ item.id } className="window__main__section__large-list__item__name">{ item.name }</span>
+                    <span id={ item.id } className="window__main__section__large-list__item__nutrition-facts">
+                      <p id={ item.id } className="window__main__section__large-list__item__nutrition-facts__proteins" title="Proteins">{ item.proteins } g</p>
+                      <p id={ item.id } className="window__main__section__large-list__item__nutrition-facts__fats" title="Fats">{ item.fats } g</p>
+                      <p id={ item.id } className="window__main__section__large-list__item__nutrition-facts__carbs" title="Carbohydrates">{ item.carbs } g</p>
+                    </span>
+                    <span id={ item.id } className="window__main__section__large-list__item__calories">{ item.kcal } kcal</span>
+                  </div>
+                  <span id={ item.id } className="window__main__section__large-list__item__weight">{ item.weight } g</span>
+                </li>
+            )})
+          }
 
-          </ul>
-          
-          <section className="removing-window__main__list__buttons-section">
-            <button className="removing-window__main__list__buttons-section__tertiary" onClick={ handleRemovingAllButton }>Remove all</button>
-            <div>
-              <button className="removing-window__main__list__buttons-section__secondary" onClick={ props.handleRemoveWindow }>Cancel</button>
-              <button 
-              className={ isRemoveButtonDisabled
-                          ? "removing-window__main__list__buttons-section__primary removing-window__main__list__buttons-section__primary--disabled" 
-                          : "removing-window__main__list__buttons-section__primary" }
-               onClick={ handleRemoveButton }>Remove</button>
-            </div>
-          </section>
+        </ul>
 
-        </main>
+      </main>
 
-      </section>
+      <section className="window__bottom">
+          <button className="window__bottom__tertiary-button" onClick={ handleRemovingAllButton }>Remove all</button>
+          <div>
+            <button className="window__bottom__secondary-button" onClick={ props.handleRemoveWindow }>Cancel</button>
+            <button 
+            className={ isRemoveButtonDisabled
+                        ? "window__bottom__primary-button window__bottom__primary-button--disabled" 
+                        : "window__bottom__primary-button" }
+              onClick={ handleRemoveButton }>Remove</button>
+          </div>
+        </section>
 
-      { isRemovingAllButtonPressed 
-        ? <section className="removing-window__confirm">
+    </section>
 
-            <h1 className="removing-window__title">Remove all?</h1> 
+    { isRemovingAllButtonPressed 
+        ? <section className="window window--login">
 
-            <h3 className="removing-window__confirm__subtitle">{props.type === 'exercises' ? "Are you sure you want to remove all series in current exercise?" : "Are you sure you want to remove all products in current meal?"}</h3>
+            <header className="window__header">
+              <h2 className="window__header__heading">Remove all?</h2> 
+            </header>
 
-            <section className="removing-window__main__list__buttons-section" style={{ justifyContent: "flex-end" }}>
-              <div>
-                <button className="removing-window__main__list__buttons-section__secondary" onClick={ handleRemovingAllCancel }>Cancel</button>
-                <button className="removing-window__main__list__buttons-section__primary" onClick={ handleRemovingAllConfirm }>Remove</button>
-              </div>
+            <main className="window__main">
+              <h3 className="window__main__message">{props.type === 'exercises' ? "Are you sure you want to remove all series in current exercise?" : "Are you sure you want to remove all products in current meal?"}</h3>
+            </main>
+
+            <section className="window__bottom">
+              <button className="window__bottom__secondary-button" onClick={ handleRemovingAllCancel }>Cancel</button>
+              <button className="window__bottom__primary-button" onClick={ handleRemovingAllConfirm }>Remove</button>
             </section>
-
           </section>
         : null }
-  </>
+    </>,
+  document.getElementById("portal")
   )
 }

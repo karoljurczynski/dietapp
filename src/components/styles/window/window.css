@@ -51,8 +51,12 @@
   max-height: 650px;
   -ms-overflow-style: none;
   scrollbar-width: none;
+  -webkit-transition: -webkit-filter 0.5s ease-out;
+  transition: -webkit-filter 0.5s ease-out;
+  transition: filter 0.5s ease-out;
+  transition: filter 0.5s ease-out, -webkit-filter 0.5s ease-out;
 }
-.window::-webkit- scrollbar {
+.window::-webkit-scrollbar {
   display: none;
 }
 .window--login, .window--logout {
@@ -136,7 +140,7 @@
   padding: 20px;
   background-color: rgba(255, 255, 255, 0.3);
 }
-.window__main--add {
+.window__main--add, .window__main--list {
   padding: 0;
 }
 .window__main__input-line {
@@ -252,6 +256,9 @@
   margin-bottom: 20px;
   width: 100%;
 }
+.window__main__section:last-of-type {
+  margin-bottom: 0;
+}
 .window__main__section--form {
   padding: 0 20px;
   margin-bottom: 40px;
@@ -259,8 +266,8 @@
 .window__main__section--form:first-of-type {
   padding-top: 20px;
 }
-.window__main__section:last-of-type {
-  margin-bottom: 0;
+.window__main__section--form:last-of-type {
+  margin-bottom: 40px;
 }
 .window__main__section--halfed {
   -webkit-box-orient: horizontal;
@@ -335,9 +342,9 @@
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
-  -webkit-box-align: start;
-      -ms-flex-align: start;
-          align-items: flex-start;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   -webkit-box-pack: start;
       -ms-flex-pack: start;
           justify-content: flex-start;
@@ -355,9 +362,9 @@
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
   width: 100%;
 }
 .window__main__section__large-list__item {
@@ -398,10 +405,11 @@
   border-radius: 30px;
 }
 .window__main__section__large-list__item__name {
-  width: 40%;
+  width: 50%;
   color: black;
 }
 .window__main__section__large-list__item__weight {
+  margin-top: 3px;
   font-size: 0.8rem;
 }
 .window__main__section__large-list__item__nutrition-facts {
@@ -437,7 +445,10 @@
   width: calc(100% / 3);
   font-size: 1rem;
 }
-.window__main__section__large-list__item__nutrition-facts__calories {
+.window__main__section__large-list__item__nutrition-facts__weight {
+  width: 100%;
+}
+.window__main__section__large-list__item__calories {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -452,7 +463,6 @@
       -ms-flex-pack: end;
           justify-content: flex-end;
   width: 20%;
-  padding-right: 10px;
 }
 .window__main__section__large-list--heading {
   overflow: hidden;

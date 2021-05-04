@@ -1,5 +1,6 @@
 import { React, useReducer, useEffect, useState } from 'react';
-import './styles/productAddingWindow.css';
+import ReactDOM from 'react-dom';
+import '../styles/window/window.css';
 import { warnings } from '../meal/Meal';
 
 const ACTIONS = {
@@ -69,6 +70,17 @@ export default function EditForm(props) {
   }
 
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  useEffect(() => {
+    const addingWindow = document.querySelector(".window--add");
+      addingWindow.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
+      addingWindow.style.pointerEvents = "none";
+
+    return () => {
+      addingWindow.style.filter = "blur(0px) opacity(100%) grayscale(0%)";
+      addingWindow.style.pointerEvents = "auto";
+    }
+  }, []);
 
     // CHECKING IF FORM IS COMPLETED
   useEffect(() => { 
@@ -166,129 +178,119 @@ export default function EditForm(props) {
     props.handleProductEditing(state.productData);
   }
 
-  return (
-    <section className="adding-window__edit">
+  return ReactDOM.createPortal (
+    <form className="window window--edit" onSubmit={ handleSavingChanges }>
 
-      <h1 className="adding-window__title adding-window__title--edit">Edit product</h1>
+      <header className="window__header">
+        <h3 className="window__header__heading">Edit product</h3>
+      </header>
 
-      <main className="adding-window__main">
+      <main className="window__form">
 
-        <form className="adding-window__main__form adding-window__main__form--edit"  onSubmit={ handleSavingChanges }>
+        <section className="window__main__section window__main__section--form">
+          
+          <h3 className="window__main__section__title">Product info</h3>
 
-          <section className="adding-window__main__form adding-window__main__form--product-info">
-
-
-            <h3 className="adding-window__main__form__title">Product info</h3>
-            
-            <div className="adding-window__main__form__line adding-window__main__form__line--long">
-              <label className="adding-window__main__form__line__label" htmlFor="name">Product name: </label>
-              <input
-                className="adding-window__main__form__line__input" 
+          <div className="window__main__input-line">
+            <label className="window__main__input-line__label" htmlFor="name">Product name: </label>
+            <input
+                className="window__main__input-line__input" 
                 type="text"
                 id="name"
                 value={ state.productData.name } 
                 onChange={ handleNameChanging }
-                placeholder="Product name"
+                placeholder={ state.warning[1] === 'name' ? state.warning[0] : null }
                 maxLength="32">
-              </input>
-              <p className="adding-window__main__form__line__warning">{ state.warning[1] === 'name' ? state.warning[0] : null }</p>
-            </div>
+            </input>
+          </div>
 
-            <div className="adding-window__main__form__line adding-window__main__form__line--short">
-              <label className="adding-window__main__form__line__label" htmlFor="weight">Product weight: </label>
-              <input 
-                className="adding-window__main__form__line__input" 
-                type="text" 
+          <div className="window__main__input-line">
+            <label className="window__main__input-line__label" htmlFor="weight">Product weight: </label>
+            <input
+                className="window__main__input-line__input" 
+                type="text"
                 id="weight"
                 value={ state.productData.weight } 
                 onChange={ calculateNutritionFacts }
-                placeholder="Weight"
-                maxLength="4">
-              </input>
-              <span className="adding-window__main__form__line__decoration">g</span>
-              <p className="adding-window__main__form__line__warning">{ state.warning[1] === 'weight' ? state.warning[0] : null }</p>
-            </div>
+                placeholder={ state.warning[1] === 'weight' ? state.warning[0] : null }
+                maxLength="32">
+            </input>
+            <span className="window__main__input-line__unit">g</span>
+          </div>
+        
+        </section>
+        
+        <section className="window__main__section window__main__section--form">
+          
+          <h3 className="window__main__section__title">Nutrition facts</h3>
 
+          <div className="window__main__input-line">
+            <label className="window__main__input-line__label" htmlFor="proteins">Proteins: </label>
+            <p
+              className="window__main__input-line__input" 
+              id="proteins">
+              { state.productData.proteins }
+            </p>
+            <span className="window__main__input-line__unit">g</span>
+          </div>
 
-          </section>
+          <div className="window__main__input-line">
+            <label className="window__main__input-line__label" htmlFor="fats">Fats: </label>
+            <p
+              className="window__main__input-line__input" 
+              id="fats">
+              { state.productData.fats }
+            </p>
+            <span className="window__main__input-line__unit">g</span>
+          </div>
 
-          <section className="adding-window__main__form adding-window__main__form--nutrition-facts">
-            
+          <div className="window__main__input-line">
+            <label className="window__main__input-line__label" htmlFor="carbs">Carbs: </label>
+            <p
+              className="window__main__input-line__input" 
+              id="carbs">
+              { state.productData.carbs }
+            </p>
+            <span className="window__main__input-line__unit">g</span>
+          </div>
 
-            <h3 className="adding-window__main__form__title">Nutrition facts</h3>
-            
-            <div className="adding-window__main__form__line adding-window__main__form__line--normal">
-              <label className="adding-window__main__form__line__label" htmlFor="proteins">Proteins: </label>
-              <p 
-                className="adding-window__main__form__line__input" 
-                id="proteins">
-                { state.productData.proteins }
-              </p>
-              <span className="adding-window__main__form__line__decoration">g</span>
-            </div>
-
-            <div className="adding-window__main__form__line adding-window__main__form__line--normal">
-              <label className="adding-window__main__form__line__label" htmlFor="fats">Fats: </label>
-              <p 
-                className="adding-window__main__form__line__input" 
-                id="fats">
-                { state.productData.fats }
-              </p>
-              <span className="adding-window__main__form__line__decoration">g</span>
-            </div>
-
-            <div className="adding-window__main__form__line adding-window__main__form__line--normal">
-              <label className="adding-window__main__form__line__label" htmlFor="carbs">Carbs: </label>
-              <p 
-                className="adding-window__main__form__line__input" 
-                id="carbs">
-                { state.productData.carbs }
-              </p>
-              <span className="adding-window__main__form__line__decoration">g</span>
-            </div>
-
-            <div className="adding-window__main__form__line adding-window__main__form__line--normal">
-              <label className="adding-window__main__form__line__label" htmlFor="kcal">Calories: </label>
-              <p 
-                className="adding-window__main__form__line__input" 
-                id="kcal">
-                { state.productData.kcal }
-              </p>
-              <span className="adding-window__main__form__line__decoration">kcal</span>
-            </div>
-
-
-          </section>
-
-          <section className="adding-window__main__form adding-window__main__form--buttons-section">
-
-
-            <button 
-              className={ isStateEqualToProps ? "adding-window__main__form__tertiary adding-window__main__form__tertiary--disabled" : "adding-window__main__form__tertiary" } 
-              disabled={ isStateEqualToProps ? true : false } 
-              type="button" 
-              onClick={ handleResetingForm }>
-              Reset</button>
-            
-            <div className="adding-window__main__form__right">
-              <button className="adding-window__main__form__secondary" type="button" onClick={ handleCancelButton }>Cancel</button>
-              <button 
-                className={ isFormCompleted
-                            ? "adding-window__main__form__primary"
-                            : "adding-window__main__form__primary adding-window__main__form__primary--disabled"
-                            } 
-                type="submit"
-                disabled={ isFormCompleted ? false : true }>
-                Save</button>
-            </div>
-
-
-          </section>
-
-          </form>
-
+          <div className="window__main__input-line">
+            <label className="window__main__input-line__label" htmlFor="kcal">Calories: </label>
+            <p
+              className="window__main__input-line__input" 
+              id="kcal">
+              { state.productData.kcal }
+            </p>
+            <span className="window__main__input-line__unit">kcal</span>
+          </div>
+        
+        </section>
+        
       </main>
 
-    </section>
+      <section className="window__bottom">
+        <button 
+          className={ isStateEqualToProps ? "window__bottom__tertiary-button window__bottom__tertiary-button--disabled" : "window__bottom__tertiary-button" } 
+          disabled={ isStateEqualToProps ? true : false } 
+          type="button" 
+          onClick={ handleResetingForm }>
+          Reset</button>
+        
+        <div>
+          <button className="window__bottom__secondary-button" type="button" onClick={ handleCancelButton }>Cancel</button>
+          <button 
+            className={ isFormCompleted
+                        ? "window__bottom__primary-button"
+                        : "window__bottom__primary-button window__bottom__primary-button--disabled"
+                        } 
+            type="submit"
+            disabled={ isFormCompleted ? false : true }>
+            Save</button>
+        </div>
+
+      </section>
+
+    </form>,
+    document.getElementById("portal")
   )
 }
