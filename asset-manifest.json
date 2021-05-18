@@ -1,21 +1,21 @@
 {
   "files": {
-    "main.css": "/dietapp/static/css/main.0a9662bc.chunk.css",
-    "main.js": "/dietapp/static/js/main.95bb7352.chunk.js",
-    "main.js.map": "/dietapp/static/js/main.95bb7352.chunk.js.map",
+    "main.css": "/dietapp/static/css/main.c1b237fc.chunk.css",
+    "main.js": "/dietapp/static/js/main.349565e8.chunk.js",
+    "main.js.map": "/dietapp/static/js/main.349565e8.chunk.js.map",
     "runtime-main.js": "/dietapp/static/js/runtime-main.7d24b099.js",
     "runtime-main.js.map": "/dietapp/static/js/runtime-main.7d24b099.js.map",
-    "static/js/2.b5f83140.chunk.js": "/dietapp/static/js/2.b5f83140.chunk.js",
-    "static/js/2.b5f83140.chunk.js.map": "/dietapp/static/js/2.b5f83140.chunk.js.map",
+    "static/js/2.ed7136fc.chunk.js": "/dietapp/static/js/2.ed7136fc.chunk.js",
+    "static/js/2.ed7136fc.chunk.js.map": "/dietapp/static/js/2.ed7136fc.chunk.js.map",
     "index.html": "/dietapp/index.html",
-    "static/css/main.0a9662bc.chunk.css.map": "/dietapp/static/css/main.0a9662bc.chunk.css.map",
-    "static/js/2.b5f83140.chunk.js.LICENSE.txt": "/dietapp/static/js/2.b5f83140.chunk.js.LICENSE.txt",
+    "static/css/main.c1b237fc.chunk.css.map": "/dietapp/static/css/main.c1b237fc.chunk.css.map",
+    "static/js/2.ed7136fc.chunk.js.LICENSE.txt": "/dietapp/static/js/2.ed7136fc.chunk.js.LICENSE.txt",
     "static/media/logo.92f8fff8.png": "/dietapp/static/media/logo.92f8fff8.png"
   },
   "entrypoints": [
     "static/js/runtime-main.7d24b099.js",
-    "static/js/2.b5f83140.chunk.js",
-    "static/css/main.0a9662bc.chunk.css",
-    "static/js/main.95bb7352.chunk.js"
+    "static/js/2.ed7136fc.chunk.js",
+    "static/css/main.c1b237fc.chunk.css",
+    "static/js/main.349565e8.chunk.js"
   ]
 }
