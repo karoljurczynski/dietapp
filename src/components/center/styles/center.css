@@ -220,4 +220,33 @@
 .center-section__main__settings__form__cancel-button {
   width: 100%;
 }
+
+@media (max-width: 768px) {
+  .center-section {
+    height: calc(100% - 290px);
+    width: 100%;
+    padding-top: 25px;
+  }
+  .center-section__top__title {
+    display: none;
+  }
+  .center-section__top__date-changer {
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
+    width: 100%;
+    right: 0;
+  }
+  .center-section__top__date-changer__previous-button, .center-section__top__date-changer__next-button {
+    width: 30%;
+  }
+}
+@media (max-width: 480px) {
+  .center-section {
+    height: calc(100% - 230px);
+  }
+  .center-section__main {
+    padding: 0 10px;
+  }
+}
 /*# sourceMappingURL=center.css.map */

@@ -31,6 +31,9 @@
   &__header {
     @include flexSetup(column, flex-start, flex-start);
     width: 100%;
+    position: sticky;
+    top: 0;
+    z-index: 10;
     padding: 20px;
     border-radius: 25px 25px 0 0;
     background-color: rgba(255,255,255, 0.9);
@@ -40,6 +43,34 @@
       font-size: 1.6rem;
       font-family: 'Segoe UI', sans-serif;
       font-weight: 700;
+    }
+
+    &__back-button, &__add-button {
+      position: absolute;
+      z-index: -1;
+      width: 1.3rem;
+      @include flexSetup(row, center, center);
+      background: transparent;
+
+      & > * {
+        width: 100%;
+        height: auto;
+        color: $white-color;
+      }
+    }
+
+    &__back-button {
+      left: 20px;
+    }
+
+    &__add-button {
+      right: 20px;
+      top: 110px;
+
+      &--disabled {
+        opacity: 0.5;
+
+      }
     }
 
     &__switch {
@@ -331,6 +362,82 @@
       background: $purple-color;
       color: $white-color;
       border: 1px solid $purple-color2;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .window {
+    width: 100%;
+    min-height: 100vh;
+    max-height: 100vh;
+    top: 0;
+    left: 0;
+    transform: translate(0, 0);
+    border-radius: 0px;
+    border: none;
+    box-shadow: none;
+    transition: none;
+
+    &--login, &--logout {
+      width: 100%;
+    }
+
+    &__header {
+      justify-content: center;
+      align-items: center;
+      background: $purple-color;
+      border-radius: 0px;
+      border-bottom: 2px solid $white-color;
+
+      &__heading {
+        font-size: 1.3rem;
+        color: $white-color;
+      }
+
+      &__back-button, &__add-button {
+        display: flex;
+        z-index: 0;
+      }
+
+      &__switch {
+        border: none;
+        background: $purple-color2;
+
+        &__left, &__right {
+          color: $white-color;
+          padding: 8px 16px;
+          font-size: 0.9rem;
+  
+          &--selected {
+            color: $purple-color;
+            background: $white-color;
+          }
+        }
+      }
+    }
+
+    &__main {
+      height: 100%;
+
+      &__section {
+        &--halfed {
+          flex-direction: column;
+          margin-top: 20px;
+        }
+
+        &__split-left, &__split-right {
+          width: 100%;
+        }
+
+        &__split-left {
+          margin-bottom: 40px;
+        }
+      }
+    }
+
+    &__bottom {
+      display: none;
     }
   }
 }

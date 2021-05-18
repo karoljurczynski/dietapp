@@ -3,7 +3,7 @@
 import { React, useReducer, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
-import { Logo, Title, MenuItem, Quotation } from './components/left/left';
+import { Logo, Title, Hamburger, MenuItem, Quotation } from './components/left/left';
 import DateChanger from './components/center/DateChanger';
 import Meal from './components/meal/Meal';
 import Gauge from './components/right/Gauge';
@@ -29,7 +29,8 @@ const ACTIONS = {
   CHANGE_PAGE_TITLE: 'change-page-title',
   LOAD_SETTINGS: 'load-settings',
   SET_LOGIN_WINDOW: 'set-login-window',
-  SET_USER_STATUS: 'set-user-status'
+  SET_USER_STATUS: 'set-user-status',
+  CHANGE_HAMBURGER_STATE: 'change-hamburger-state'
 }
 
 
@@ -131,6 +132,10 @@ function App() {
         return {...state, userStatus: action.payload}
       }
 
+      case ACTIONS.CHANGE_HAMBURGER_STATE: {
+        return {...state, hamburgerState: !state.hamburgerState}
+      }
+
       default: return console.error(`Unknown action type: ${action.type}`);
     }
   }
@@ -142,6 +147,7 @@ function App() {
     isAddWindowsEnabled: false,
     isRemoveWindowsEnabled: false,
     isMoreWindowsEnabled: false,
+    hamburgerState: false,
     userStatus: "Log in",
     mealsIngredientsSummary: [],
     dailyIngredientsSummary: { kcal: 0, proteins: 0, fats: 0, carbs: 0 },
@@ -203,6 +209,17 @@ function App() {
 
   }, [state.isLoginWindowsEnabled]);
 
+  useEffect(() => {
+    const menu = document.querySelector(".left-section__menu-container");
+    if (state.hamburgerState ) {
+      menu.style.display = "none";
+    }
+    else {
+      menu.style.display = "flex";
+    }
+
+  }, [state.hamburgerState]);
+
   const updateMealSummary = (object, mealId) => {
     dispatch({ type: ACTIONS.UPDATE_MEALS_INGREDIENTS_SUMMARY, payload: {data: object, mealId: mealId} });
     updateDailySummary();
@@ -244,6 +261,10 @@ function App() {
     else {
       changePageTitle(categoryTitle);
     }
+
+    if (window.innerWidth < 768) {
+      dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE })
+    }
   }
 
   const saveSettingsToLocalStorage = () => {
@@ -256,6 +277,10 @@ function App() {
 
   const setUserStatus = (newStatus) => {
     dispatch({ type: ACTIONS.SET_USER_STATUS, payload: newStatus });
+  }
+
+  const handleHamburger = () => {
+    dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE });
   }
 
   return (
@@ -277,6 +302,8 @@ function App() {
           <Logo />
           <Title />
         </header>
+
+        <Hamburger handleHamburger={ handleHamburger } />
 
         <ul className="left-section__menu-container">
 

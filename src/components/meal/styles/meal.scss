@@ -158,3 +158,92 @@
     }
   }
 }
+
+@media (max-width: 1100px) {
+  .meal {
+    &__top-section {
+      &__meal-title {
+        font-size: 1.1rem;
+      }
+
+      &__meal-stats-list {
+        &__item {
+          margin-left: 10px;
+          font-size: 1.1rem;
+        }
+      }
+    }
+
+    &__products-section {
+      &__product {
+        &__title {
+          font-size: 0.9rem;
+        }
+
+        &__weight {
+          font-size: 0.8rem;
+        }
+
+        &__stats-list {
+          &__item {
+            margin-left: 10px;
+            font-size: 0.9rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .meal {
+    &__top-section {
+      &__meal-title {
+        font-size: 1.2rem;
+      }
+
+      &__meal-stats-list {
+        &__item {
+          margin-left: 10px;
+          font-size: 1.2rem;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .meal {
+    &__top-section {
+      &__meal-title {
+        font-size: 1rem;
+      }
+
+      &__meal-stats-list {
+        &__item {
+          margin-left: 10px;
+          font-size: 1rem;
+        }
+      }
+    }
+
+    &__products-section {
+      &__product {
+        &__title {
+          font-size: 0.9rem;
+        }
+
+        &__weight {
+          font-size: 0.7rem;
+        }
+
+        &__stats-list {
+          &__item {
+            margin-left: 10px;
+            font-size: 0.9rem;
+          }
+        }
+      }
+    }
+  }
+}

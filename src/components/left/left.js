@@ -23,6 +23,16 @@ export function Title() {
   )
 }
 
+export function Hamburger(props) {
+  return (
+    <button className="left-section__hamburger" onClick={ props.handleHamburger }>
+      <span className="left-section__hamburger__line"></span>
+      <span className="left-section__hamburger__line"></span>
+      <span className="left-section__hamburger__line"></span>
+    </button>
+  )
+}
+
 export function Quotation() {
 
   return (

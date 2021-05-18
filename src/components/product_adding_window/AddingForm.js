@@ -1,6 +1,7 @@
 import { React, useState, useEffect } from 'react';
 import './styles/productAddingWindow.css';
 import '../styles/window/window.css';
+import { FaPlusCircle } from 'react-icons/fa';
 
 export default function AddingForm(props) {
   const initialOptionsStates = {
@@ -189,6 +190,13 @@ export default function AddingForm(props) {
             
           </section>
 
+          <button 
+                className={ isFormCompleted
+                            ? "window__header__add-button"
+                            : "window__header__add-button window__header__add-button--disabled" }
+                type="submit"
+                disabled={ isFormCompleted ? false : true }><FaPlusCircle /></button>
+
           <section className="window__bottom">
 
             <button 
@@ -318,12 +326,12 @@ export default function AddingForm(props) {
             <div className="window__main__input-line">
               <label className="window__main__input-line__label" htmlFor="list-saving">Save to list</label>
               <button 
-                className="window__main__input-line__input"
+                className="window__main__input-line__checkbox"
                 id="list-saving"
                 type="button"
                 onClick={ handleCheckboxOnClick }>
                 <div 
-                  className="window__main__input-line__input" 
+                  className="window__main__input-line__checkbox__background" 
                   id="list-saving"
                   style={ optionsStates['list-saving'] ? {backgroundColor: "#7500AF"} : {backgroundColor: "transparent"} }>
                 </div>
@@ -331,6 +339,13 @@ export default function AddingForm(props) {
             </div>
 
           </section>
+
+          <button 
+                className={ isFormCompleted
+                            ? "window__header__add-button"
+                            : "window__header__add-button window__header__add-button--disabled" }
+                type="submit"
+                disabled={ isFormCompleted ? false : true }><FaPlusCircle /></button>
 
           <section className="window__bottom">
 

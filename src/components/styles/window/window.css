@@ -77,6 +77,10 @@
       -ms-flex-pack: start;
           justify-content: flex-start;
   width: 100%;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 10;
   padding: 20px;
   border-radius: 25px 25px 0 0;
   background-color: rgba(255, 255, 255, 0.9);
@@ -86,6 +90,40 @@
   font-size: 1.6rem;
   font-family: "Segoe UI", sans-serif;
   font-weight: 700;
+}
+.window__header__back-button, .window__header__add-button {
+  position: absolute;
+  z-index: -1;
+  width: 1.3rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  background: transparent;
+}
+.window__header__back-button > *, .window__header__add-button > * {
+  width: 100%;
+  height: auto;
+  color: #FFFFFF;
+}
+.window__header__back-button {
+  left: 20px;
+}
+.window__header__add-button {
+  right: 20px;
+  top: 110px;
+}
+.window__header__add-button--disabled {
+  opacity: 0.5;
 }
 .window__header__switch {
   display: -webkit-box;
@@ -523,5 +561,79 @@
   background: #7500AF;
   color: #FFFFFF;
   border: 1px solid #8e2ebe;
+}
+
+@media (max-width: 768px) {
+  .window {
+    width: 100%;
+    min-height: 100vh;
+    max-height: 100vh;
+    top: 0;
+    left: 0;
+    -webkit-transform: translate(0, 0);
+            transform: translate(0, 0);
+    border-radius: 0px;
+    border: none;
+    -webkit-box-shadow: none;
+            box-shadow: none;
+    -webkit-transition: none;
+    transition: none;
+  }
+  .window--login, .window--logout {
+    width: 100%;
+  }
+  .window__header {
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    background: #7500AF;
+    border-radius: 0px;
+    border-bottom: 2px solid #FFFFFF;
+  }
+  .window__header__heading {
+    font-size: 1.3rem;
+    color: #FFFFFF;
+  }
+  .window__header__back-button, .window__header__add-button {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    z-index: 0;
+  }
+  .window__header__switch {
+    border: none;
+    background: #8e2ebe;
+  }
+  .window__header__switch__left, .window__header__switch__right {
+    color: #FFFFFF;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+  .window__header__switch__left--selected, .window__header__switch__right--selected {
+    color: #7500AF;
+    background: #FFFFFF;
+  }
+  .window__main {
+    height: 100%;
+  }
+  .window__main__section--halfed {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    margin-top: 20px;
+  }
+  .window__main__section__split-left, .window__main__section__split-right {
+    width: 100%;
+  }
+  .window__main__section__split-left {
+    margin-bottom: 40px;
+  }
+  .window__bottom {
+    display: none;
+  }
 }
 /*# sourceMappingURL=window.css.map */

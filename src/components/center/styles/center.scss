@@ -1,5 +1,5 @@
 @forward '../../../styles/config/config';
-@forward '../styles/media_queries/media';
+//@forward '../styles/media_queries/media';
 @use '../../../styles/config/config' as *;
 
 .center-section {
@@ -34,7 +34,6 @@
       width: 50%;
       font-size: 1.3rem;
       @extend %robotoBold;
-      
     }
 
     &__date-changer {
@@ -50,6 +49,7 @@
         width: 20px;
         font-size: 1.3rem;
         background: none;
+
         & > * {
           width: 100%;
         }
@@ -68,6 +68,7 @@
         background: none;
         font-size: 1.3rem;
         width: 20px;
+
         & > * {
           width: 100%;
         }
@@ -78,8 +79,8 @@
   &__main {
     @include flexSetup(column, flex-start, flex-start);
     width: 100%;
-    padding: 0 40px;
-
+    padding: 0 40px;  
+    
     &__settings {
       @include flexSetup(column, flex-start, flex-start);
       width: 100%;
@@ -121,6 +122,40 @@
           width: 100%;
         }
       }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .center-section {
+    height: calc(100% - 290px);
+    width: 100%;
+    padding-top: 25px;
+
+    &__top {
+      &__title {
+        display: none;
+      }
+
+      &__date-changer {
+        justify-content: space-between;
+        width: 100%;
+        right: 0;
+        
+        &__previous-button, &__next-button {
+          width: 30%;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .center-section {
+    height: calc(100% - 230px);
+
+    &__main {
+      padding: 0 10px;
     }
   }
 }

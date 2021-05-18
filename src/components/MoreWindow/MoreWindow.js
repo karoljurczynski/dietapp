@@ -1,6 +1,7 @@
 import { React, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import '../styles/window/window.css';
+import { FaChevronCircleLeft } from 'react-icons/fa';
  
 export default function MoreWindow(props) {
   // BACKGROUND EFFECTS
@@ -28,6 +29,7 @@ export default function MoreWindow(props) {
 
       <header className="window__header">
         <h2 className="window__header__heading">{ props.title }</h2>
+        <button className="window__header__back-button" onClick={ handleBackButton }><FaChevronCircleLeft /></button>
       </header>
 
       <main className="window__main">
