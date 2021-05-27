@@ -1,4 +1,6 @@
 import { React, useReducer, useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
+import { FaChevronCircleLeft, FaSave } from 'react-icons/fa';
 import { exercises } from '../../exercisesList';
 import '../../components/product_removing_window/styles/productRemovingWindow.css';
 import '../../components/product_adding_window/styles/productAddingWindow.css';
@@ -6,6 +8,9 @@ import '../../components/product_adding_window/styles/productAddingWindow.css';
 
 const initialState = {
   isCategoryOpened: false,
+  isAccountCategory: false,
+  isNutritionCategory: true,
+  isTrainingCategory: false,
   settingsData: {
     account: {
 
@@ -36,7 +41,8 @@ const ACTIONS = {
   REMOVE_EXERCISE_FROM_SELECTEDEXERCISES: 'remove-exercise-from-selectedexercises',
   SET_SETTINGS_CHANGED_STATE: 'set-settings-changed-state',
   RESET_NUTRITION_SETTINGS_TO_INITIAL: 'reset-nutrition-settings-to-initial',
-  RESET_TRAINING_SETTINGS_TO_INITIAL: 'reset-training-settings-to-initial'
+  RESET_TRAINING_SETTINGS_TO_INITIAL: 'reset-training-settings-to-initial',
+  SET_CATEGORY: 'set-category'
 }
 
 export default function Settings(props) {
@@ -115,12 +121,17 @@ export default function Settings(props) {
       }
 
       case ACTIONS.RESET_NUTRITION_SETTINGS_TO_INITIAL: {
-        return { ...state, settingsData: { ...state.settingsData, nutrition: props.initialData }};
+        return { ...state, settingsData: { ...state.settingsData, nutrition: props.initialData.nutrition }};
       }
 
       case ACTIONS.RESET_TRAINING_SETTINGS_TO_INITIAL: {
         console.log(state.settingsData.training.selectedExercises);
-        return { ...state, settingsData: { ...state.settingsData, training: props.initialData }};
+        return { ...state, settingsData: { ...state.settingsData, training: props.initialData.training }};
+      }
+
+      case ACTIONS.SET_CATEGORY: {
+        let category = action.payload.category;
+        return { ...state, [category]: action.payload.value };
       }
 
       default: return console.error(`Unknown action type: ${action.type}`);
@@ -145,17 +156,36 @@ export default function Settings(props) {
 
   }, []);
 
-  // EFFECT WHICH ENABLE POINTER EVENTS AFTER OPENING CONFIRM WINDOW
+  // BACKGROUND EFFECTS
   useEffect(() => {
-    if (state.clearAllProducts || state.clearAllSeries) {
-      const confirmWindow = document.querySelector(".removing-window__confirm");
-      confirmWindow.style.pointerEvents = "auto";
-    }
+    const wrapper = document.querySelector("#root");
 
-  }, [ state.clearAllProducts, state.clearAllSeries ]);
+    wrapper.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
+    wrapper.style.pointerEvents = "none";
+  
+    return (() => {
+      wrapper.style.filter = "blur(0px) opacity(100%) grayscale(0%)";
+      wrapper.style.pointerEvents = "auto";
+    })
+
+  }, []);
+
+  // WINDOW EFFECTS
+  useEffect(() => {
+    const settingsWindow = document.querySelector(".window");
+
+    if (state.clearAllProducts || state.clearAllSeries) {
+      settingsWindow.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
+      settingsWindow.style.pointerEvents = "none";
+    }
+    else {
+      settingsWindow.style.filter = "blur(0px) opacity(100%) grayscale(0%)";
+      settingsWindow.style.pointerEvents = "auto";
+    }
+  }, [state.clearAllProducts, state.clearAllSeries]);
 
   // DISABLES POINTER EVENTS WHEN ONE OF FORM WINDOWS IS OPENED 
-  useEffect(() => {
+  /*useEffect(() => {
     const changePointerEvents = (value) => {
       const meals = document.querySelectorAll(".meal");
       const wrapper = document.querySelector(".wrapper");
@@ -176,14 +206,11 @@ export default function Settings(props) {
     : changePointerEvents("auto");
     
   }, [ state.clearAllProducts, state.clearAllSeries ]);
-
+*/
   // EFFECT WHICH CHECKS IS SETTINGS ARE CHANGED
   useEffect(() => {
     const localStorageSettings = localStorage.getItem("settings");
     const currentSettings = JSON.stringify(state.settingsData);
-    console.log(localStorageSettings);
-    console.log(state.settingsData);
-
     if (localStorageSettings === currentSettings)
       dispatch({ type: ACTIONS.SET_SETTINGS_CHANGED_STATE, payload: false });
     else
@@ -191,13 +218,21 @@ export default function Settings(props) {
 
   }, [ state.settingsData ]);
 
+  useEffect(() => {
+    for (let i = 0; i < Object.keys(optionsStates).length; i++) {
+      if (Object.values(optionsStates)[i] === true) {
+        dispatch({ type: ACTIONS.SET_SETTINGS_CHANGED_STATE, payload: true });
+        break;
+      }
+      else {
+        dispatch({ type: ACTIONS.SET_SETTINGS_CHANGED_STATE, payload: false });
+      }
+    };
+  }, [optionsStates]);
+
 
   const handleOpening = () => {
     dispatch({ type: ACTIONS.NEGATE_CATEGORY_OPENED });
-  }
-
-  const resetCheckbox = (idOfCheckbox) => {
-    document.querySelector("#" + idOfCheckbox).checked = false;
   }
 
   const resetOptionsStates = () => {
@@ -236,11 +271,14 @@ export default function Settings(props) {
       if (value.exerciseId >= 0)
         localStorage.removeItem(key);
     });
-
   }
 
   const cancelClearAllSeries = () => {
     dispatch({ type: ACTIONS.SET_CLEAR_ALL_SERIES, payload: false });
+  }
+
+  const handleBackToPreviousPage = () => {
+    props.changePageTitle(props.previousPage);
   }
 
   const handleSettingsSaved = (e) => {
@@ -262,6 +300,14 @@ export default function Settings(props) {
   }
 
   const handleSettingsCanceled = (e) => {
+    e.preventDefault();
+    restoreSettingFromLocalStorage();
+    resetOptionsStates();
+    props.updateGauges();
+    handleBackToPreviousPage();
+  }
+
+  const handleSettingsReset = (e) => {
     e.preventDefault();
     restoreSettingFromLocalStorage();
     resetOptionsStates();
@@ -311,165 +357,209 @@ export default function Settings(props) {
   const handleCheckboxOnClick = (e) => {
     setOptionsStates(prevOptions => { return {...prevOptions, [e.target.id]: !optionsStates[e.target.id]} });
   }
+  
+  const handleCategorySwitch = (e) => {
+    e.preventDefault();
+    dispatch({type: ACTIONS.SET_CATEGORY, payload: { category: 'isAccountCategory', value: false }});
+    dispatch({type: ACTIONS.SET_CATEGORY, payload: { category: 'isNutritionCategory', value: false }});
+    dispatch({type: ACTIONS.SET_CATEGORY, payload: { category: 'isTrainingCategory', value: false }});
+    dispatch({type: ACTIONS.SET_CATEGORY, payload: { category: e.target.id, value: true }});
+    restoreSettingFromLocalStorage();
+    resetOptionsStates();
+  }
 
-  return (
+  return ReactDOM.createPortal (
     <>
-    <div className="meal" style={ state.isCategoryOpened ? {left: '-10px'} : {left: '0px'} }>
-      <section className="meal__top-section" onClick={ handleOpening }>
-        
-        <h2 className="meal__top-section__meal-title">{ props.category }</h2>        
-        
-      </section>
-
-      <section className="meal__products-section meal__products-section--settings" style={ state.isCategoryOpened ? {display: "flex"} : {display: "none"} }>
+    <div className="window">
+      <header className="window__header">
           
-        { props.category === "Account" &&
-          <section className="center-section__main__settings">
+        <h2 className="window__header__heading">Settings</h2>
 
-          <form className="center-section__main__settings__form" onSubmit={ handleSettingsSaved }>
+        <button className="window__header__back-button" onClick={ handleSettingsCanceled }><FaChevronCircleLeft /></button>        
+        <button className="window__header__switch">
+          <h3 
+            className={ state.isAccountCategory 
+                        ? "window__header__switch__left window__header__switch__left--selected"
+                        : "window__header__switch__left" }
+            id="isAccountCategory"
+            onClick={ handleCategorySwitch }>
+            Account
+          </h3>
 
-            <section className="center-section__main__settings__form__section">
+          <h3 
+            className={ state.isNutritionCategory
+                        ? "window__header__switch__center window__header__switch__center--selected"  
+                        : "window__header__switch__center" }
+            id="isNutritionCategory"
+            onClick={ handleCategorySwitch }>
+            Nutrition        
+          </h3>
+          
+          <h3 
+            className={ state.isTrainingCategory  
+                        ? "window__header__switch__right window__header__switch__right--selected"  
+                        : "window__header__switch__right" }
+            id="isTrainingCategory"
+            onClick={ handleCategorySwitch }>
+            Training
+          </h3>
+        </button>
+
+      </header>
+
+      <main className="window__form">
+        { state.isAccountCategory &&
+          <form className="window__main window__main--add" onSubmit={ handleSettingsSaved }>
+          
+            <button 
+              className={ state.isSettingsChanged
+                          ? "window__header__add-button"
+                          : "window__header__add-button window__header__add-button--disabled" }
+              type="submit"
+              style={{ zIndex: 11 }}
+              disabled={ state.isSettingsChanged ? false : true }><FaSave />
+            </button>
             
+            <section className="window__main__section window__main__section--form">
+              <h3 className="window__main__section__title">Account</h3> 
             </section>
 
-            <section className="meal__buttons-section meal__buttons-section--settings" style={ state.isCategoryOpened ? {display: "flex"} : {display: "none"} }>
-              
+            <section className="window__bottom">
+
+              <button 
+                  className={
+                    state.isSettingsChanged
+                    ? "window__bottom__tertiary-button"
+                    : "window__bottom__tertiary-button window__bottom__tertiary-button--disabled"
+                  } 
+                  type="button"
+                  onClick={ handleSettingsReset }
+                  disabled={ state.isSettingsChanged ? false : true }>
+                  Reset
+              </button>
+
               <div>
-              <button 
-                className="meal__buttons-section__remove-button"
-                onClick={ handleSettingsCanceled }
-                type="button" 
-                disabled={ state.isSettingsChanged ? false : true }>
-                Cancel</button> 
+                <button 
+                  className="window__bottom__secondary-button"
+                  type="button" 
+                  onClick={ handleSettingsCanceled }>
+                  Cancel
+                </button>
 
-              <button 
-                className="meal__buttons-section__add-button"
-                type="submit" 
-                value="Save" 
-                id="saveSettings">
-                Save</button>  
-              </div>     
-            
-            </section>
+                <button 
+                  className={
+                    state.isSettingsChanged
+                    ? "window__bottom__primary-button"
+                    : "window__bottom__primary-button window__bottom__primary-button--disabled" 
+                  }
+                  type="submit"
+                  id="saveSettings"
+                  value="Save"
+                  disabled={ state.isSettingsChanged ? false : true }>
+                  Save
+                </button>
+              </div>
 
+          </section>
           </form>
-
-        </section>
         }
 
-        { props.category === "Nutrition" &&
-          <section className="center-section__main__settings">
+        { state.isNutritionCategory &&
+          <form className="window__main window__main--add" onSubmit={ handleSettingsSaved }>
+            
+            <button 
+              className={ state.isSettingsChanged
+                          ? "window__header__add-button"
+                          : "window__header__add-button window__header__add-button--disabled" }
+              type="submit"
+              style={{ zIndex: 11 }}
+              disabled={ state.isSettingsChanged ? false : true }><FaSave />
+            </button>
+            
+            <section className="window__main__section window__main__section--form">
+              <h3 className="window__main__section__title">Daily demand</h3>
 
-          { state.clearAllProducts &&
-            <section className="removing-window__confirm">
-
-                <h1 className="removing-window__title">Clear all?</h1> 
-
-                <h3 className="removing-window__confirm__subtitle">Are you sure you want to clear all products?</h3>
-
-                <section className="removing-window__main__list__buttons-section" style={{ justifyContent: "flex-end" }}>
-                  <div>
-                    <button className="removing-window__main__list__buttons-section__secondary" onClick={ cancelClearAllProducts }>Cancel</button>
-                    <button className="removing-window__main__list__buttons-section__primary" onClick={ confirmClearAllProducts }>Remove</button>
-                  </div>
-                </section>
-
-            </section>
-          }
-
-          <form className="adding-window__main__form" onSubmit={ handleSettingsSaved }>
-
-            <section className="adding-window__main__form adding-window__main__form--daily-demand">
-      
-              <h3 className="adding-window__main__form__title">Daily demand</h3>
-
-              <div className="adding-window__main__form__line adding-window__main__form__line--short">
-                <label className="adding-window__main__form__line__label" htmlFor="proteins">Proteins</label>
-                <input 
-                  className="adding-window__main__form__line__input" 
+              <div className="window__main__input-line">
+                <label className="window__main__input-line__label" htmlFor="proteins">Proteins</label>
+                <input
+                  className="window__main__input-line__input"  
                   type="text" 
                   id="proteins"
-                  value={ state.settingsData.nutrition.dailyDemand.proteins }
+                  value={ state.settingsData.nutrition.dailyDemand.proteins } 
                   onChange={ handleSettingOnChange }
-                  placeholder="Proteins"
+                  //placeholder={ props.warning[1] === 'proteins' ? props.warning[0] : null }
                   maxLength="4">
                 </input>
-                <span className="adding-window__main__form__line__decoration">g</span>
-                {/*<p className="adding-window__main__form__line__warning">{ props.warning[1] === 'weight' ? props.warning[0] : null }</p>*/}
+                <span className="window__main__input-line__unit">g</span>
               </div>
 
-              <div className="adding-window__main__form__line adding-window__main__form__line--short">
-                <label className="adding-window__main__form__line__label" htmlFor="fats">Fats</label>
-                <input 
-                  className="adding-window__main__form__line__input" 
+              <div className="window__main__input-line">
+                <label className="window__main__input-line__label" htmlFor="fats">Fats</label>
+                <input
+                  className="window__main__input-line__input"  
                   type="text" 
                   id="fats"
-                  value={ state.settingsData.nutrition.dailyDemand.fats }
+                  value={ state.settingsData.nutrition.dailyDemand.fats } 
                   onChange={ handleSettingOnChange }
-                  placeholder="Fats"
+                  //placeholder={ props.warning[1] === 'fats' ? props.warning[0] : null }
                   maxLength="4">
                 </input>
-                <span className="adding-window__main__form__line__decoration">g</span>
-                {/*<p className="adding-window__main__form__line__warning">{ props.warning[1] === 'weight' ? props.warning[0] : null }</p>*/}
+                <span className="window__main__input-line__unit">g</span>
               </div>
 
-              <div className="adding-window__main__form__line adding-window__main__form__line--short">
-                <label className="adding-window__main__form__line__label" htmlFor="Carbs">Carbs</label>
-                <input 
-                  className="adding-window__main__form__line__input" 
+              <div className="window__main__input-line">
+                <label className="window__main__input-line__label" htmlFor="carbs">Carbohydrates</label>
+                <input
+                  className="window__main__input-line__input"  
                   type="text" 
-                  id="Carbs"
-                  value={ state.settingsData.nutrition.dailyDemand.carbs }
+                  id="carbs"
+                  value={ state.settingsData.nutrition.dailyDemand.carbs } 
                   onChange={ handleSettingOnChange }
-                  placeholder="Carbs"
+                  //placeholder={ props.warning[1] === 'carbs' ? props.warning[0] : null }
                   maxLength="4">
                 </input>
-                <span className="adding-window__main__form__line__decoration">g</span>
-                {/*<p className="adding-window__main__form__line__warning">{ props.warning[1] === 'weight' ? props.warning[0] : null }</p>*/}
+                <span className="window__main__input-line__unit">g</span>
               </div>
 
-              <div className="adding-window__main__form__line adding-window__main__form__line--short">
-                <label className="adding-window__main__form__line__label" htmlFor="kcal">Calories</label>
-                <input 
-                  className="adding-window__main__form__line__input" 
+              <div className="window__main__input-line">
+                <label className="window__main__input-line__label" htmlFor="kcal">Calories</label>
+                <input
+                  className="window__main__input-line__input"  
                   type="text" 
                   id="kcal"
-                  value={ state.settingsData.nutrition.dailyDemand.kcal }
+                  value={ state.settingsData.nutrition.dailyDemand.kcal } 
                   onChange={ handleSettingOnChange }
-                  placeholder="Calories"
+                  //placeholder={ props.warning[1] === 'kcal' ? props.warning[0] : null }
                   maxLength="4">
                 </input>
-                <span className="adding-window__main__form__line__decoration">kcal</span>
-                {/*<p className="adding-window__main__form__line__warning">{ props.warning[1] === 'weight' ? props.warning[0] : null }</p>*/}
+                <span className="window__main__input-line__unit">kcal</span>
               </div>
-            
             </section>
 
-            <section className="adding-window__main__form adding-window__main__form--meals">
-      
-              <h3 className="adding-window__main__form__title">Meals</h3>
+            <section className="window__main__section window__main__section--form">
+              <h3 className="window__main__section__title">Meals</h3>
 
-              <div className="adding-window__main__form__line adding-window__main__form__line--short">
-                <label className="adding-window__main__form__line__label" htmlFor="setMealsNumber">Number of meals</label>
-                <input 
-                  className="adding-window__main__form__line__input" 
+              <div className="window__main__input-line">
+                <label className="window__main__input-line__label" htmlFor="setMealsNumber">Number of meals</label>
+                <input
+                  className="window__main__input-line__input"  
                   type="text" 
                   id="setMealsNumber"
-                  value={ state.settingsData.nutrition.numberOfMeals }
+                  value={ state.settingsData.nutrition.numberOfMeals } 
                   onChange={ handleSettingOnChange }
+                  //placeholder={ props.warning[1] === 'proteins' ? props.warning[0] : null }
                   maxLength="1">
                 </input>
-                <span className="adding-window__main__form__line__decoration">meals</span>
-                {/*<p className="adding-window__main__form__line__warning">{ props.warning[1] === 'weight' ? props.warning[0] : null }</p>*/}
+                <span className="window__main__input-line__unit">meals</span>
               </div>
-
+              
               { Object.values(state.settingsData.nutrition.namesOfMeals).map((meal, index) => {
                 if (state.settingsData.nutrition.numberOfMeals > index) {
                   return (
-                    <div key={ index } className="adding-window__main__form__line adding-window__main__form__line--normal">
-                      <label className="adding-window__main__form__line__label" htmlFor="editMealName">{`Set meal nr ${ index + 1 } name: `}</label>
+                    <div key={ index } className="window__main__input-line">
+                      <label className="window__main__input-line__label" htmlFor="editMealName">{`Set meal nr ${ index + 1 } name`}</label>
                       <input 
-                        className="adding-window__main__form__line__input"
+                        className="window__main__input-line__input"
                         data-key={ index } 
                         type="text" 
                         id="editMealName"
@@ -477,7 +567,6 @@ export default function Settings(props) {
                         onChange={ handleSettingOnChange }
                         required>
                       </input>
-                      {/*<p className="adding-window__main__form__line__warning">{ props.warning[1] === 'weight' ? props.warning[0] : null }</p>*/}
                     </div>
                   ) 
                 }
@@ -488,106 +577,110 @@ export default function Settings(props) {
                   )
                 }
               })}
-              
             </section>
 
-            <section className="adding-window__main__form adding-window__main__form--options">
+            <section className="window__main__section window__main__section--form">
+              <h3 className="window__main__section__title">Options</h3>
 
-              <h3 className="adding-window__main__form__title">Options</h3>
-
-              <div className="adding-window__main__form__line adding-window__main__form__line--checkbox">
-                <label className="adding-window__main__form__line__label adding-window__main__form__line__label--options" htmlFor="clearAllProducts">Clear all products</label>
+              <div className="window__main__input-line">
+                <label className="window__main__input-line__label window__main__input-line__label--checkbox" htmlFor="clearAllProducts">Clear all products</label>
                 <button 
-                  className="adding-window__main__form__background"
+                  className="window__main__input-line__checkbox"
                   id="clear-all-products"
                   type="button"
                   onClick={ handleCheckboxOnClick }>
                   <div 
-                    className="adding-window__main__form__background__checked" 
+                    className="window__main__input-line__checkbox__background" 
                     id="clear-all-products"
                     style={ optionsStates["clear-all-products"] ? {backgroundColor: "#7500AF"} : {backgroundColor: "transparent"} }>
                   </div>
                 </button>
               </div>
 
-              <div className="adding-window__main__form__line adding-window__main__form__line--checkbox">
-                <label className="adding-window__main__form__line__label adding-window__main__form__line__label--options" htmlFor="resetNutritionSettingsToInitial">Reset nutrition settings to initial</label>
+              <div className="window__main__input-line">
+                <label className="window__main__input-line__label window__main__input-line__label--checkbox" htmlFor="resetNutritionSettingsToInitial">Reset nutrition settings to initial</label>
                 <button 
-                  className="adding-window__main__form__background"
+                  className="window__main__input-line__checkbox"
                   id="reset-nutrition-to-initial"
                   type="button"
                   onClick={ handleCheckboxOnClick }>
                   <div 
-                    className="adding-window__main__form__background__checked" 
+                    className="window__main__input-line__checkbox__background" 
                     id="reset-nutrition-to-initial"
                     style={ optionsStates["reset-nutrition-to-initial"] ? {backgroundColor: "#7500AF"} : {backgroundColor: "transparent"} }>
                   </div>
                 </button>
               </div>
-
-            </section>
-
-            <section className="meal__buttons-section meal__buttons-section--settings" style={ state.isCategoryOpened ? {display: "flex"} : {display: "none"} }>
-              
-              <div>
-              <button 
-                className={ state.isSettingsChanged ? "meal__buttons-section__remove-button" : "meal__buttons-section__remove-button meal__buttons-section__remove-button--disabled" }
-                onClick={ handleSettingsCanceled }
-                type="button" 
-                disabled={ state.isSettingsChanged ? false : true }>
-                Cancel</button> 
-
-              <button 
-                className="meal__buttons-section__add-button"
-                type="submit" 
-                value="Save" 
-                id="saveSettings">
-                Save</button>  
-              </div>     
             
             </section>
 
-          </form>
+            <section className="window__bottom">
 
-        </section>
-        }
+              <button 
+                  className={
+                    state.isSettingsChanged
+                    ? "window__bottom__tertiary-button"
+                    : "window__bottom__tertiary-button window__bottom__tertiary-button--disabled"
+                  } 
+                  type="button"
+                  onClick={ handleSettingsReset }
+                  disabled={ state.isSettingsChanged ? false : true }>
+                  Reset
+              </button>
 
-        { props.category === "Training" &&
-          <section className="center-section__main__settings">
-
-          { state.clearAllSeries &&
-          <section className="removing-window__confirm">
-
-            <h1 className="removing-window__title">Clear all?</h1> 
-
-            <h3 className="removing-window__confirm__subtitle">Are you sure you want to clear all series?</h3>
-
-            <section className="removing-window__main__list__buttons-section" style={{ justifyContent: "flex-end" }}>
               <div>
-                <button className="removing-window__main__list__buttons-section__secondary" onClick={ cancelClearAllSeries }>Cancel</button>
-                <button className="removing-window__main__list__buttons-section__primary" onClick={ confirmClearAllSeries }>Remove</button>
+                <button 
+                  className="window__bottom__secondary-button"
+                  type="button" 
+                  onClick={ handleSettingsCanceled }>
+                  Cancel
+                </button>
+
+                <button 
+                  className={
+                    state.isSettingsChanged
+                    ? "window__bottom__primary-button"
+                    : "window__bottom__primary-button window__bottom__primary-button--disabled" 
+                  }
+                  type="submit"
+                  id="saveSettings"
+                  value="Save"
+                  disabled={ state.isSettingsChanged ? false : true }>
+                  Save
+                </button>
               </div>
-            </section>
 
           </section>
-          } 
+          </form>
+        }
 
-          <form className="center-section__main__settings__form" onSubmit={ handleSettingsSaved }>
-
-
-            <section className="adding-window__main__form adding-window__main__form--exercises">
-              <h3 className="adding-window__main__form__title">Choose exercises</h3>
-                { exercises.map(exercise => {
+        { state.isTrainingCategory &&
+          <form className="window__main window__main--add" onSubmit={ handleSettingsSaved }>
+          
+            <button 
+              className={ state.isSettingsChanged
+                          ? "window__header__add-button"
+                          : "window__header__add-button window__header__add-button--disabled" }
+              type="submit"
+              style={{ zIndex: 11 }}
+              disabled={ state.isSettingsChanged ? false : true }><FaSave />
+            </button>
+            
+            <section className="window__main__section window__main__section--form">
+              
+              <h3 className="window__main__section__title">Exercises</h3>
+              
+              { exercises.map(exercise => {
                   return (
-                    <div key={ exercise.id } className="adding-window__main__form__line adding-window__main__form__line--checkbox">
-                      <label className="adding-window__main__form__line__label adding-window__main__form__line__label--options" htmlFor={"exercise"+ exercise.id }>{ exercise.name }:</label>
+                    <div key={ exercise.id } className="window__main__input-line">
+                      <label className="window__main__input-line__label window__main__input-line__label--checkbox" htmlFor={"exercise"+ exercise.id }>{ exercise.name }</label>
                       <button 
-                        className="adding-window__main__form__background"
+                        className="window__main__input-line__checkbox"
                         id={"exercise"+ exercise.id }
                         type="button"
                         onClick={ handleExerciseChoosing }>
                         <div 
-                          className="adding-window__main__form__background__checked" 
+                          className="window__main__input-line__checkbox__background" 
                           id={"exercise"+ exercise.id }
                           style={ state.settingsData.training.selectedExercises.includes(exercise.id) ? {backgroundColor: "#7500AF"} : {backgroundColor: "transparent"} }>
                         </div>
@@ -595,74 +688,121 @@ export default function Settings(props) {
                     </div>
                   )}) 
                 }
-                
-              </section>
 
-            <section className="adding-window__main__form adding-window__main__form--options">
+            </section>
 
-              <h3 className="adding-window__main__form__title">Options</h3>
+            <section className="window__main__section window__main__section--form">
+              <h3 className="window__main__section__title">Options</h3>
 
-              <div className="adding-window__main__form__line adding-window__main__form__line--checkbox">
-                <label className="adding-window__main__form__line__label adding-window__main__form__line__label--options" htmlFor="clear-all-series">Clear all series</label>
+              <div className="window__main__input-line">
+                <label className="window__main__input-line__label window__main__input-line__label--checkbox" htmlFor="clear-all-series">Clear all series</label>
                 <button 
-                  className="adding-window__main__form__background"
+                  className="window__main__input-line__checkbox"
                   id="clear-all-series"
                   type="button"
                   onClick={ handleCheckboxOnClick }>
                   <div 
-                    className="adding-window__main__form__background__checked" 
+                    className="window__main__input-line__checkbox__background" 
                     id="clear-all-series"
                     style={ optionsStates["clear-all-series"] ? {backgroundColor: "#7500AF"} : {backgroundColor: "transparent"} }>
                   </div>
                 </button>
               </div>
 
-              <div className="adding-window__main__form__line adding-window__main__form__line--checkbox">
-                <label className="adding-window__main__form__line__label adding-window__main__form__line__label--options" htmlFor="reset-training-to-initial">Reset training settings to initial</label>
+              <div className="window__main__input-line">
+                <label className="window__main__input-line__label window__main__input-line__label--checkbox" htmlFor="reset-training-to-initial">Reset training settings to initial</label>
                 <button 
-                  className="adding-window__main__form__background"
+                  className="window__main__input-line__checkbox"
                   id="reset-training-to-initial"
                   type="button"
                   onClick={ handleCheckboxOnClick }>
                   <div 
-                    className="adding-window__main__form__background__checked" 
+                    className="window__main__input-line__checkbox__background" 
                     id="reset-training-to-initial"
                     style={ optionsStates["reset-training-to-initial"] ? {backgroundColor: "#7500AF"} : {backgroundColor: "transparent"} }>
                   </div>
                 </button>
               </div>
-
-            </section>
-
-            <section className="meal__buttons-section meal__buttons-section--settings" style={ state.isCategoryOpened ? {display: "flex"} : {display: "none"} }>
-              
-              <div>
-              <button 
-                className={ state.isSettingsChanged ? "meal__buttons-section__remove-button" : "meal__buttons-section__remove-button meal__buttons-section__remove-button--disabled" }
-                onClick={ handleSettingsCanceled }
-                type="button" 
-                disabled={ state.isSettingsChanged ? false : true }>
-                Cancel</button> 
-
-              <button 
-                className="meal__buttons-section__add-button"
-                type="submit" 
-                value="Save" 
-                id="saveSettings">
-                Save</button>  
-              </div>     
             
             </section>
 
+            <section className="window__bottom">
+
+              <button 
+                  className={
+                    state.isSettingsChanged
+                    ? "window__bottom__tertiary-button"
+                    : "window__bottom__tertiary-button window__bottom__tertiary-button--disabled"
+                  } 
+                  type="button"
+                  onClick={ handleSettingsReset }
+                  disabled={ state.isSettingsChanged ? false : true }>
+                  Reset
+              </button>
+
+              <div>
+                <button 
+                  className="window__bottom__secondary-button"
+                  type="button" 
+                  onClick={ handleSettingsCanceled }>
+                  Cancel
+                </button>
+
+                <button 
+                  className={
+                    state.isSettingsChanged
+                    ? "window__bottom__primary-button"
+                    : "window__bottom__primary-button window__bottom__primary-button--disabled" 
+                  }
+                  type="submit"
+                  id="saveSettings"
+                  value="Save"
+                  disabled={ state.isSettingsChanged ? false : true }>
+                  Save
+                </button>
+              </div>
+
+          </section>
           </form>
-
-        </section>
         }
-
-      </section>
-      
+      </main>
     </div>
 
-    </>
+    { state.clearAllSeries && 
+      <section className="window window--login">
+        <header className="window__header">
+          <h2 className="window__header__heading">Clear all?</h2> 
+        </header>
+
+        <main className="window__main">
+          <h3 className="window__main__message">Are you sure you want to clear all series?</h3>
+        </main>
+
+        <section className="window__bottom">
+          <button className="window__bottom__secondary-button" onClick={ cancelClearAllSeries }>Cancel</button>
+          <button className="window__bottom__primary-button" onClick={ confirmClearAllSeries }>Remove</button>
+        </section>
+      </section>
+    }
+
+    { state.clearAllProducts &&
+      <section className="window window--login">
+        <header className="window__header">
+          <h2 className="window__header__heading">Clear all?</h2> 
+        </header>
+
+        <main className="window__main">
+          <h3 className="window__main__message">Are you sure you want to clear all products?</h3>
+        </main>
+
+        <section className="window__bottom">
+          <button className="window__bottom__secondary-button" onClick={ cancelClearAllProducts }>Cancel</button>
+          <button className="window__bottom__primary-button" onClick={ confirmClearAllProducts }>Remove</button>
+        </section>
+      </section>
+    }
+
+    </>,
+    document.getElementById("portal")
   )
 }

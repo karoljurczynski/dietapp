@@ -86,7 +86,7 @@ export default function AddingList(props) {
    }, []);
 
   useEffect(() => { handleAddButtonDisabling() }, [])
-   
+
   const handleSelected = (e) => {
     const product = document.getElementById(e.currentTarget.id);
     if (e.currentTarget.id) {

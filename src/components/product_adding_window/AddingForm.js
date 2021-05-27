@@ -333,7 +333,7 @@ export default function AddingForm(props) {
             <h3 className="window__main__section__title">Options</h3>
 
             <div className="window__main__input-line">
-              <label className="window__main__input-line__label" htmlFor="list-saving">Save to list</label>
+              <label className="window__main__input-line__label window__main__input-line__label--checkbox" htmlFor="list-saving">Save to list</label>
               <button 
                 className="window__main__input-line__checkbox"
                 id="list-saving"

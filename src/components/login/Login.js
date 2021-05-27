@@ -1,6 +1,7 @@
 import { React, useReducer } from 'react';
 import '../styles/window/window.css';
 import '../styles/confirm_window/confirm_window.css';
+import { FaChevronCircleLeft, FaChevronCircleRight } from 'react-icons/fa';
 
 const initialState = {
   isSignUpWindow: false
@@ -45,6 +46,11 @@ export default function Login({ isLogout, setUserStatus, disableLoginWindows }) 
     disableLoginWindows();
   }
 
+  const handleCancel = (e) => {
+    e.preventDefault();
+    disableLoginWindows();
+  }
+
   return (
     <>
     { isLogout 
@@ -53,10 +59,26 @@ export default function Login({ isLogout, setUserStatus, disableLoginWindows }) 
 
             <h2 className="window__header__heading">Log out?</h2>
 
+            <button 
+              className="window__header__back-button"
+              type="button"
+              onClick={ handleLoginUser}
+              style={{ zIndex: 11 }}><FaChevronCircleLeft />
+            </button>
+
+            <button 
+              className="window__header__add-button"
+              type="button"
+              onClick={ handleLogoutUser }
+              style={{ zIndex: 11 }}><FaChevronCircleRight />
+            </button>
+
+
           </header>
 
           <main className="window__main">
 
+            <h3 className="window__main__section__title">Confirm</h3>
             <p className="window__main__message">Are you sure you want to log out?</p>
 
           </main>
@@ -73,7 +95,21 @@ export default function Login({ isLogout, setUserStatus, disableLoginWindows }) 
           <header className="window__header">
 
             <h2 className="window__header__heading">{ state.isSignUpWindow ? "Sign up" : "Log in"}</h2>
+            
+            <button 
+              className="window__header__back-button"
+              type="button"
+              onClick={ handleCancel }
+              style={{ zIndex: 11 }}><FaChevronCircleLeft />
+            </button>
 
+            <button 
+              className="window__header__add-button"
+              type="submit"
+              onClick={ handleLoginUser }
+              style={{ zIndex: 11 }}><FaChevronCircleRight />
+            </button>
+          
           </header>
 
           { state.isSignUpWindow
@@ -138,9 +174,8 @@ export default function Login({ isLogout, setUserStatus, disableLoginWindows }) 
           }
           
           <section className="window__bottom">
-            <div></div>
+            <button className="window__bottom__secondary-button" type="button" onClick={ handleCancel }>Cancel</button>
             <button className="window__bottom__primary-button" type="submit" onClick={ handleLoginUser }>{ state.isSignUpWindow ? "Sign up" : "Log in"}</button>
-
           </section>
         </div>
     }

@@ -1,7 +1,7 @@
 import { React, useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import '../styles/window/window.css';
-import { FaChevronCircleLeft, FaChevronCircleRight} from 'react-icons/fa';
+import { FaChevronCircleLeft, FaTrash, FaTrashAlt} from 'react-icons/fa';
 
 
 export default function RemoveWindow(props) {
@@ -124,7 +124,7 @@ export default function RemoveWindow(props) {
             isRemoveButtonDisabled
             ? "window__header__add-button window__header__add-button--disabled" 
             : "window__header__add-button" }
-          onClick={ handleRemoveButton }><FaChevronCircleRight /></button>
+          onClick={ handleRemoveButton }><FaTrashAlt /></button>
 
       </header>
 

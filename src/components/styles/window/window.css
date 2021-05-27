@@ -78,7 +78,6 @@
       -ms-flex-pack: start;
           justify-content: flex-start;
   width: 100%;
-  position: sticky;
   top: 0;
   z-index: 10;
   padding: 20px;
@@ -93,7 +92,7 @@
 }
 .window__header__back-button, .window__header__add-button {
   position: absolute;
-  z-index: -1;
+  display: none;
   width: 1.6rem;
   top: 20px;
   background: transparent;
@@ -131,17 +130,17 @@
   margin-top: 20px;
   cursor: pointer;
 }
-.window__header__switch__left, .window__header__switch__right {
+.window__header__switch__left, .window__header__switch__center, .window__header__switch__right {
   color: #707070;
   padding: 8px 24px;
   font-size: 1rem;
 }
-.window__header__switch__left--selected, .window__header__switch__right--selected {
+.window__header__switch__left--selected, .window__header__switch__center--selected, .window__header__switch__right--selected {
   color: #FFFFFF;
   background: #7500AF;
   border-radius: 30px;
 }
-.window__header__switch__right {
+.window__header__switch__center, .window__header__switch__right {
   margin-left: -10px;
 }
 .window__form {
@@ -163,7 +162,7 @@
           justify-content: flex-end;
   width: 100%;
   padding: 20px;
-  z-index: 10;
+  z-index: 9;
 }
 .window__main--add, .window__main--list {
   padding: 0;
@@ -192,6 +191,10 @@
   font-size: 0.9rem;
   color: #707070;
 }
+.window__main__input-line__label--checkbox {
+  width: 100%;
+  margin-bottom: 0;
+}
 .window__main__input-line__input {
   width: 100%;
   padding: 10px 15px;
@@ -201,6 +204,25 @@
   color: #000000;
   background: #FFFFFF;
   font-weight: 600;
+}
+.window__main__input-line__checkbox {
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #7500AF;
+  border-radius: 50%;
+  display: block;
+  position: absolute;
+  background: white;
+  right: 0;
+}
+.window__main__input-line__checkbox__background {
+  position: absolute;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
 }
 .window__main__input-line__unit {
   position: absolute;
@@ -340,6 +362,11 @@
   font-size: 1rem;
   color: #000000;
   line-height: 1.7;
+}
+.window__main__section__logo {
+  height: 80px;
+  width: auto;
+  margin: 0 auto;
 }
 .window__main__section__list {
   display: -webkit-box;
@@ -590,18 +617,17 @@
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    z-index: 0;
   }
   .window__header__switch {
     border: none;
     background: #8e2ebe;
   }
-  .window__header__switch__left, .window__header__switch__right {
+  .window__header__switch__left, .window__header__switch__center, .window__header__switch__right {
     color: #FFFFFF;
     padding: 8px 16px;
     font-size: 0.9rem;
   }
-  .window__header__switch__left--selected, .window__header__switch__right--selected {
+  .window__header__switch__left--selected, .window__header__switch__center--selected, .window__header__switch__right--selected {
     color: #7500AF;
     background: #FFFFFF;
   }

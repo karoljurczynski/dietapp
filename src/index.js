@@ -116,7 +116,7 @@ function App() {
       }
 
       case ACTIONS.CHANGE_PAGE_TITLE: {
-        return {...state, pageTitle: action.payload};
+        return {...state, previousPageTitle: state.pageTitle, pageTitle: action.payload};
       }
       
       case ACTIONS.LOAD_SETTINGS: {
@@ -143,6 +143,7 @@ function App() {
   const initialState = {
     dateIds: { dayId: 0, monthId: 0, yearId: 0 },
     pageTitle: 'Dashboard',
+    previousPageTitle: 'Dashboard',
     isLoginWindowsEnabled: false,
     isAddWindowsEnabled: false,
     isRemoveWindowsEnabled: false,
@@ -366,18 +367,19 @@ function App() {
         { state.pageTitle === 'Settings' &&
 
           <>
-
-          <Settings category="Account" updateGauges={ updateGauges } pageTitle={ state.pageTitle } />
-          <Settings category="Nutrition" initialData={ initialState.settingsData.nutrition } updateGauges={ updateGauges } pageTitle={ state.pageTitle } />
-          <Settings category="Training" initialData={ initialState.settingsData.training } updateGauges={ updateGauges } pageTitle={ state.pageTitle } />
-
+          <Settings 
+            initialData={ initialState.settingsData }
+            updateGauges={ updateGauges } 
+            pageTitle={ state.pageTitle } 
+            previousPage={ state.previousPageTitle }
+            changePageTitle={ changePageTitle } />
           </>
 
         }
 
         { state.pageTitle === 'About' &&
 
-          <About />
+          <About previousPage={ state.previousPageTitle } changePageTitle={ changePageTitle } />
         
         }
 

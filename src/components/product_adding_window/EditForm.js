@@ -2,7 +2,7 @@ import { React, useReducer, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import '../styles/window/window.css';
 import { warnings } from '../meal/Meal';
-import { FaChevronCircleLeft, FaChevronCircleRight } from 'react-icons/fa';
+import { FaChevronCircleLeft, FaSave } from 'react-icons/fa';
 
 
 const ACTIONS = {
@@ -192,7 +192,7 @@ export default function EditForm(props) {
             ? "window__header__add-button"
             : "window__header__add-button window__header__add-button--disabled" } 
           disabled={ isFormCompleted ? false : true } 
-          onClick={ handleSavingChanges }><FaChevronCircleRight /></button>
+          onClick={ handleSavingChanges }><FaSave /></button>
       </header>
 
       <main className="window__form">

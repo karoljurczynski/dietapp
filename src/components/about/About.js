@@ -1,39 +1,77 @@
-import React from 'react';
-import '../meal/styles/meal.css';
+import { React, useEffect} from 'react';
+import ReactDOM from 'react-dom';
+import { FaChevronCircleLeft } from 'react-icons/fa';
+import logo from '../../logo.png';
 
-export default function About() {
-  return (
-    <div className="meal">
+export default function About({ previousPage, changePageTitle }) {
 
-      <section className="meal__top-section">
-        <h2 className="meal__top-section__meal-title">Info</h2>        
-      </section>
-      <section className="meal__products_section">
-        <p className="meal__paragraph">The Dietapp is a complex nutrition and training organizer.
+  // BACKGROUND EFFECTS
+  useEffect(() => {
+    const wrapper = document.querySelector("#root");
+
+    wrapper.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
+    wrapper.style.pointerEvents = "none";
+
+    return (() => {
+      wrapper.style.filter = "blur(0px) opacity(100%) grayscale(0%)";
+      wrapper.style.pointerEvents = "auto";
+    })
+
+  }, []);
+
+  const handleBackToPreviousPage = (e) => {
+    e.preventDefault();
+    changePageTitle(previousPage);
+  }
+
+  return ReactDOM.createPortal (
+    <div className="window">
+
+      <header className="window__header">
+        <h2 className="window__header__heading">About</h2>
+        <button className="window__header__back-button" onClick={ handleBackToPreviousPage }><FaChevronCircleLeft /></button>
+      </header>
+
+      <main className="window__main">
+        <section className="window__main__section">
+          <img className="window__main__section__logo" src={ logo } alt="Dietapp logo"></img>
+          <h1 className="left-section__logo-container__title">Diet
+            <span className="left-section__logo-container__title__right">app</span>
+          </h1>
+        </section>
+        <section className="window__main__section"> 
+          <h3 className="window__main__section__title">Info</h3>
+          <p className="window__main__section__text">The Dietapp is a complex nutrition and training organizer.
            Made to improve my skills in creating web apps using React,
            React Hooks, SCSS and Firebase.</p>
-      </section>
+        </section>
 
-      <section className="meal__top-section">
-        <h2 className="meal__top-section__meal-title">Features</h2>        
-      </section>
-      <section className="meal__products_section">
-        <p className="meal__paragraph">You can manually set your daily demand as well as your exercises
+        <section className="window__main__section"> 
+          <h3 className="window__main__section__title">Features</h3>
+          <p className="window__main__section__text">You can manually set your daily demand as well as your exercises
            which you are doing on training. An app saves data you entered
            and makes a several operations on these like counting macronutrients,
            progression made in training, or just storing these for any time you want.</p>
-      </section>
+        </section>
 
-      <section className="meal__top-section">
-        <h2 className="meal__top-section__meal-title">Idea</h2>        
-      </section>
-      <section className="meal__products_section">
-        <p className="meal__paragraph">Whole idea of the app is about my main hobby which are dietetics and
+        <section className="window__main__section"> 
+          <h3 className="window__main__section__title">Idea</h3>
+          <p className="window__main__section__text">Whole idea of the app is about my main hobby which are dietetics and
            bodybuilding. After 3 years of being a fit, I have included the most useful
            features to control your fit life.</p>
-      </section>
+        </section>
 
-      <p className="meal__copyright">© 2021 Karol Jurczyński</p>
-    </div>
+        <section className="window__main__section" style={{ marginTop: "40px" }}>
+          <h3 className="window__main__section__title">© 2021 Karol Jurczyński</h3>
+        </section>
+      </main>
+
+      <section className="window__bottom">
+        <div></div>
+        <button className="window__bottom__primary-button" type="button" onClick={ handleBackToPreviousPage }>Back</button>
+      </section>
+    </div>,
+
+    document.getElementById('portal')
   )
 }
