@@ -2,6 +2,8 @@ import { React, useReducer, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import '../styles/window/window.css';
 import { warnings } from '../meal/Meal';
+import { FaChevronCircleLeft, FaChevronCircleRight } from 'react-icons/fa';
+
 
 const ACTIONS = {
   UPDATE_PRODUCT_DATA: 'update-product-data',
@@ -183,6 +185,14 @@ export default function EditForm(props) {
 
       <header className="window__header">
         <h3 className="window__header__heading">Edit product</h3>
+        <button className="window__header__back-button" onClick={ handleCancelButton }><FaChevronCircleLeft /></button>
+        <button 
+          className={ 
+            isFormCompleted
+            ? "window__header__add-button"
+            : "window__header__add-button window__header__add-button--disabled" } 
+          disabled={ isFormCompleted ? false : true } 
+          onClick={ handleSavingChanges }><FaChevronCircleRight /></button>
       </header>
 
       <main className="window__form">

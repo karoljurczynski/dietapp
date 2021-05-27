@@ -30,7 +30,7 @@ export default function AddWindow(props) {
   const changeAddingType = () => {
     setAddingType(!isAddingTypeSetAtLeftOption);
   }
-
+  
   return ReactDOM.createPortal ( 
     <div className="window window--add">
       
@@ -38,8 +38,7 @@ export default function AddWindow(props) {
         
         <h2 className="window__header__heading" >{ props.type === 'exercises' ? "Add serie" : "Add product" }</h2>
     
-        <button className="window__header__back-button" onClick={ props.handleAddWindow }><FaChevronCircleLeft /></button>
-
+        <button className="window__header__back-button" onClick={ props.handleAddWindow }><FaChevronCircleLeft /></button>        
         <button className="window__header__switch" onClick={ changeAddingType }>
           <h3 
             className={ isAddingTypeSetAtLeftOption 

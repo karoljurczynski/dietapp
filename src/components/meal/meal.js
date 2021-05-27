@@ -393,7 +393,7 @@ export default function Meal(props) {
               kcal: state.newProduct.kcal }}
             warning={ state.warning }
             handleOnChange={ handleOnChange }
-            handleFormClearing = { handleFormClearing }
+            handleFormClearing={ handleFormClearing }
             handleProductAdding={ handleProductAdding }
             handleAddWindow={ handleAddWindow }
             handlePredefinedProductsAdding={ handlePredefinedProductsAdding }

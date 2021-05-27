@@ -1,6 +1,7 @@
 import { React, useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import '../styles/window/window.css';
+import { FaChevronCircleLeft, FaChevronCircleRight} from 'react-icons/fa';
 
 
 export default function RemoveWindow(props) {
@@ -117,6 +118,14 @@ export default function RemoveWindow(props) {
 
       <header className="window__header">
         <h1 className="window__header__heading">{ props.type === 'exercises' ? "Remove serie" : "Remove product" }</h1>
+        <button className="window__header__back-button" onClick={ props.handleRemoveWindow }><FaChevronCircleLeft /></button>
+        <button 
+          className={ 
+            isRemoveButtonDisabled
+            ? "window__header__add-button window__header__add-button--disabled" 
+            : "window__header__add-button" }
+          onClick={ handleRemoveButton }><FaChevronCircleRight /></button>
+
       </header>
 
       <main className="window__main window__main--list">

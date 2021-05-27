@@ -19,6 +19,7 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
   transition: filter 0.5s ease-out;
+  background-color: rgba(255,255,255, 0.3);
 
   &::-webkit-scrollbar {
     display: none;
@@ -48,8 +49,8 @@
     &__back-button, &__add-button {
       position: absolute;
       z-index: -1;
-      width: 1.3rem;
-      @include flexSetup(row, center, center);
+      width: 1.6rem;
+      top: 20px;
       background: transparent;
 
       & > * {
@@ -65,8 +66,7 @@
 
     &__add-button {
       right: 20px;
-      top: 110px;
-
+      
       &--disabled {
         opacity: 0.5;
 
@@ -107,7 +107,8 @@
     @include flexSetup(column, flex-start, flex-end);
     width: 100%;
     padding: 20px;
-    background-color: rgba(255,255,255, 0.3);
+    z-index: 10;
+    
 
     &--add, &--list {
       padding: 0;
@@ -371,9 +372,11 @@
     width: 100%;
     min-height: 100vh;
     max-height: 100vh;
+    min-width: 360px;
     top: 0;
     left: 0;
     transform: translate(0, 0);
+    display: block;
     border-radius: 0px;
     border: none;
     box-shadow: none;
@@ -415,6 +418,9 @@
           }
         }
       }
+    }
+    &__form {
+      min-height: calc(100vh - 125px);
     }
 
     &__main {

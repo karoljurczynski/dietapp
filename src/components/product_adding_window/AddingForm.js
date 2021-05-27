@@ -44,7 +44,7 @@ export default function AddingForm(props) {
   useEffect(() => { 
     checkIfFormCompleted();
     checkIfStateIsEqualToProps();
-  }, [props, optionsStates])
+  }, [props, optionsStates]);
 
   const checkIfFormCompleted = () => {
     if (props.type === 'nutrition') {
@@ -65,7 +65,7 @@ export default function AddingForm(props) {
       const weight = document.querySelector("#weight").value;
       const reps = document.querySelector("#reps").value;
 
-      if(weight && reps)
+      if (weight && reps)
         setIsFormCompleted(true);
       else
         setIsFormCompleted(false);
@@ -218,6 +218,15 @@ export default function AddingForm(props) {
 
           </section>
 
+          <button 
+            className={ isFormCompleted
+                        ? "window__header__add-button"
+                        : "window__header__add-button window__header__add-button--disabled" }
+            type="submit"
+            style={{ zIndex: 11 }}
+            disabled={ isFormCompleted ? false : true }><FaPlusCircle />
+          </button>
+
         </form>
 
       : <form className="window__main window__main--add" onSubmit={ handleAddProduct }>
@@ -341,11 +350,13 @@ export default function AddingForm(props) {
           </section>
 
           <button 
-                className={ isFormCompleted
-                            ? "window__header__add-button"
-                            : "window__header__add-button window__header__add-button--disabled" }
-                type="submit"
-                disabled={ isFormCompleted ? false : true }><FaPlusCircle /></button>
+            className={ isFormCompleted
+                        ? "window__header__add-button"
+                        : "window__header__add-button window__header__add-button--disabled" }
+            type="submit"
+            style={{ zIndex: 11 }}
+            disabled={ isFormCompleted ? false : true }><FaPlusCircle />
+          </button>
 
           <section className="window__bottom">
 

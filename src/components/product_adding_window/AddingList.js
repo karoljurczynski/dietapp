@@ -1,5 +1,6 @@
 import { React, useReducer, useEffect } from 'react';
 import EditForm from './EditForm';
+import { FaPlusCircle } from 'react-icons/fa';
 
 const ACTIONS = {
   SET_PRODUCT_SEND_FOR_EDIT: "set-product-send-for-edit",
@@ -191,6 +192,16 @@ export default function AddingList(props) {
 
   return (
     <>
+      <button 
+        className={ !state.isAddButtonDisabled
+                    ? "window__header__add-button"
+                    : "window__header__add-button window__header__add-button--disabled" }
+        type="button"
+        style={{ zIndex: 11 }}
+        onClick={ handleProductsAdding }
+        disabled={ state.isAddButtonDisabled ? true : false }><FaPlusCircle />
+      </button>
+
        { state.isEditWindowOpened 
         ? <EditForm 
           data={{

@@ -187,7 +187,7 @@ function App() {
   // EFFECT WHICH CHECKS IS SETTINGS ARE SAVED IN LOCAL STORAGE
   useEffect(() => {
 
-    if (Object.keys(localStorage).length !== 0)
+    if (localStorage.getItem("settings"))
       dispatch({ type: ACTIONS.LOAD_SETTINGS });   
     else
       saveSettingsToLocalStorage(); 

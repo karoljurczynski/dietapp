@@ -6,12 +6,18 @@
 
 // STYLES
 
+html {
+  min-height: 600px;
+  min-width: 360px;
+}
+
 body {
   background: $background;
   background-repeat: no-repeat;
   background-attachment: fixed;
   backdrop-filter: blur(20px);
   user-select: none;
+  min-width: 360px;
 }
 
 #root {
@@ -19,7 +25,8 @@ body {
   transition: filter 0.5s ease-out;
   width: 100vw;
   height: 100vh;
-  min-height: 800px;
+  min-height: 600px;
+  min-width: 360px;
 }
 
 .wrapper {
@@ -43,10 +50,6 @@ body {
 }
 
 @media (max-width: 1100px) {
-  #root {
-    min-height: 600px;
-  }
-
   .wrapper {
     width: 1000px;
     height: 600px;
@@ -65,14 +68,10 @@ body {
 }
 
 @media (max-width: 768px) {
-  #root {
-    min-height: 700px;
-  }
-
   .wrapper {
     width: 100%;
     flex-direction: column;
-    height: 100%;
+    min-height: 100vh;
     min-width: 360px;
   }
 }
