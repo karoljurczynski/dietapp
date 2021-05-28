@@ -4,6 +4,19 @@
 @use '../../../styles/config/config' as *;
 
 
+// KEYFRAMES
+
+@keyframes menuOpening {
+  from {
+    right: -200px;
+  }
+
+  to {
+    right: 0;
+  }
+}
+
+
 // STYLES
 
 .left-section {
@@ -39,6 +52,10 @@
     @include flexSetup(column, center, center);
     width: 50%;
 
+    &__logo {
+      display: none;
+    }
+
     &__list-item {
       @include flexSetup(column, center, center);
       width: 100%;
@@ -57,10 +74,6 @@
         font-size: 1rem;
         color: $purple-color;
 
-        &:visited {
-          color: $purple-color;
-        }
-
         &:hover, &:active {
           border-radius: 2rem;
           background: $purple-color;
@@ -72,35 +85,40 @@
   }
 
   &__hamburger {
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
     border: none;
     background: transparent;
     position: absolute;
     display: none;
-    right: 40px;
-    top: 20px;
+    right: 10px;
+    top: 15px;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
+    transition: right 0.3s ease-out;
 
     &__line {
+      position: absolute;
       width: 100%;
       display: block;
       background: $purple-color;
-      width: 10px;
-      height: 10px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       transition: 0.2s ease;
 
       &:nth-of-type(1) {
+        left: 0px;
       }
 
       &:nth-of-type(2) {
+        left: 10px;
       }
 
       &:nth-of-type(3) { 
+        left: 20px;
       }
     }
   }
@@ -212,16 +230,41 @@
     }
 
     &__menu-container {
-      width: 100%;
+      display: none;
+      height: 100%;
+      width: 200px;
       position: absolute;
-      top: 15%;
+      justify-content: flex-start;
+      top: 0;
+      right: -200px;
       z-index: 5;
-      background: rgba(0, 0, 0, 0.2);
-      justify-content: flex-end;
+      background-color: $purple-color2;
       padding: 15px;
+      padding-top: 58px;
+      animation: menuOpening 0.3s ease-out forwards;
+
+      &__logo {
+        display: block;
+        position: absolute;
+        bottom: 40px;
+
+        & > * {
+          width: 80px;
+        }
+      }
   
       &__list-item {
-        width: 60%;
+        width: 80%;
+        background: transparent;
+        margin-bottom: 20px;
+        border: none;
+        box-shadow: none;
+
+        &__content {
+          color: white;
+          background: transparent;
+          font-size: 0.9rem;
+        }
 
         &:last-of-type {
           margin-bottom: 0;
@@ -231,6 +274,7 @@
 
     &__hamburger { 
       display: flex;
+      z-index: 9;
     }
 
     &__quotation-container {
@@ -265,7 +309,7 @@
     }
 
     &__hamburger {
-      right: 15px;
+      right: 10px;
     }
 
     &__quotation-container {

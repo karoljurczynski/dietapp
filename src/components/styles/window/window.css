@@ -201,7 +201,10 @@
   font-size: 1.1rem;
   color: #000000;
   background: #FFFFFF;
-  font-weight: 600;
+  font-weight: 400;
+}
+.window__main__input-line__input--unchanging {
+  color: #707070;
 }
 .window__main__input-line__checkbox {
   cursor: pointer;
@@ -242,8 +245,8 @@
           justify-content: center;
   color: #FFFFFF;
   right: 0;
-  bottom: 1px;
-  height: calc(30px + 0.9rem);
+  bottom: 0;
+  height: calc(30px + 1rem);
   background: #7500AF;
   font-size: 0.8rem;
 }

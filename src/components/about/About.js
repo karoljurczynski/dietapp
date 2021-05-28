@@ -74,7 +74,7 @@ export default function About({ previousPage, changePageTitle }) {
         </section>
 
         <section className="window__main__section" style={{ marginTop: "40px" }}>
-          <h3 className="window__main__section__title">© 2021 Karol Jurczyński</h3>
+          <h3 className="window__main__section__text">© 2021 Karol Jurczyński</h3>
         </section>
       </main>
 

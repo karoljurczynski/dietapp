@@ -288,7 +288,6 @@ export default function Meal(props) {
     const isNumber = /[0-9]/;
     const isWord = /[a-z\s]/i;
     const isZero = /^[0]{1}/;
-    console.log(state.productList);
 
     const setValueAsZero = () => {
       dispatch({ type: ACTIONS.CHANGE_NEW_PRODUCT_DATA, payload: { key: e.target.id, value: '0' }});
@@ -306,22 +305,16 @@ export default function Meal(props) {
     }
 
     if (e.target.id === 'name') {
-
       isWord.test(e.target.value[e.target.value.length - 1]) ? setValueAsCorrect() : setValueAsNull();
-
     }
 
     else {
-
       if (isNumber.test(e.target.value[e.target.value.length - 1])) {
-
         if (isZero.test(e.target.value))
           e.target.id === 'weight' ? setValueAsNull() : setValueAsZero();
-
         else
           setValueAsCorrect();
       }
-
       else {
         setValueAsNull();
       }

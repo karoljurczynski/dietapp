@@ -1,4 +1,3 @@
-// warnings to settings' forms
 // IMPORTS
 
 import { React, useReducer, useEffect } from 'react';
@@ -14,6 +13,7 @@ import About from './components/about/About';
 import Login from './components/login/Login';
 import { exercises } from './exercisesList';
 
+import logo from '../src/logo_white.png';
 import './styles/index/index.css';
 import './components/left/styles/left.css';
 import './components/center/styles/center.css';
@@ -48,7 +48,8 @@ const ACTIONS = {
   LOAD_SETTINGS: 'load-settings',
   SET_LOGIN_WINDOW: 'set-login-window',
   SET_USER_STATUS: 'set-user-status',
-  CHANGE_HAMBURGER_STATE: 'change-hamburger-state'
+  CHANGE_HAMBURGER_STATE: 'change-hamburger-state',
+  UPDATE_WINDOW_WIDTH: 'update-window-width'
 }
 
 const initialState = {
@@ -60,6 +61,7 @@ const initialState = {
   isRemoveWindowsEnabled: false,
   isMoreWindowsEnabled: false,
   hamburgerState: false,
+  windowWidth: window.innerWidth,
   userStatus: "Log in",
   mealsIngredientsSummary: [],
   dailyIngredientsSummary: { kcal: 0, proteins: 0, fats: 0, carbs: 0 },
@@ -175,7 +177,11 @@ function App() {
       }
 
       case ACTIONS.CHANGE_HAMBURGER_STATE: {
-        return {...state, hamburgerState: !state.hamburgerState}
+        return { ...state, hamburgerState: action.payload }
+      }
+
+      case ACTIONS.UPDATE_WINDOW_WIDTH: {
+        return { ...state, windowWidth: window.innerWidth };
       }
 
       default: return console.error(`Unknown action type: ${action.type}`);
@@ -191,6 +197,15 @@ function App() {
 
   // EFFECTS
 
+  // UPDATES WINDOW WIDTH
+  useEffect(() => {
+    window.addEventListener("resize", () => dispatch({ type: ACTIONS.UPDATE_WINDOW_WIDTH }));
+    
+    if (window.innerWidth > 768)
+      dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: true });
+    
+  }, []);
+
   // UPDATES GAUGES AFTER DATE CHANGE
   useEffect(() => { 
     updateGauges();
@@ -203,7 +218,7 @@ function App() {
     if (localStorageKeys.includes("settings"))
       dispatch({ type: ACTIONS.LOAD_SETTINGS });   
     else
-      saveSettingsToLocalStorage(); 
+      saveSettingsToLocalStorage();
 
     updateGauges();
 
@@ -224,17 +239,43 @@ function App() {
 
   }, [ state.isLoginWindowsEnabled ]);
 
-  // HIDING AND SHOWING MENU WHEN HAMBURGER APPEARS
+  // HIDING AND SHOWING MENU USING WINDOW WIDTH
   useEffect(() => {
     const menu = document.querySelector(".left-section__menu-container");
-    if (state.hamburgerState) {
-      menu.style.display = "none";
-    }
-    else {
+    if (state.windowWidth > 768)
       menu.style.display = "flex";
+    else 
+      menu.style.display = "none";
+
+    if (state.hamburgerState)
+      dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: false });
+
+  }, [ state.windowWidth ]);
+
+  useEffect(() => {
+    const menu = document.querySelector(".left-section__menu-container");
+    const hamburger = document.querySelector(".left-section__hamburger");
+    const hamburgerLines = document.querySelectorAll(".left-section__hamburger__line");
+
+    if (state.hamburgerState) {
+      menu.style.display = "flex";
+      menu.style.right = 0;
+      hamburger.style.right = 200 - 28 - 15 + "px";
+      hamburgerLines[0].style.cssText ="left: 0px; background: #FFFFFF; width: 100%; transform: rotate(45deg); border-radius: 10px";
+      hamburgerLines[1].style.cssText ="left: 10px; background: #FFFFFF; visibility: hidden";
+      hamburgerLines[2].style.cssText ="left: 0px; background: #FFFFFF; width: 100%; transform: rotate(-45deg); border-radius: 10px";
     }
 
-  }, [ state.hamburgerState ]);
+    else {
+      menu.style.display = "none";
+      menu.style.right = "-200px";
+      hamburger.style.right = "10px"
+      hamburgerLines[0].style.cssText ="left: 0px; background: #7500AF; width: 8px; transform: rotate(0deg); border-radius: 50%";
+      hamburgerLines[1].style.cssText ="left: 10px; background: #7500AF; visibility: visible";
+      hamburgerLines[2].style.cssText ="left: 20px; background: #7500AF; width: 8px; transform: rotate(0deg); border-radius: 50%";
+    }
+
+  }, [ state.hamburgerState ])
 
 
   // FUNCTIONS
@@ -268,22 +309,21 @@ function App() {
       newPageTitle = categoryTitle;
 
     dispatch({type: ACTIONS.CHANGE_PAGE_TITLE, payload: newPageTitle });
+    dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: false });
     dispatch({ type: ACTIONS.LOAD_SETTINGS });
+
+    if (window.innerWidth > 768)
+      dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: true });
+      
     updateGauges();
   }
 
   const handleMenu = (categoryTitle) => {
-    if (categoryTitle === state.userStatus) {
+    if (categoryTitle === state.userStatus)
       dispatch({ type: ACTIONS.SET_LOGIN_WINDOW, payload: true });
-    }
 
-    else {
+    else
       changePageTitle(categoryTitle);
-    }
-
-    if (window.innerWidth < 768) {
-      dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE })
-    }
   }
 
   const saveSettingsToLocalStorage = () => {
@@ -299,7 +339,10 @@ function App() {
   }
 
   const handleHamburger = () => {
-    dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE });
+    if (state.hamburgerState)
+      dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: false });
+    else  
+      dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: true });
   }
 
   
@@ -333,6 +376,10 @@ function App() {
               return <MenuItem key={ index } value={ category } href="" isActive={ false } linkTo={ handleMenu } />
             })
           }
+
+          <div className="left-section__menu-container__logo">
+            <img src={ logo } alt="Dietapp logo"></img>
+          </div>
 
         </ul>
 

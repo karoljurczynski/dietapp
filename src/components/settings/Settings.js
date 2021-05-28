@@ -13,6 +13,7 @@ const initialState = {
   isAccountCategory: false,
   isNutritionCategory: true,
   isTrainingCategory: false,
+  warning: ['carbs', 'fff'],
   settingsData: {
     account: {
 
@@ -44,6 +45,8 @@ const ACTIONS = {
   NEGATE_CATEGORY_OPENED: 'negate-category-opened',
   CHANGE_SETTINGS_DATA: 'change-settings-data',
   LOAD_SETTINGS: 'load-settings',
+  SET_WARNING: 'set-warning',
+  CLEAR_WARNING: 'clear-warning',
   SET_CLEAR_ALL_PRODUCTS: 'set-clear-all-products',
   SET_CLEAR_ALL_SERIES: 'set-clear-all-series',
   ADD_EXERCISE_TO_SELECTEDEXERCISES: 'add-exercise-to-selectedexercises',
@@ -52,6 +55,12 @@ const ACTIONS = {
   RESET_NUTRITION_SETTINGS_TO_INITIAL: 'reset-nutrition-settings-to-initial',
   RESET_TRAINING_SETTINGS_TO_INITIAL: 'reset-training-settings-to-initial',
   SET_CATEGORY: 'set-category'
+}
+
+const warnings = {
+  editMealName:   "Meal name must be a string of letters only",
+  setMealsNumber: "Number of meals must be a positive number",
+  macros: "Macronutrient must be a positive number"
 }
 
 
@@ -147,6 +156,18 @@ export default function Settings(props) {
       case ACTIONS.SET_CATEGORY: {
         let category = action.payload.category;
         return { ...state, [category]: action.payload.value };
+      }
+
+      case ACTIONS.SET_WARNING: {
+        switch (action.payload) {
+          case 'editMealName':  return { ...state, warning: [warnings.editMealName, action.payload] }
+          case 'setMealsNumber':  return { ...state, warning: [warnings.setMealsNumber, action.payload] }
+          default:  return { ...state, warning: [warnings.macros, action.payload] }
+        };
+      }
+
+      case ACTIONS.CLEAR_WARNING: {
+        return { ...state, warning: ['', action.payload]};
       }
 
       default: return console.error(`Unknown action type: ${action.type}`);
@@ -321,23 +342,36 @@ export default function Settings(props) {
   const handleSettingOnChange = (e) => {
     const isNumber = /[0-9]/;
     const isZero = /^[0]{1}/;
+    const isWord = /[a-z\s]/i;
 
     e.preventDefault();
   
     if (e.target.id === 'editMealName') {
-      dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: e.target.id, index: Number(e.target.attributes["data-key"].value), value: e.target.value }})
+      if (isWord.test(e.target.value[e.target.value.length - 1])) {
+        dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: e.target.id, index: Number(e.target.attributes["data-key"].value), value: e.target.value }})
+        dispatch({ type: ACTIONS.CLEAR_WARNING, payload: e.target.id });
+      }
+      else {
+        dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: e.target.id, index: Number(e.target.attributes["data-key"].value), value: ""}})
+        dispatch({ type: ACTIONS.SET_WARNING, payload: e.target.id });
+      }
     }
     
     if (isNumber.test(e.target.value[e.target.value.length - 1])) {
 
-      if (isZero.test(e.target.value))
+      if (isZero.test(e.target.value)) {
         dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: e.target.id, value: 1 }});
+        dispatch({ type: ACTIONS.SET_WARNING, payload: e.target.id });
+      }
       else
         dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: e.target.id, value: e.target.value }});
+        dispatch({ type: ACTIONS.CLEAR_WARNING, payload: e.target.id });
     }
 
-    else
+    else {
       dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: e.target.id, value: "" }});
+      dispatch({ type: ACTIONS.SET_WARNING, payload: e.target.id });
+    }
 
     props.updateGauges();
   }
@@ -478,7 +512,7 @@ export default function Settings(props) {
                   id="proteins"
                   value={ state.settingsData.nutrition.dailyDemand.proteins } 
                   onChange={ handleSettingOnChange }
-                  //placeholder={ props.warning[1] === 'proteins' ? props.warning[0] : null }
+                  placeholder={ state.warning[1] === 'proteins' ? state.warning[0] : null }
                   maxLength="4">
                 </input>
                 <span className="window__main__input-line__unit">g</span>
@@ -492,7 +526,7 @@ export default function Settings(props) {
                   id="fats"
                   value={ state.settingsData.nutrition.dailyDemand.fats } 
                   onChange={ handleSettingOnChange }
-                  //placeholder={ props.warning[1] === 'fats' ? props.warning[0] : null }
+                  placeholder={ state.warning[1] === 'fats' ? state.warning[0] : null }
                   maxLength="4">
                 </input>
                 <span className="window__main__input-line__unit">g</span>
@@ -506,7 +540,7 @@ export default function Settings(props) {
                   id="carbs"
                   value={ state.settingsData.nutrition.dailyDemand.carbs } 
                   onChange={ handleSettingOnChange }
-                  //placeholder={ props.warning[1] === 'carbs' ? props.warning[0] : null }
+                  placeholder={ state.warning[1] === 'carbs' ? state.warning[0] : null }
                   maxLength="4">
                 </input>
                 <span className="window__main__input-line__unit">g</span>
@@ -520,7 +554,7 @@ export default function Settings(props) {
                   id="kcal"
                   value={ state.settingsData.nutrition.dailyDemand.kcal } 
                   onChange={ handleSettingOnChange }
-                  //placeholder={ props.warning[1] === 'kcal' ? props.warning[0] : null }
+                  placeholder={ state.warning[1] === 'kcal' ? state.warning[0] : null }
                   maxLength="4">
                 </input>
                 <span className="window__main__input-line__unit">kcal</span>
@@ -538,7 +572,7 @@ export default function Settings(props) {
                   id="setMealsNumber"
                   value={ state.settingsData.nutrition.numberOfMeals } 
                   onChange={ handleSettingOnChange }
-                  //placeholder={ props.warning[1] === 'proteins' ? props.warning[0] : null }
+                  placeholder={ state.warning[1] === 'setMealsNumber' ? state.warning[0] : null }
                   maxLength="1">
                 </input>
                 <span className="window__main__input-line__unit">meals</span>
@@ -556,6 +590,7 @@ export default function Settings(props) {
                         id="editMealName"
                         value={ state.settingsData.nutrition.namesOfMeals[index] } 
                         onChange={ handleSettingOnChange }
+                        placeholder={ state.warning[1] === 'editMealName' ? state.warning[0] : null }
                         required>
                       </input>
                     </div>

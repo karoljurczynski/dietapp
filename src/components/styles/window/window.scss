@@ -142,7 +142,12 @@
         font-size: 1.1rem;
         color: $black-color;
         background: $white-color;
-        font-weight: 600;
+        font-weight: 400;
+
+        &--unchanging {
+          color: $gray-color;
+
+        }
       }
 
       &__checkbox {
@@ -174,8 +179,8 @@
         @include flexSetup(row, center, center);
         color: $white-color;
         right: 0;
-        bottom: 1px;
-        height: calc(30px + 0.9rem);
+        bottom: 0;
+        height: calc(30px + 1rem);
         background: $purple-color;
         font-size: 0.8rem;
       }

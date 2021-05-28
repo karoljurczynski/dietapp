@@ -71,10 +71,19 @@ body {
 }
 
 @media (max-width: 768px) {
+  html {
+    height: -webkit-fill-available;
+  }
+
+  body {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+  
   .wrapper {
     width: 100%;
     flex-direction: column;
-    min-height: 100vh;
+    min-height: 100%;
     min-width: 360px;
   }
 }

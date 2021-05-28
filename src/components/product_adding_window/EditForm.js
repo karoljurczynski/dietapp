@@ -254,7 +254,7 @@ export default function EditForm(props) {
           <div className="window__main__input-line">
             <label className="window__main__input-line__label" htmlFor="proteins">Proteins: </label>
             <p
-              className="window__main__input-line__input" 
+              className="window__main__input-line__input window__main__input-line__input--unchanging" 
               id="proteins">
               { state.productData.proteins }
             </p>
@@ -264,7 +264,7 @@ export default function EditForm(props) {
           <div className="window__main__input-line">
             <label className="window__main__input-line__label" htmlFor="fats">Fats: </label>
             <p
-              className="window__main__input-line__input" 
+              className="window__main__input-line__input window__main__input-line__input--unchanging" 
               id="fats">
               { state.productData.fats }
             </p>
@@ -274,7 +274,7 @@ export default function EditForm(props) {
           <div className="window__main__input-line">
             <label className="window__main__input-line__label" htmlFor="carbs">Carbs: </label>
             <p
-              className="window__main__input-line__input" 
+              className="window__main__input-line__input window__main__input-line__input--unchanging" 
               id="carbs">
               { state.productData.carbs }
             </p>
@@ -284,7 +284,7 @@ export default function EditForm(props) {
           <div className="window__main__input-line">
             <label className="window__main__input-line__label" htmlFor="kcal">Calories: </label>
             <p
-              className="window__main__input-line__input" 
+              className="window__main__input-line__input window__main__input-line__input--unchanging" 
               id="kcal">
               { state.productData.kcal }
             </p>
