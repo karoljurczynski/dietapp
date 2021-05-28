@@ -611,7 +611,7 @@
     border-bottom: 2px solid #FFFFFF;
   }
   .window__header__heading {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     color: #FFFFFF;
   }
   .window__header__back-button, .window__header__add-button {
@@ -650,6 +650,12 @@
   }
   .window__main__section__split-left {
     margin-bottom: 40px;
+  }
+  .window__main__section__large-list__item__name, .window__main__section__large-list__item__weight, .window__main__section__large-list__item__calories {
+    font-size: 0.7rem;
+  }
+  .window__main__section__large-list__item__nutrition-facts > * {
+    font-size: 0.7rem;
   }
   .window__bottom {
     display: none;

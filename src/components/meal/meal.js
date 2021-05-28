@@ -3,13 +3,17 @@
 import { React, useState, useEffect, useReducer } from 'react';
 import AddWindow from '../product_adding_window/ProductAddingWindow';
 import RemoveWindow from '../product_removing_window/ProductRemovingWindow';
+import Product from './Product';
 import './styles/meal.css';
+
+
+// VARIABLES
 
 export const warnings = {
   name:   "Name must be a string of letters only",
   weight: "Weight must be a positive number",
   macros: "Macronutrient must be a number"
-};
+}
 
 const ACTIONS = {
   NEGATE_MEAL_STATE: 'negate-meal-state',
@@ -28,11 +32,12 @@ const ACTIONS = {
 }
 
 
-// COMPONENTS
+// COMPONENT
 
 export default function Meal(props) {
 
-  // REDUCER STUFF
+  // VARIABLES
+
   const initialState = {
     isMealOpened: false, 
     isAddingWindowOpened: false,
@@ -48,6 +53,9 @@ export default function Meal(props) {
       kcal: 0
     }
   };
+
+
+  // HOOKS
 
   const reducer = (state, action) => {
     switch(action.type) {
@@ -136,10 +144,11 @@ export default function Meal(props) {
       default: return console.error(`Unknown action type: ${action.type}`);
     }
   }
-
   const [state, dispatch] = useReducer(reducer, initialState);
   const [isPlaceholderEnabled, setPlaceholderState] = useState(false);
 
+
+  // EFFECTS
 
   // LOADS DATA FROM LOCAL STORAGE AFTER DAY CHANGE
   useEffect(() => {
@@ -152,15 +161,13 @@ export default function Meal(props) {
         dispatch({ type: ACTIONS.ADD_PRODUCT_TO_PRODUCTLIST, payload: value });
     });
 
-  }, [props.dateIds]);
-
+  }, [ props.dateIds ]);
 
   // CLEARS PRODUCTLIST AFTER DAY CHANGE
   useEffect(() => { 
     return () => dispatch({ type: ACTIONS.CLEAR_PRODUCTLIST_BEFORE_DAY_CHANGING });
 
-  }, [props.dateIds]);
-
+  }, [ props.dateIds ]);
 
   // CLOSES WINDOWS AFTER DAY CHANGE
   useEffect(() => {
@@ -173,15 +180,13 @@ export default function Meal(props) {
     disableVisibilityIfEnabled(state.isAddingWindowOpened, ACTIONS.NEGATE_ADDING_WINDOW_STATE);
     disableVisibilityIfEnabled(state.isRemovingWindowOpened, ACTIONS.NEGATE_REMOVING_WINDOW_STATE);
 
-  }, [props.dateIds])
-
+  }, [ props.dateIds ])
 
   // SENDS DATA FROM MEAL TO GAUGES
   useEffect(() => { 
     props.updateGauges(state.summary, props.mealId);
 
-  }, [state.summary]);
-
+  }, [ state.summary ]);
 
   // DISABLES POINTER EVENTS WHEN ONE OF FORM WINDOWS IS OPENED 
   useEffect(() => {
@@ -205,8 +210,10 @@ export default function Meal(props) {
     ? changePointerEvents("none")
     : changePointerEvents("auto");
     
-  }, [state.isAddingWindowOpened, state.isRemovingWindowOpened]);
+  }, [ state.isAddingWindowOpened, state.isRemovingWindowOpened ]);
 
+
+  // FUNCTIONS
 
   const handleMealOpening = () => {
     dispatch( {type: ACTIONS.NEGATE_MEAL_STATE} );
@@ -321,6 +328,9 @@ export default function Meal(props) {
     }
   }
 
+
+  // RETURN
+
   return (
     <div className="meal" style={ (state.isMealOpened && window.innerWidth > 768) ? {left: '-10px'} : {left: '0px'} }>
       <section className="meal__top-section" onClick={ handleMealOpening }>
@@ -401,33 +411,6 @@ export default function Meal(props) {
           />
         : null }
 
-    </div>
-  )
-}
-
-function Product(props) {
-  useEffect(() => { 
-    let ingredients = { proteins: props.proteins, fats: props.fats, carbs: props.carbs, kcal: props.kcal };
-    props.addIngredientsFunction(ingredients);
-
-    return () => {
-      props.subIngredientsFunction(ingredients);
-      }
-  }, []);
-
-  return (
-    <div className="meal__products-section__product">
-      <div className="meal__products-section__product__info">
-        <h2 className="meal__products-section__product__title">{props.name}</h2>          
-        <p className="meal__products-section__product__weight">{props.weight} g</p>           
-      </div>
-        
-      <ul className="meal__products-section__product__stats-list">             
-        <li className="meal__products-section__product__stats-list__item">{props.proteins} g</li>
-        <li className="meal__products-section__product__stats-list__item">{props.fats} g</li>
-        <li className="meal__products-section__product__stats-list__item">{props.carbs} g</li>
-        <li className="meal__products-section__product__stats-list__item meal__products-section__product__stats-list__item--kcal">{props.kcal} kcal</li>
-      </ul>
     </div>
   )
 }

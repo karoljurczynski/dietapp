@@ -197,9 +197,20 @@ function App() {
 
   // EFFECTS
 
-  // UPDATES WINDOW WIDTH
+  // WINDOW WIDTH STUFF
   useEffect(() => {
-    window.addEventListener("resize", () => dispatch({ type: ACTIONS.UPDATE_WINDOW_WIDTH }));
+
+    // WINDOW REAL HEIGHT COUNTING
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+
+    window.addEventListener("resize", () => {
+      dispatch({ type: ACTIONS.UPDATE_WINDOW_WIDTH });
+
+      // WINDOW REAL HEIGHT COUNTING AFTER RESIZING
+      vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    });
     
     if (window.innerWidth > 768)
       dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: true });
@@ -230,6 +241,10 @@ function App() {
     if (state.isLoginWindowsEnabled) {
       wrapper.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
       wrapper.style.pointerEvents = "none";
+      
+      if (state.hamburgerState) {
+        dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: false });
+      }
     }
 
     else {

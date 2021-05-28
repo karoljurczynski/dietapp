@@ -436,7 +436,7 @@
       border-bottom: 2px solid $white-color;
 
       &__heading {
-        font-size: 1.3rem;
+        font-size: 1.1rem;
         color: $white-color;
       }
 
@@ -479,6 +479,21 @@
 
         &__split-left {
           margin-bottom: 40px;
+        }
+
+        &__large-list {
+          &__item {
+
+            &__name, &__weight, &__calories {
+              font-size: 0.7rem;
+            }
+
+            &__nutrition-facts {
+              & > * {
+                font-size: 0.7rem;
+              }
+            }
+          }
         }
       }
     }
