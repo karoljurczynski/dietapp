@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Fredoka+One&family=Secular+One&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Cookie&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap");
 .window__bottom__primary-button, .window__bottom__secondary-button, .window__bottom__tertiary-button {
@@ -189,7 +187,7 @@
   margin-left: 17px;
   margin-bottom: 3px;
   font-size: 0.9rem;
-  color: #707070;
+  color: #000000;
 }
 .window__main__input-line__label--checkbox {
   width: 100%;

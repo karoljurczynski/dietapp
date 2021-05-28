@@ -1,14 +1,20 @@
-import { React, useEffect} from 'react';
+// IMPORTS
+
+import { React, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { FaChevronCircleLeft } from 'react-icons/fa';
 import logo from '../../logo.png';
 
+
+// COMPONENT
+
 export default function About({ previousPage, changePageTitle }) {
 
-  // BACKGROUND EFFECTS
-  useEffect(() => {
-    const wrapper = document.querySelector("#root");
+  // EFFECTS
 
+  // BLURING AND DISABLING POINTER EVENTS ON BACKGROUND AFTER MOUNTING
+  useEffect(() => {
+    const wrapper = document.querySelector(".wrapper");
     wrapper.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
     wrapper.style.pointerEvents = "none";
 
@@ -19,10 +25,16 @@ export default function About({ previousPage, changePageTitle }) {
 
   }, []);
 
+
+  // FUNCTIONS
+
   const handleBackToPreviousPage = (e) => {
     e.preventDefault();
     changePageTitle(previousPage);
   }
+
+
+  // RETURN
 
   return ReactDOM.createPortal (
     <div className="window">
@@ -70,8 +82,8 @@ export default function About({ previousPage, changePageTitle }) {
         <div></div>
         <button className="window__bottom__primary-button" type="button" onClick={ handleBackToPreviousPage }>Back</button>
       </section>
-    </div>,
 
+    </div>,
     document.getElementById('portal')
   )
 }

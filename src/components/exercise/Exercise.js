@@ -3,26 +3,12 @@
 import { React, useEffect, useReducer } from 'react';
 import './style/exercise.css';
 import './../meal/styles/meal.css';
-import '../product_adding_window/styles/productAddingWindow.css';
 import AddWindow from '../product_adding_window/ProductAddingWindow';
 import RemoveWindow from '../product_removing_window/ProductRemovingWindow';
 import MoreWindow from '../MoreWindow/MoreWindow';
 
-const ACTIONS = {
-  NEGATE_EXERCISE_OPENED: 'negate-exercise-opened',
-  NEGATE_ADD_WINDOW_STATE: 'negate-add-window-state',
-  NEGATE_REMOVE_WINDOW_STATE: 'negate-remove-window-state',
-  NEGATE_MORE_WINDOW_STATE: 'negate-more-window-state',
-  SORT_SERIESLIST: 'sort-serieslist',
-  CHANGE_NEW_SERIE_DATA: 'change-new-serie-data',
-  UPDATE_LASTTIME_DATA: 'update-lasttime-data',
-  SET_WARNING: 'set-warning',
-  CLEAR_WARNING: 'clear-warning',
-  ADD_SERIE: 'add-serie',
-  REMOVE_SERIE: 'remove-serie',
-  ADD_SERIE_TO_SERIESLIST: 'add-serie-to-serieslist',
-  CLEAR_SERIESLIST_BEFORE_DAY_CHANGING: 'clear-serieslist-before-day-change'
-}
+
+// VARIABLES
 
 export const warnings = {
   weight: "Weight must be a positive number",
@@ -32,6 +18,24 @@ export const warnings = {
 // COMPONENT
 
 export default function Exercise(props) {
+
+  // VARIABLES
+
+  const ACTIONS = {
+    NEGATE_EXERCISE_OPENED: 'negate-exercise-opened',
+    NEGATE_ADD_WINDOW_STATE: 'negate-add-window-state',
+    NEGATE_REMOVE_WINDOW_STATE: 'negate-remove-window-state',
+    NEGATE_MORE_WINDOW_STATE: 'negate-more-window-state',
+    SORT_SERIESLIST: 'sort-serieslist',
+    CHANGE_NEW_SERIE_DATA: 'change-new-serie-data',
+    UPDATE_LASTTIME_DATA: 'update-lasttime-data',
+    SET_WARNING: 'set-warning',
+    CLEAR_WARNING: 'clear-warning',
+    ADD_SERIE: 'add-serie',
+    REMOVE_SERIE: 'remove-serie',
+    ADD_SERIE_TO_SERIESLIST: 'add-serie-to-serieslist',
+    CLEAR_SERIESLIST_BEFORE_DAY_CHANGING: 'clear-serieslist-before-day-change'
+  }
 
   const initialState = {
     isExerciseOpened: false,
@@ -47,88 +51,15 @@ export default function Exercise(props) {
     newSerie: { id: 0, exerciseId: props.exerciseId, trainingId: 0, dateIds: { dayId: 0, monthId: 0, yearId: 0 }, serieCount: '', weight: '', reps:'' }
   }
 
-  const getPreviousTrainingDate = (previousDateIds) => {
-    const isLeapYear = () => {
-      if (((previousDateIds.yearId % 4 === 0) && (previousDateIds.yearId % 100 !== 0)) || previousDateIds.yearId % 400 === 0)
-         return true;
-      
-      else
-         return false;
-    }
-    const isDayFirstInMonth = () => {
-      if(previousDateIds.dayId === 1)
-        return true;
-      else
-        return false;
-    }
-    const isDayFirstInJanuary = () => {
-      if ((previousDateIds.dayId === 1) && (previousDateIds.monthId === 1))
-        return true;
-      
-      else
-        return false;
-    }
-    const isDayFirstInMarch = () => {
-      if ((previousDateIds.dayId === 1) && (previousDateIds.monthId === 3))
-        return true;
-      
-      else
-        return false;
-    }
-    const isDayFirstIn30DayMonths = () => {
-      if ((previousDateIds.dayId === 1) && ((previousDateIds.monthId === 4) || (previousDateIds.monthId === 6) || (previousDateIds.monthId === 8) || (previousDateIds.monthId === 9) || (previousDateIds.monthId === 11)))
-        return true;
-      
-      else
-        return false;
-    }
-
-    let potentialPreviousDateIds = { dayId: 0, monthId: 0, yearId: 0 };
-
-    if (isDayFirstInJanuary()) {
-      potentialPreviousDateIds.dayId = 31;
-      potentialPreviousDateIds.monthId = 12;
-      potentialPreviousDateIds.yearId = previousDateIds.yearId - 1;
-    }
-
-    else if (isDayFirstInMarch()) {
-      if(isLeapYear())
-        potentialPreviousDateIds.dayId = 29;
-      else
-        potentialPreviousDateIds.dayId = 28;
-      
-      potentialPreviousDateIds.monthId = 2;
-      potentialPreviousDateIds.yearId = previousDateIds.yearId;
-    }
-
-    else if (isDayFirstIn30DayMonths()) {
-      potentialPreviousDateIds.dayId = 31;
-      potentialPreviousDateIds.monthId = previousDateIds.monthId - 1;
-      potentialPreviousDateIds.yearId = previousDateIds.yearId;
-    }
-
-    else if (isDayFirstInMonth()) {
-      potentialPreviousDateIds.dayId = 30
-      potentialPreviousDateIds.monthId = previousDateIds.monthId - 1;
-      potentialPreviousDateIds.yearId = previousDateIds.yearId;
-    }
-    
-    else {
-      potentialPreviousDateIds.dayId = previousDateIds.dayId - 1;
-      potentialPreviousDateIds.monthId = previousDateIds.monthId;
-      potentialPreviousDateIds.yearId = previousDateIds.yearId;
-    }
-
-    return potentialPreviousDateIds;
-  }
+  // HOOKS
 
   const reducer = (state, action) => {
-    
     switch(action.type) {
+      
       case ACTIONS.NEGATE_EXERCISE_OPENED: {
         return {...state, isExerciseOpened: !state.isExerciseOpened};
       }
-
+    
       case ACTIONS.NEGATE_ADD_WINDOW_STATE: {
         return {...state, isAddWindowOpened: !state.isAddWindowOpened};
       }
@@ -315,9 +246,10 @@ export default function Exercise(props) {
       default: return console.error(`Unknown action type: ${action.type}`);
     }
   }
-
   const [state, dispatch] = useReducer(reducer, initialState);
 
+
+  // EFFECTS
 
   // LOADS DATA FROM LOCAL STORAGE AFTER DAY CHANGE
   useEffect(() => {
@@ -333,23 +265,15 @@ export default function Exercise(props) {
 
     dispatch({ type: ACTIONS.SORT_SERIESLIST });
 
-  }, [props.dateIds]);
+  }, [ props.dateIds ]);
 
-
-  // CLEARS SERIESLIST AFTER DAY CHANGE
+  // CLEARS SERIESLIST AFTER DATE CHANGE
   useEffect(() => { 
     return () => dispatch({ type: ACTIONS.CLEAR_SERIESLIST_BEFORE_DAY_CHANGING });
 
-  }, [props.dateIds]);
+  }, [ props.dateIds ]);
 
-
-  // 
-  useEffect(() => { 
-
-  }, [props.dateIds]);
-
-
-  // CLOSES WINDOWS AFTER DAY CHANGE
+  // CLOSES WINDOWS AFTER DATE CHANGE
   useEffect(() => {
     const disableVisibilityIfEnabled = (state, action) => {
       if (state)
@@ -361,8 +285,7 @@ export default function Exercise(props) {
     disableVisibilityIfEnabled(state.isRemoveWindowOpened, ACTIONS.NEGATE_REMOVE_WINDOW_STATE);
     disableVisibilityIfEnabled(state.isMoreWindowOpened, ACTIONS.NEGATE_MORE_WINDOW_STATE);
 
-  }, [props.dateIds]);
-
+  }, [ props.dateIds ]);
 
   // DISABLES POINTER EVENTS WHEN ONE OF FORM WINDOWS IS OPENED 
   useEffect(() => {
@@ -381,13 +304,11 @@ export default function Exercise(props) {
       });
     }
 
-
     state.isAddWindowOpened || state.isRemoveWindowOpened || state.isMoreWindowOpened
     ? changePointerEvents("none")
     : changePointerEvents("auto");
     
-  }, [state.isAddWindowOpened, state.isRemoveWindowOpened, state.isMoreWindowOpened]);
-
+  }, [ state.isAddWindowOpened, state.isRemoveWindowOpened, state.isMoreWindowOpened ]);
 
   // UPDATES LAST TIME DATA AFTER OPENING CHANGING WINDOWS
   useEffect(() => {
@@ -395,7 +316,85 @@ export default function Exercise(props) {
       dispatch({ type: ACTIONS.UPDATE_LASTTIME_DATA });
     countProgress();
 
-  }, [state.isAddWindowOpened]);
+  }, [ state.isAddWindowOpened ]);
+
+
+  // FUNCTIONS
+
+  const getPreviousTrainingDate = (previousDateIds) => {
+    const isLeapYear = () => {
+      if (((previousDateIds.yearId % 4 === 0) && (previousDateIds.yearId % 100 !== 0)) || previousDateIds.yearId % 400 === 0)
+         return true;
+      
+      else
+         return false;
+    }
+    const isDayFirstInMonth = () => {
+      if(previousDateIds.dayId === 1)
+        return true;
+      else
+        return false;
+    }
+    const isDayFirstInJanuary = () => {
+      if ((previousDateIds.dayId === 1) && (previousDateIds.monthId === 1))
+        return true;
+      
+      else
+        return false;
+    }
+    const isDayFirstInMarch = () => {
+      if ((previousDateIds.dayId === 1) && (previousDateIds.monthId === 3))
+        return true;
+      
+      else
+        return false;
+    }
+    const isDayFirstIn30DayMonths = () => {
+      if ((previousDateIds.dayId === 1) && ((previousDateIds.monthId === 4) || (previousDateIds.monthId === 6) || (previousDateIds.monthId === 8) || (previousDateIds.monthId === 9) || (previousDateIds.monthId === 11)))
+        return true;
+      
+      else
+        return false;
+    }
+
+    let potentialPreviousDateIds = { dayId: 0, monthId: 0, yearId: 0 };
+
+    if (isDayFirstInJanuary()) {
+      potentialPreviousDateIds.dayId = 31;
+      potentialPreviousDateIds.monthId = 12;
+      potentialPreviousDateIds.yearId = previousDateIds.yearId - 1;
+    }
+
+    else if (isDayFirstInMarch()) {
+      if(isLeapYear())
+        potentialPreviousDateIds.dayId = 29;
+      else
+        potentialPreviousDateIds.dayId = 28;
+      
+      potentialPreviousDateIds.monthId = 2;
+      potentialPreviousDateIds.yearId = previousDateIds.yearId;
+    }
+
+    else if (isDayFirstIn30DayMonths()) {
+      potentialPreviousDateIds.dayId = 31;
+      potentialPreviousDateIds.monthId = previousDateIds.monthId - 1;
+      potentialPreviousDateIds.yearId = previousDateIds.yearId;
+    }
+
+    else if (isDayFirstInMonth()) {
+      potentialPreviousDateIds.dayId = 30
+      potentialPreviousDateIds.monthId = previousDateIds.monthId - 1;
+      potentialPreviousDateIds.yearId = previousDateIds.yearId;
+    }
+    
+    else {
+      potentialPreviousDateIds.dayId = previousDateIds.dayId - 1;
+      potentialPreviousDateIds.monthId = previousDateIds.monthId;
+      potentialPreviousDateIds.yearId = previousDateIds.yearId;
+    }
+
+    return potentialPreviousDateIds;
+  }
 
   const handleExerciseOpening = () => {
     dispatch({ type: ACTIONS.NEGATE_EXERCISE_OPENED });
@@ -558,6 +557,9 @@ export default function Exercise(props) {
     dispatch({ type: ACTIONS.REMOVE_SERIE, payload: checkedIdsList });
     dispatch({ type: ACTIONS.NEGATE_REMOVE_WINDOW_STATE });
   }
+
+
+  // RETURN
   
   return (
     <div className="meal exercise" style={ (state.isExerciseOpened && window.innerWidth > 768) ? {left: '-10px'} : {left: '0px'} }>
@@ -615,7 +617,7 @@ export default function Exercise(props) {
       <section className="meal__buttons-section exercise__buttons-section" style={ state.isExerciseOpened ? {display: "flex"} : {display: "none"} }>
 
         <button 
-          className="adding-window__main__form__tertiary" 
+          className="meal__buttons-section__tertiary" 
           onClick={ handleMoreWindow }>
           More
         </button>
@@ -629,7 +631,7 @@ export default function Exercise(props) {
           </button>
 
           <button 
-            className="adding-window__main__form__primary" 
+            className="meal__buttons-section__add-button" 
             onClick={ handleAddWindow }
             disabled={ state.isAddWindowOpened || state.isRemoveWindowOpened ? true : false }>
             Add
@@ -677,6 +679,5 @@ export default function Exercise(props) {
         : null }
 
     </div>
-
   )
 }

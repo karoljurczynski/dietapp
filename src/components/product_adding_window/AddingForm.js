@@ -1,17 +1,37 @@
+// IMPORTS
+
 import { React, useState, useEffect } from 'react';
-import './styles/productAddingWindow.css';
-import '../styles/window/window.css';
 import { FaPlusCircle } from 'react-icons/fa';
 
-export default function AddingForm(props) {
-  const initialOptionsStates = {
-    'list-saving': false
-  };
 
+// VARIABLES
+
+const initialOptionsStates = {
+  'list-saving': false
+};
+
+
+// COMPONENT
+
+export default function AddingForm(props) {
+
+  // HOOKS
+  
   const [optionsStates, setOptionsStates] = useState(initialOptionsStates);
   const [isFormCompleted, setIsFormCompleted] = useState(false);
   const [isStateEqualToProps, setIsStateEqualToProps] = useState(true);
+  
 
+  // EFFECTS
+
+  // CHECKING IF FORM IS COMPLETED
+  useEffect(() => { 
+    checkIfFormCompleted();
+    checkIfStateIsEqualToProps();
+  }, [ props, optionsStates ]);
+
+  
+  // FUNCTIONS
 
   const handleClearButton = () => {
     setOptionsStates(initialOptionsStates);
@@ -24,7 +44,6 @@ export default function AddingForm(props) {
   }
 
   const checkIfStateIsEqualToProps = () => {
-
     // CHECKING OPTIONS
     Object.keys(optionsStates).forEach(option => {
       setIsStateEqualToProps(true);
@@ -38,13 +57,6 @@ export default function AddingForm(props) {
         setIsStateEqualToProps(false);
     });
   }
-
-
-  // CHECKING IF FORM IS COMPLETED
-  useEffect(() => { 
-    checkIfFormCompleted();
-    checkIfStateIsEqualToProps();
-  }, [props, optionsStates]);
 
   const checkIfFormCompleted = () => {
     if (props.type === 'nutrition') {
@@ -124,6 +136,9 @@ export default function AddingForm(props) {
   const handleCheckboxOnClick = (e) => {
     setOptionsStates(prevOptions => { return {...prevOptions, [e.target.id]: !optionsStates[e.target.id]} });
   }
+
+
+  // RETURN
 
   return (
     <>

@@ -1,6 +1,11 @@
+// IMPORTS
+
 import { React, useReducer, useEffect } from 'react';
 import EditForm from './EditForm';
 import { FaPlusCircle } from 'react-icons/fa';
+
+
+// VARIABLES
 
 const ACTIONS = {
   SET_PRODUCT_SEND_FOR_EDIT: "set-product-send-for-edit",
@@ -28,7 +33,12 @@ const initialState = {
   isAddButtonDisabled: false
 }
 
+
+// COMPONENT
+
 export default function AddingList(props) {
+
+  // HOOKS
 
   const reducer = (state, action) => {
     switch (action.type) {
@@ -63,18 +73,20 @@ export default function AddingList(props) {
         return {...state, isAddButtonDisabled: action.payload};
       }
 
-
       default: return console.error(`Unknown action type: ${action.type}`);
     }
   }
-
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  // EFFECT WHICH LOAD / CREATE PREDEFINED PRODUCTS LIST FROM / TO LOCAL STORAGE
+
+  // EFFECTS
+
+  // LOADS PREDEFINED PRODUCTS LIST FROM LOCALSTORAGE OR CREATES IF DOESN'T EXIST
   useEffect(() => { 
     let predefinedProductsList = [];
+    const localStorageKeys = Object.keys(localStorage);
 
-    if (Object.keys(localStorage).includes('predefined')) {
+    if (localStorageKeys.includes('predefined')) {
       predefinedProductsList = JSON.parse(localStorage.getItem("predefined"));
       dispatch({ type: ACTIONS.LOAD_PREDEFINED_PRODUCTS_LIST_FROM_LOCAL_STORAGE, payload: predefinedProductsList });
     }
@@ -83,9 +95,15 @@ export default function AddingList(props) {
       localStorage.setItem("predefined", JSON.stringify(predefinedProductsList)); 
     }
 
-   }, []);
+  }, []);
 
-  useEffect(() => { handleAddButtonDisabling() }, [])
+  // DISABLES ADD BUTTON AFTER MOUNTING
+  useEffect(() => { 
+    handleAddButtonDisabling() 
+  }, [])
+
+
+  // FUNCTIONS
 
   const handleSelected = (e) => {
     const product = document.getElementById(e.currentTarget.id);
@@ -189,6 +207,9 @@ export default function AddingList(props) {
     });
     return returnedIndex;
   }
+
+  
+  // RETURN
 
   return (
     <>

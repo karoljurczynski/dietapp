@@ -1,10 +1,12 @@
+// IMPORTS
+
 import { React, useReducer, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { FaChevronCircleLeft, FaSave } from 'react-icons/fa';
 import { exercises } from '../../exercisesList';
-import '../../components/product_removing_window/styles/productRemovingWindow.css';
-import '../../components/product_adding_window/styles/productAddingWindow.css';
 
+
+// VARIABLES
 
 const initialState = {
   isCategoryOpened: false,
@@ -29,7 +31,14 @@ const initialState = {
   clearAllProducts: false,
   clearAllSeries: false,
   isSettingsChanged: false
-};
+}
+
+const initialOptionsStates = {
+  'clear-all-products': false,
+  'reset-nutrition-to-initial': false,
+  'clear-all-series': false,
+  'reset-training-to-initial': false
+}
 
 const ACTIONS = {
   NEGATE_CATEGORY_OPENED: 'negate-category-opened',
@@ -45,10 +54,16 @@ const ACTIONS = {
   SET_CATEGORY: 'set-category'
 }
 
+
+// COMPONENT
+
 export default function Settings(props) {
+
+  // HOOKS
+
+  const [optionsStates, setOptionsStates] = useState(initialOptionsStates);
   const reducer = (state, action) => {
     switch (action.type) {
-
       case ACTIONS.NEGATE_CATEGORY_OPENED: {
         return { ...state, isCategoryOpened: !state.isCategoryOpened }
       }
@@ -138,28 +153,24 @@ export default function Settings(props) {
     }
   }
   const [state, dispatch] = useReducer(reducer, initialState);
-  const initialOptionsStates = {
-    'clear-all-products': false,
-    'reset-nutrition-to-initial': false,
-    'clear-all-series': false,
-    'reset-training-to-initial': false
-  };
 
-  const [optionsStates, setOptionsStates] = useState(initialOptionsStates);
 
-  // EFFECT WHICH CHECKS IS SETTINGS ARE SAVED IN LOCAL STORAGE
+  // EFFECTS
+
+  // SEARCH FOR SETTINGS IN LOCALSTORAGE
   useEffect(() => {
-    if (Object.keys(localStorage).length !== 0)
+    const localStorageKeys = Object.keys(localStorage);
+
+    if (localStorageKeys.includes("settings"))
       dispatch({ type: ACTIONS.LOAD_SETTINGS });   
     else
       saveSettingsToLocalStorage(); 
 
   }, []);
 
-  // BACKGROUND EFFECTS
+  // BLURING AND DISABLING POINTER EVENTS ON BACKGROUND AFTER MOUNTING
   useEffect(() => {
-    const wrapper = document.querySelector("#root");
-
+    const wrapper = document.querySelector(".wrapper");
     wrapper.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
     wrapper.style.pointerEvents = "none";
   
@@ -170,10 +181,9 @@ export default function Settings(props) {
 
   }, []);
 
-  // WINDOW EFFECTS
+  // BLURING AND DISABLING POINTER EVENTS ON WINDOW AFTER CONFIRM WINDOW MOUNTING
   useEffect(() => {
     const settingsWindow = document.querySelector(".window");
-
     if (state.clearAllProducts || state.clearAllSeries) {
       settingsWindow.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
       settingsWindow.style.pointerEvents = "none";
@@ -182,42 +192,21 @@ export default function Settings(props) {
       settingsWindow.style.filter = "blur(0px) opacity(100%) grayscale(0%)";
       settingsWindow.style.pointerEvents = "auto";
     }
-  }, [state.clearAllProducts, state.clearAllSeries]);
 
-  // DISABLES POINTER EVENTS WHEN ONE OF FORM WINDOWS IS OPENED 
-  /*useEffect(() => {
-    const changePointerEvents = (value) => {
-      const meals = document.querySelectorAll(".meal");
-      const wrapper = document.querySelector(".wrapper");
-      const center = document.querySelector(".center-section");
-
-      meals.forEach(meal => {
-        let buttons = meal.querySelector(".meal__buttons-section");
-        buttons.style.pointerEvents = value;
-        wrapper.style.pointerEvents = value;
-
-        // DISABLING SCROLL AT CENTER SECTION 
-        value === "none" ? center.style.overflowY = "hidden" : center.style.overflowY = "auto";
-      });
-    }
-
-    (state.clearAllProducts || state.clearAllSeries)
-    ? changePointerEvents("none")
-    : changePointerEvents("auto");
-    
   }, [ state.clearAllProducts, state.clearAllSeries ]);
-*/
-  // EFFECT WHICH CHECKS IS SETTINGS ARE CHANGED
+
+  // CHECKS IF SETTINGS WERE CHANGED
   useEffect(() => {
     const localStorageSettings = localStorage.getItem("settings");
     const currentSettings = JSON.stringify(state.settingsData);
     if (localStorageSettings === currentSettings)
       dispatch({ type: ACTIONS.SET_SETTINGS_CHANGED_STATE, payload: false });
     else
-      dispatch({ type: ACTIONS.SET_SETTINGS_CHANGED_STATE, payload: true});
+      dispatch({ type: ACTIONS.SET_SETTINGS_CHANGED_STATE, payload: true });
 
   }, [ state.settingsData ]);
 
+  // CHECKS IF OPTIONS CHECKBOXES WERE CHANGED
   useEffect(() => {
     for (let i = 0; i < Object.keys(optionsStates).length; i++) {
       if (Object.values(optionsStates)[i] === true) {
@@ -227,13 +216,12 @@ export default function Settings(props) {
       else {
         dispatch({ type: ACTIONS.SET_SETTINGS_CHANGED_STATE, payload: false });
       }
-    };
-  }, [optionsStates]);
+    }
 
+  }, [ optionsStates ]);
+  
 
-  const handleOpening = () => {
-    dispatch({ type: ACTIONS.NEGATE_CATEGORY_OPENED });
-  }
+  // FUNCTIONS
 
   const resetOptionsStates = () => {
     Object.keys(optionsStates).forEach(key => {
@@ -367,6 +355,9 @@ export default function Settings(props) {
     restoreSettingFromLocalStorage();
     resetOptionsStates();
   }
+
+
+  // RETURN
 
   return ReactDOM.createPortal (
     <>

@@ -1,13 +1,7 @@
 // IMPORTS
 
 @forward '../../../styles/config/config';
-//@forward '../styles/media_queries/media';
 @use '../../../styles/config/config' as *;
-
-
-// VARIABLES
-
-$size: 150px;
 
 
 // KEYFRAMES
@@ -139,12 +133,9 @@ $size: 150px;
     }
   }
 }
-// VARIABLES
-
-$size: 150px;
 
 
-// STYLES
+// MEDIA QUERIES
 
 @media (max-width: 1600px) {
   .right-section {

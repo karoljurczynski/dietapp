@@ -1,6 +1,10 @@
+// IMPORTS
+
 @forward '../../../styles/config/config';
-//@forward '../styles/media_queries/media';
 @use '../../../styles/config/config' as *;
+
+
+// STYLES
 
 .exercise {
   &__top-section {
@@ -95,8 +99,8 @@
       }
     }
   }
+
   &__buttons-section {
     @include flexSetup(row, center, space-between);
-
   }
 }

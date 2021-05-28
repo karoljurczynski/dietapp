@@ -1,3 +1,4 @@
+// warnings to settings' forms
 // IMPORTS
 
 import { React, useReducer, useEffect } from 'react';
@@ -19,7 +20,24 @@ import './components/center/styles/center.css';
 import './components/right/styles/right.css';
 
 
-// GLOBALS
+// FUNCTIONS
+
+const countPercentOfEatenIngredient = (eatenAmount, maxAmount) => {
+  if (Number.isNaN((Math.round(eatenAmount / maxAmount * 100))))
+    return 0;
+  else
+  return Math.round(eatenAmount / maxAmount * 100);
+}
+
+const countAmountOfIngredientLeft = (eatenAmount, maxAmount) => {
+  if (eatenAmount >= maxAmount)
+    return 0;
+  else
+    return maxAmount - eatenAmount;
+}
+
+
+// VARIABLES
 
 const ACTIONS = {
   UPDATE_MEALS_INGREDIENTS_SUMMARY: 'update-meals-ingredients-summary',
@@ -33,27 +51,51 @@ const ACTIONS = {
   CHANGE_HAMBURGER_STATE: 'change-hamburger-state'
 }
 
+const initialState = {
+  dateIds: { dayId: 0, monthId: 0, yearId: 0 },
+  pageTitle: 'Dashboard',
+  previousPageTitle: 'Dashboard',
+  isLoginWindowsEnabled: false,
+  isAddWindowsEnabled: false,
+  isRemoveWindowsEnabled: false,
+  isMoreWindowsEnabled: false,
+  hamburgerState: false,
+  userStatus: "Log in",
+  mealsIngredientsSummary: [],
+  dailyIngredientsSummary: { kcal: 0, proteins: 0, fats: 0, carbs: 0 },
+  gaugesData: {
+    kcal: { eaten: 0, left: 0, max: 0, percent: 0 },
+    proteins: { eaten: 0, left: 0, max: 0, percent: 0 },
+    fats: { eaten: 0, left: 0, max: 0, percent: 0 },
+    carbs: { eaten: 0, left: 0, max: 0, percent: 0 }
+  },
 
-// FUNCTIONS
+  settingsData: {
+    main: {
 
-const countPercentOfEatenIngredient = (eatenAmount, maxAmount) => {
-  if (Number.isNaN((Math.round(eatenAmount / maxAmount * 100))))
-    return 0;
-  else
-   return Math.round(eatenAmount / maxAmount * 100);
-}
+    },
 
-const countAmountOfIngredientLeft = (eatenAmount, maxAmount) => {
-  if (eatenAmount >= maxAmount)
-    return 0;
-  else
-    return maxAmount - eatenAmount;
+    nutrition: {
+      dailyDemand: { kcal: 2000, proteins: 120, fats: 55, carbs: 240 },
+      namesOfMeals: { 0: "Breakfast", 1: "II Breakfast", 2: "Lunch", 3: "Snack", 4: "Dinner", 5: "", 6: "", 7: "", 8: "", 9: "" },
+      numberOfMeals: 5
+    },
+
+    training: {
+      selectedExercises: [0, 1, 2, 3, 5]
+    }
+  },
+  clearAllProducts: false,
+  clearAllSeries: false,
+  isSettingsChanged: false
 }
 
 
 // COMPONENTS
 
 function App() {
+
+  // HOOKS
 
   const reducer = (state, action) => {
     switch (action.type) {
@@ -139,63 +181,35 @@ function App() {
       default: return console.error(`Unknown action type: ${action.type}`);
     }
   }
-
-  const initialState = {
-    dateIds: { dayId: 0, monthId: 0, yearId: 0 },
-    pageTitle: 'Dashboard',
-    previousPageTitle: 'Dashboard',
-    isLoginWindowsEnabled: false,
-    isAddWindowsEnabled: false,
-    isRemoveWindowsEnabled: false,
-    isMoreWindowsEnabled: false,
-    hamburgerState: false,
-    userStatus: "Log in",
-    mealsIngredientsSummary: [],
-    dailyIngredientsSummary: { kcal: 0, proteins: 0, fats: 0, carbs: 0 },
-    gaugesData: {
-      kcal: { eaten: 0, left: 0, max: 0, percent: 0 },
-      proteins: { eaten: 0, left: 0, max: 0, percent: 0 },
-      fats: { eaten: 0, left: 0, max: 0, percent: 0 },
-      carbs: { eaten: 0, left: 0, max: 0, percent: 0 }
-    },
-
-    settingsData: {
-      main: {
-  
-      },
-  
-      nutrition: {
-        dailyDemand: { kcal: 2000, proteins: 120, fats: 55, carbs: 240 },
-        namesOfMeals: { 0: "Breakfast", 1: "II Breakfast", 2: "Lunch", 3: "Snack", 4: "Dinner", 5: "", 6: "", 7: "", 8: "", 9: "" },
-        numberOfMeals: 5
-      },
-  
-      training: {
-        selectedExercises: [0, 1, 2, 3, 5]
-      }
-    },
-    clearAllProducts: false,
-    clearAllSeries: false,
-    isSettingsChanged: false
-  }
-
   const [state, dispatch] = useReducer(reducer, initialState);
+  
+
+  // VARIABLES
 
   const MENU_CATEGORIES = [state.userStatus, "Nutrition", "Training", "Settings", "About"];
 
-  useEffect(() => { updateGauges() }, [ state.dateIds ]);
 
-  // EFFECT WHICH CHECKS IS SETTINGS ARE SAVED IN LOCAL STORAGE
+  // EFFECTS
+
+  // UPDATES GAUGES AFTER DATE CHANGE
+  useEffect(() => { 
+    updateGauges();
+
+  }, [ state.dateIds ]);
+
+  // CHECKS IF SETTINGS ARE SAVED IN LOCAL STORAGE
   useEffect(() => {
-
-    if (localStorage.getItem("settings"))
+    const localStorageKeys = Object.keys(localStorage);
+    if (localStorageKeys.includes("settings"))
       dispatch({ type: ACTIONS.LOAD_SETTINGS });   
     else
       saveSettingsToLocalStorage(); 
 
     updateGauges();
+
   }, []);
 
+  // BLURING AND DISABLING POINTER EVENTS ON BACKGROUND AFTER LOG IN WINDOW MOUNTING 
   useEffect(() => {
     const wrapper = document.querySelector(".wrapper");
     if (state.isLoginWindowsEnabled) {
@@ -208,18 +222,22 @@ function App() {
       wrapper.style.pointerEvents = "auto";
     }
 
-  }, [state.isLoginWindowsEnabled]);
+  }, [ state.isLoginWindowsEnabled ]);
 
+  // HIDING AND SHOWING MENU WHEN HAMBURGER APPEARS
   useEffect(() => {
     const menu = document.querySelector(".left-section__menu-container");
-    if (state.hamburgerState ) {
+    if (state.hamburgerState) {
       menu.style.display = "none";
     }
     else {
       menu.style.display = "flex";
     }
 
-  }, [state.hamburgerState]);
+  }, [ state.hamburgerState ]);
+
+
+  // FUNCTIONS
 
   const updateMealSummary = (object, mealId) => {
     dispatch({ type: ACTIONS.UPDATE_MEALS_INGREDIENTS_SUMMARY, payload: {data: object, mealId: mealId} });
@@ -283,6 +301,9 @@ function App() {
   const handleHamburger = () => {
     dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE });
   }
+
+  
+  // RETURN
 
   return (
     <>

@@ -1,6 +1,10 @@
+// IMPORTS
+
 @forward '../../../styles/config/config';
-//@forward '../styles/media_queries/media';
 @use '../../../styles/config/config' as *;
+
+
+// STYLES
 
 .center-section {
   @include flexSetup(column, center, flex-start);
@@ -125,6 +129,9 @@
     }
   }
 }
+
+
+// MEDIA QUERIES
 
 @media (max-width: 768px) {
   .center-section {

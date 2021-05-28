@@ -5,13 +5,32 @@ import './styles/center.css';
 import { FaChevronCircleLeft, FaChevronCircleRight } from 'react-icons/fa';
 
 
-// COMPONENTS
+// COMPONENT
 
 export default function DateChanger(props) {
+
+  // VARIABLES
+
   const initialDate = new Date();
+
+
+  // HOOKS
+
   const [currentDay, setCurrentDay] = useState(initialDate.getDate());
   const [currentMonth, setCurrentMonth] = useState(initialDate.getMonth() + 1);
   const [currentYear, setCurrentYear] = useState(initialDate.getFullYear());
+
+  
+  // EFFECTS
+
+  // CHANGES DATE AFTER MODIFYING STATES
+  useEffect(() => { 
+    props.changeDate({ currentDay, currentMonth, currentYear });
+
+  }, [currentDay, currentMonth, currentYear]);
+
+
+  // FUNCTIONS
 
   const translateMonth = () => {
     switch(currentMonth) {
@@ -84,8 +103,6 @@ export default function DateChanger(props) {
     changeNextDay();
   }
 
-
-
   const isDayFirstInMonth = () => {
     if(currentDay === 1)
       return true;
@@ -153,12 +170,8 @@ export default function DateChanger(props) {
     changePreviousDay();
   }
 
-
-  useEffect(() => { 
-    props.changeDate({ currentDay, currentMonth, currentYear });
-
-  }, [currentDay, currentMonth, currentYear]);
-
+  
+  // RETURN
 
   return (
     <div className="center-section__top__date-changer">

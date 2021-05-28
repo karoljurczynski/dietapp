@@ -1,5 +1,10 @@
+// IMPORTS
+
 @forward '../../../styles/config/config';
 @use '../../../styles/config/config' as *;
+
+
+// STYLES
 
 .meal {
   @include flexSetup(column, flex-start, center);
@@ -156,8 +161,27 @@
       border-radius: 15px;
       box-shadow: 0 0 3px $gray-color;
     }
+
+    &__tertiary, &__tertiary--disabled {
+      cursor: pointer;
+      background: $white-color;
+      border: 1px solid $purple-color;
+      color: black;
+      padding: 8px 15px;
+      border-radius: 15px;
+      @extend %robotoNormal;
+      font-size: 1.2rem;
+
+      &--disabled {
+        cursor: default;
+        opacity: 0.4;
+      }
+    }
   }
 }
+
+
+// MEDIA QUERIES
 
 @media (max-width: 1100px) {
   .meal {

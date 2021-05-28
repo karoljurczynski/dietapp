@@ -1,14 +1,20 @@
+// IMPORTS
+
 import { React, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import '../styles/window/window.css';
 import { FaChevronCircleLeft } from 'react-icons/fa';
  
-export default function MoreWindow(props) {
-  // BACKGROUND EFFECTS
-  useEffect(() => {
-    const wrapper = document.querySelector("#root");
-    const iframe = document.querySelector(".window__main__section__iframe");
 
+// COMPONENT
+
+export default function MoreWindow(props) {
+
+  // EFFECTS
+
+  // BLURING AND DISABLING POINTER EVENTS ON BACKGROUND AND DELAYING AN IFRAME AFTER MOUNTING
+  useEffect(() => {
+    const wrapper = document.querySelector(".wrapper");
+    const iframe = document.querySelector(".window__main__section__iframe");
     wrapper.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
     wrapper.style.pointerEvents = "none";
     setTimeout(() => { iframe.style.opacity = "1" }, 500);
@@ -20,9 +26,15 @@ export default function MoreWindow(props) {
 
   }, []);
 
+
+  // FUNCTIONS
+
   const handleBackButton = () => {
     props.handleMoreWindow();
   }
+
+
+  // RETURN
 
   return ReactDOM.createPortal (
     <div className="window window--more">

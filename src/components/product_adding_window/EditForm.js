@@ -1,20 +1,23 @@
+// IMPORTS
+
 import { React, useReducer, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import '../styles/window/window.css';
 import { warnings } from '../meal/Meal';
 import { FaChevronCircleLeft, FaSave } from 'react-icons/fa';
 
 
-const ACTIONS = {
-  UPDATE_PRODUCT_DATA: 'update-product-data',
-  RESET_FORM: 'reset-form',
-  SET_WARNING: 'set-warning',
-  CLEAR_WARNING: 'clear-warning'
-}
+// COMPONENT
 
 export default function EditForm(props) {
-  const [isFormCompleted, setIsFormCompleted] = useState(false);
-  const [isStateEqualToProps, setIsStateEqualToProps] = useState(true);
+
+  // VARIABLES
+
+  const ACTIONS = {
+    UPDATE_PRODUCT_DATA: 'update-product-data',
+    RESET_FORM: 'reset-form',
+    SET_WARNING: 'set-warning',
+    CLEAR_WARNING: 'clear-warning'
+  }
 
   const initialState = {
     productData: {
@@ -27,11 +30,13 @@ export default function EditForm(props) {
       kcal: props.data.kcal
     },
     warning: ['' ,'']
-  } 
-    
+  }
+
+
+  // HOOKS
+
   const reducer = (state, action) => {
     switch (action.type) {
-
       case ACTIONS.UPDATE_PRODUCT_DATA: {
         switch (action.payload.key) {
           case 'name':     { return { ...state, productData: {...state.productData, name:     action.payload.value } }};
@@ -66,30 +71,39 @@ export default function EditForm(props) {
       case ACTIONS.CLEAR_WARNING: {
         return { ...state, warning: ['', action.payload] }
       }
-
+      
       default: return console.error(`Unknown action type: ${action.type}`);
     }
   }
-
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [isFormCompleted, setIsFormCompleted] = useState(false);
+  const [isStateEqualToProps, setIsStateEqualToProps] = useState(true);
 
+  
+  // EFFECTS
+
+  // BLURING AND DISABLING WINDOW AFTER CONFIRM WINDOW MOUNTING
   useEffect(() => {
     const addingWindow = document.querySelector(".window--add");
-      addingWindow.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
-      addingWindow.style.pointerEvents = "none";
+    addingWindow.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
+    addingWindow.style.pointerEvents = "none";
 
     return () => {
       addingWindow.style.filter = "blur(0px) opacity(100%) grayscale(0%)";
       addingWindow.style.pointerEvents = "auto";
     }
+
   }, []);
 
-    // CHECKING IF FORM IS COMPLETED
+  // CHECKING IF FORM IS COMPLETED
   useEffect(() => { 
     checkIfFormCompleted();
     checkIfStateIsEqualToProps();
     
-  }, [state.productData])
+  }, [ state.productData ])
+
+
+  // FUNCTIONS
 
   const checkIfFormCompleted = () => {
     const name = document.querySelector("#name").value;
@@ -179,6 +193,9 @@ export default function EditForm(props) {
     e.preventDefault();
     props.handleProductEditing(state.productData);
   }
+
+
+  // RETURN
 
   return ReactDOM.createPortal (
     <form className="window window--edit" onSubmit={ handleSavingChanges }>

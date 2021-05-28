@@ -1,14 +1,24 @@
+// IMPORTS
+
 import { React, useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import '../styles/window/window.css';
-import { FaChevronCircleLeft, FaTrash, FaTrashAlt} from 'react-icons/fa';
+import { FaChevronCircleLeft, FaTrashAlt } from 'react-icons/fa';
 
+
+// COMPONENTS
 
 export default function RemoveWindow(props) {
+
+  // HOOKS
+
   const [isRemovingAllButtonPressed, setRemovingAllButtonPressed] = useState(false);
   const [isRemoveButtonDisabled, setIsRemoveButtonDisabled] = useState(false);
 
-  // WINDOW EFFECTS
+
+  // EFFECTS
+
+  // BLURING AND DISABLING POINTER EVENTS ON WINDOW AFTER CONFIRM WINDOW MOUNTING
   useEffect(() => {
     const removingWindow = document.querySelector(".window");
 
@@ -20,11 +30,12 @@ export default function RemoveWindow(props) {
       removingWindow.style.filter = "blur(0px) opacity(100%) grayscale(0%)";
       removingWindow.style.pointerEvents = "auto";
     }
-  }, [isRemovingAllButtonPressed]);
 
-  // BACKGROUND EFFECTS
+  }, [ isRemovingAllButtonPressed ]);
+
+  // BLURING AND DISABLING POINTER EVENTS ON BACKGROUND AFTER MOUNTING
   useEffect(() => {
-    const wrapper = document.querySelector("#root");
+    const wrapper = document.querySelector(".wrapper");
 
     wrapper.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
     wrapper.style.pointerEvents = "none";
@@ -36,9 +47,13 @@ export default function RemoveWindow(props) {
 
   }, []);
 
+  // DISABLING REMOVE BUTTON AFTER MOUNTING
   useEffect(() => { 
     handleRemoveButtonDisabling() 
   }, []);
+
+
+  // FUNCTIONS
 
   const handleSelected = (e) => {
     const item = document.getElementById(e.currentTarget.id);
@@ -112,6 +127,9 @@ export default function RemoveWindow(props) {
     props.handleRemoving(selectedIds);
   }
   
+
+  // RETURN
+
   return ReactDOM.createPortal (
     <>
     <section className="window">
@@ -221,6 +239,6 @@ export default function RemoveWindow(props) {
           </section>
         : null }
     </>,
-  document.getElementById("portal")
+    document.getElementById("portal")
   )
 }

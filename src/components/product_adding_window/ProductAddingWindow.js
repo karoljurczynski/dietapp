@@ -1,17 +1,25 @@
+// IMPORTS
+
 import { React, useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
+import { FaChevronCircleLeft } from 'react-icons/fa';
 import AddingForm from './AddingForm';
 import AddingList from './AddingList';
-import { FaChevronCircleLeft, FaPlusCircle } from 'react-icons/fa';
-import '../styles/window/window.css';
+
+
+// COMPONENT
 
 export default function AddWindow(props) {
-  const [isAddingTypeSetAtLeftOption, setAddingType] = useState(true);
-  
-  // BACKGROUND EFFECTS
-  useEffect(() => {
-    const wrapper = document.querySelector("#root");
 
+  // HOOKS
+
+  const [isAddingTypeSetAtLeftOption, setAddingType] = useState(true);
+
+  // EFFECTS
+
+  // BLURING AND DISABLING POINTER EVENTS ON BACKGROUND
+  useEffect(() => {
+    const wrapper = document.querySelector(".wrapper");
     wrapper.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
     wrapper.style.pointerEvents = "none";
   
@@ -22,15 +30,21 @@ export default function AddWindow(props) {
 
   }, []);
 
-  // CLEARING FORM AFTER EACH CHANGE OF SWITCH OPTION
+  // CLEARING FORM AFTER CHANGE OF SWITCH OPTION
   useEffect(() => {
     props.handleFormClearing();
-  },[isAddingTypeSetAtLeftOption]);
+  },[ isAddingTypeSetAtLeftOption ]);
+
+
+  // FUNCTIONS
 
   const changeAddingType = () => {
     setAddingType(!isAddingTypeSetAtLeftOption);
   }
   
+
+  // RETURN
+
   return ReactDOM.createPortal ( 
     <div className="window window--add">
       

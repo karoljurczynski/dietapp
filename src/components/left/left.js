@@ -1,21 +1,18 @@
 // IMPORTS
 
 import React from 'react';
-import './styles/left.css';
 import logo from './styles/logo.png';
 
 
 // COMPONENTS
 
 export function Logo() {
-
   return (
     <img className="left-section__logo-container__logo" src={logo} alt="Dietapp logo" />
   )
 }
 
 export function Title() {
-  
   return (
     <h1 className="left-section__logo-container__title">Diet
       <span className="left-section__logo-container__title__right">app</span>
@@ -34,7 +31,6 @@ export function Hamburger(props) {
 }
 
 export function Quotation() {
-
   return (
     <>
       <span className="left-section__quotation-container__top">Be healthy,</span>
@@ -44,10 +40,16 @@ export function Quotation() {
 }
 
 export function MenuItem(props) {
+
+  // FUNCTIONS
+
   const handleClick = (e) => {
     e.preventDefault();
     props.linkTo(e.target.title);
   }
+
+  
+  // RETURN
 
   return (
     <li className="left-section__menu-container__list-item">
