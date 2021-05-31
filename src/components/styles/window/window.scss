@@ -8,7 +8,7 @@
 
 .window {
   @include flexSetup(column, flex-start, flex-start);
-  z-index: 8;
+  z-index: 99;
   width: 600px;
   position: absolute;
   top: 50%;
@@ -146,7 +146,6 @@
 
         &--unchanging {
           color: $gray-color;
-
         }
       }
 

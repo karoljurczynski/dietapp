@@ -177,7 +177,7 @@
 }
 .meal__products-section__product__title {
   font-size: 1.1rem;
-  color: #707070;
+  color: #000000;
   margin-bottom: 2px;
 }
 .meal__products-section__product__weight {
@@ -324,6 +324,18 @@
   .meal__products-section__product__stats-list__item {
     margin-left: 10px;
     font-size: 0.9rem;
+  }
+  .meal__buttons-section__remove-button, .meal__buttons-section__remove-button--disabled {
+    border-radius: 12px;
+    font-size: 1rem;
+  }
+  .meal__buttons-section__add-button {
+    font-size: 1rem;
+    border-radius: 12px;
+  }
+  .meal__buttons-section__tertiary, .meal__buttons-section__tertiary--disabled {
+    border-radius: 12px;
+    font-size: 1rem;
   }
 }
 /*# sourceMappingURL=meal.css.map */

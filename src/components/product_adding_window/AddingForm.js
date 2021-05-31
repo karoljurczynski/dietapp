@@ -152,7 +152,7 @@ export default function AddingForm(props) {
             <div className="window__main__input-line">
               <label className="window__main__input-line__label" htmlFor="oldWeight">Weight: </label>
               <p 
-                className="window__main__input-line__input" 
+                className="window__main__input-line__input window__main__input-line__input--unchanging" 
                 id="oldWeight">
                 { props.type === 'last-training' ? props.lastTimeData.training.weight : props.lastTimeData.serie.weight }
               </p>
@@ -162,7 +162,7 @@ export default function AddingForm(props) {
             <div className="window__main__input-line">
               <label className="window__main__input-line__label" htmlFor="oldReps">Reps: </label>
               <p 
-                className="window__main__input-line__input" 
+                className="window__main__input-line__input window__main__input-line__input--unchanging" 
                 id="oldReps">
                 { props.type === 'last-training' ? props.lastTimeData.training.reps : props.lastTimeData.serie.reps }
               </p>

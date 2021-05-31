@@ -380,10 +380,11 @@
     bottom: 0;
     width: 100%;
     flex-direction: row;
-    height: 140px;
+    height: 130px;
     border-radius: 0;
 
     &__gauge-container {
+      margin-top: 12px;
       width: 110px;
       height: 110px;
   
@@ -466,9 +467,10 @@
 
 @media (max-width: 480px) {
   .right-section {
-    height: 110px;
+    height: 100px;
 
     &__gauge-container {
+      margin-top: 8px;
       width: 80px;
       height: 80px;
   

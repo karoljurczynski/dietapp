@@ -206,15 +206,13 @@ function App() {
 
     window.addEventListener("resize", () => {
       dispatch({ type: ACTIONS.UPDATE_WINDOW_WIDTH });
+      dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: false });
 
       // WINDOW REAL HEIGHT COUNTING AFTER RESIZING
       vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty('--vh', `${vh}px`);
     });
-    
-    if (window.innerWidth > 768)
-      dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: true });
-    
+
   }, []);
 
   // UPDATES GAUGES AFTER DATE CHANGE
@@ -238,15 +236,14 @@ function App() {
   // BLURING AND DISABLING POINTER EVENTS ON BACKGROUND AFTER LOG IN WINDOW MOUNTING 
   useEffect(() => {
     const wrapper = document.querySelector(".wrapper");
+
     if (state.isLoginWindowsEnabled) {
       wrapper.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
       wrapper.style.pointerEvents = "none";
-      
-      if (state.hamburgerState) {
-        dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: false });
-      }
-    }
 
+      if (state.hamburgerState)
+        dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: false });
+    }
     else {
       wrapper.style.filter = "blur(0px) opacity(100%) grayscale(0%)";
       wrapper.style.pointerEvents = "auto";
@@ -254,43 +251,42 @@ function App() {
 
   }, [ state.isLoginWindowsEnabled ]);
 
-  // HIDING AND SHOWING MENU USING WINDOW WIDTH
-  useEffect(() => {
-    const menu = document.querySelector(".left-section__menu-container");
-    if (state.windowWidth > 768)
-      menu.style.display = "flex";
-    else 
-      menu.style.display = "none";
-
-    if (state.hamburgerState)
-      dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: false });
-
-  }, [ state.windowWidth ]);
 
   useEffect(() => {
+    const wrapper = document.querySelector(".wrapper");
     const menu = document.querySelector(".left-section__menu-container");
     const hamburger = document.querySelector(".left-section__hamburger");
     const hamburgerLines = document.querySelectorAll(".left-section__hamburger__line");
 
-    if (state.hamburgerState) {
-      menu.style.display = "flex";
-      menu.style.right = 0;
-      hamburger.style.right = 200 - 28 - 15 + "px";
-      hamburgerLines[0].style.cssText ="left: 0px; background: #FFFFFF; width: 100%; transform: rotate(45deg); border-radius: 10px";
-      hamburgerLines[1].style.cssText ="left: 10px; background: #FFFFFF; visibility: hidden";
-      hamburgerLines[2].style.cssText ="left: 0px; background: #FFFFFF; width: 100%; transform: rotate(-45deg); border-radius: 10px";
-    }
+    if (state.windowWidth < 769) {
+      if (state.hamburgerState) {
+        wrapper.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
+        wrapper.style.pointerEvents = "none";
+        menu.style.display = "flex";
+        menu.style.right = 0;
+        hamburger.style.right = 200 - 28 - 15 + "px";
+        hamburgerLines[0].style.cssText ="left: 0px; background: #FFFFFF; width: 100%; transform: rotate(45deg); border-radius: 10px";
+        hamburgerLines[1].style.cssText ="left: 10px; background: #FFFFFF; visibility: hidden";
+        hamburgerLines[2].style.cssText ="left: 0px; background: #FFFFFF; width: 100%; transform: rotate(-45deg); border-radius: 10px";
+      }
 
-    else {
-      menu.style.display = "none";
-      menu.style.right = "-200px";
-      hamburger.style.right = "10px"
-      hamburgerLines[0].style.cssText ="left: 0px; background: #7500AF; width: 8px; transform: rotate(0deg); border-radius: 50%";
-      hamburgerLines[1].style.cssText ="left: 10px; background: #7500AF; visibility: visible";
-      hamburgerLines[2].style.cssText ="left: 20px; background: #7500AF; width: 8px; transform: rotate(0deg); border-radius: 50%";
+      else {
+        menu.style.display = "none";
+        menu.style.right = "-200px";
+        hamburger.style.right = "10px"
+        hamburgerLines[0].style.cssText ="left: 0px; background: #7500AF; width: 8px; transform: rotate(0deg); border-radius: 50%";
+        hamburgerLines[1].style.cssText ="left: 10px; background: #7500AF; visibility: visible";
+        hamburgerLines[2].style.cssText ="left: 20px; background: #7500AF; width: 8px; transform: rotate(0deg); border-radius: 50%";
+        
+        if (!state.isLoginWindowsEnabled && (state.pageTitle === "Dashboard" || state.pageTitle === "Training")) {
+          wrapper.style.filter = "blur(0px) opacity(100%) grayscale(0%)";
+          wrapper.style.pointerEvents = "auto";
+        }
+      }
     }
-
   }, [ state.hamburgerState ])
+
+  
 
 
   // FUNCTIONS
@@ -326,9 +322,6 @@ function App() {
     dispatch({type: ACTIONS.CHANGE_PAGE_TITLE, payload: newPageTitle });
     dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: false });
     dispatch({ type: ACTIONS.LOAD_SETTINGS });
-
-    if (window.innerWidth > 768)
-      dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: true });
       
     updateGauges();
   }
@@ -374,6 +367,26 @@ function App() {
           /> 
     }
 
+    <Hamburger handleHamburger={ handleHamburger } />
+
+    { state.windowWidth < 769 &&
+      <>
+      <div className="left-section__menu-container__closer" onClick={ state.hamburgerState ? handleHamburger : null }></div>
+      <ul className="left-section__menu-container">
+
+        { MENU_CATEGORIES.map((category, index) => {
+            return <MenuItem key={ index } value={ category } href="" isActive={ false } linkTo={ handleMenu } />
+          })
+        }
+
+        <div className="left-section__menu-container__logo">
+          <img src={ logo } alt="Dietapp logo"></img>
+        </div>
+
+      </ul>
+      </>
+    }
+
     <div className="wrapper">
 
       <aside className="left-section">
@@ -383,21 +396,17 @@ function App() {
           <Title />
         </header>
 
-        <Hamburger handleHamburger={ handleHamburger } />
+        { state.windowWidth > 768 && 
+          <ul className="left-section__menu-container">
 
-        <ul className="left-section__menu-container">
+            { MENU_CATEGORIES.map((category, index) => {
+                return <MenuItem key={ index } value={ category } href="" isActive={ false } linkTo={ handleMenu } />
+              })
+            }
 
-          { MENU_CATEGORIES.map((category, index) => {
-              return <MenuItem key={ index } value={ category } href="" isActive={ false } linkTo={ handleMenu } />
-            })
-          }
-
-          <div className="left-section__menu-container__logo">
-            <img src={ logo } alt="Dietapp logo"></img>
-          </div>
-
-        </ul>
-
+          </ul>
+        }
+        
         <h2 className="left-section__quotation-container">
           <Quotation />
         </h2>

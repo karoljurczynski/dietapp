@@ -33,7 +33,7 @@
   -webkit-box-pack: start;
       -ms-flex-pack: start;
           justify-content: flex-start;
-  z-index: 8;
+  z-index: 99;
   width: 600px;
   position: absolute;
   top: 50%;

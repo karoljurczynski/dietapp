@@ -85,7 +85,7 @@
       &__title {
         @extend %robotoBold;
         font-size: 1.1rem;
-        color: $gray-color;
+        color: $black-color;
         margin-bottom: 2px;
       }
 
@@ -267,6 +267,23 @@
             font-size: 0.9rem;
           }
         }
+      }
+    }
+
+    &__buttons-section {  
+      &__remove-button, &__remove-button--disabled {
+        border-radius: 12px;
+        font-size: 1rem;
+      }
+  
+      &__add-button {
+        font-size: 1rem;
+        border-radius: 12px;
+      }
+  
+      &__tertiary, &__tertiary--disabled {
+        border-radius: 12px;
+        font-size: 1rem;
       }
     }
   }

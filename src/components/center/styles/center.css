@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Fredoka+One&family=Secular+One&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Cookie&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap");
 .center-section__top__title, .center-section__top__date-changer__current-date {
@@ -223,7 +221,7 @@
 
 @media (max-width: 768px) {
   .center-section {
-    height: calc(100% - 290px);
+    height: calc(100% - 250px);
     width: 100%;
     padding-top: 25px;
   }
@@ -237,13 +235,19 @@
     width: 100%;
     right: 0;
   }
+  .center-section__top__date-changer__current-date {
+    font-size: 1rem;
+  }
   .center-section__top__date-changer__previous-button, .center-section__top__date-changer__next-button {
     width: 30%;
   }
 }
 @media (max-width: 480px) {
   .center-section {
-    height: calc(100% - 230px);
+    height: calc(100% - 200px);
+  }
+  .center-section__top__date-changer__current-date {
+    font-size: 0.8rem;
   }
   .center-section__main {
     padding: 0 10px;

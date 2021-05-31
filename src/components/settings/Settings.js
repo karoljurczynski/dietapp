@@ -192,12 +192,15 @@ export default function Settings(props) {
   // BLURING AND DISABLING POINTER EVENTS ON BACKGROUND AFTER MOUNTING
   useEffect(() => {
     const wrapper = document.querySelector(".wrapper");
+    const rootElement = document.querySelector("#root");
     wrapper.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
     wrapper.style.pointerEvents = "none";
-  
+    rootElement.style.zIndex = 97;
+    
     return (() => {
       wrapper.style.filter = "blur(0px) opacity(100%) grayscale(0%)";
       wrapper.style.pointerEvents = "auto";
+      rootElement.style.zIndex = 99;
     })
 
   }, []);
