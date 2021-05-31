@@ -51,6 +51,7 @@
 
     &__back-button, &__add-button {
       position: absolute;
+      cursor: pointer;
       display: none;
       width: 1.6rem;
       top: 20px;
@@ -72,6 +73,7 @@
       
       &--disabled {
         opacity: 0.5;
+        cursor: auto;
 
       }
     }
@@ -143,6 +145,7 @@
         color: $black-color;
         background: $white-color;
         font-weight: 400;
+        height: 47px;
 
         &--unchanging {
           color: $gray-color;
@@ -179,7 +182,7 @@
         color: $white-color;
         right: 0;
         bottom: 0;
-        height: calc(30px + 1rem);
+        height: 47px;
         background: $purple-color;
         font-size: 0.8rem;
       }

@@ -221,6 +221,16 @@ function App() {
 
   }, [ state.dateIds ]);
 
+  // DISABLES CENTER SECTION FUNCTIONS WITHOUT LOG IN
+  useEffect(() => {
+    const centerSection = document.querySelector(".center-section");
+    if (state.userStatus === "Log in")
+      centerSection.style.pointerEvents = "none";
+    else
+      centerSection.style.pointerEvents = "auto";
+
+  }, [ state.userStatus ])
+
   // CHECKS IF SETTINGS ARE SAVED IN LOCAL STORAGE
   useEffect(() => {
     const localStorageKeys = Object.keys(localStorage);
@@ -251,7 +261,7 @@ function App() {
 
   }, [ state.isLoginWindowsEnabled ]);
 
-
+  // TRANSFORMS HAMBURGER AND MENU
   useEffect(() => {
     const wrapper = document.querySelector(".wrapper");
     const menu = document.querySelector(".left-section__menu-container");
@@ -287,8 +297,6 @@ function App() {
   }, [ state.hamburgerState ])
 
   
-
-
   // FUNCTIONS
 
   const updateMealSummary = (object, mealId) => {
@@ -314,15 +322,22 @@ function App() {
   const changePageTitle = (categoryTitle) => {
     let newPageTitle = '';
 
-    if (categoryTitle === 'Nutrition')
-      newPageTitle = 'Dashboard';
-    else
-      newPageTitle = categoryTitle;
+    if (state.userStatus === "Log in") {
+      newPageTitle = "Dashboard";
+      dispatch({ type: ACTIONS.SET_LOGIN_WINDOW, payload: true });
+
+    }
+
+    else {
+      if (categoryTitle === 'Nutrition')
+        newPageTitle = 'Dashboard';
+      else
+       newPageTitle = categoryTitle;
+    }
 
     dispatch({type: ACTIONS.CHANGE_PAGE_TITLE, payload: newPageTitle });
     dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: false });
     dispatch({ type: ACTIONS.LOAD_SETTINGS });
-      
     updateGauges();
   }
 
@@ -353,6 +368,16 @@ function App() {
       dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: true });
   }
 
+  const settingsShortcut = (e) => {
+    e.preventDefault();
+    handleMenu("Settings");
+  }
+
+  const loginShortcut = (e) => {
+    e.preventDefault();
+    handleMenu(state.userStatus);
+  }
+
   
   // RETURN
 
@@ -371,19 +396,19 @@ function App() {
 
     { state.windowWidth < 769 &&
       <>
-      <div className="left-section__menu-container__closer" onClick={ state.hamburgerState ? handleHamburger : null }></div>
-      <ul className="left-section__menu-container">
+        <div className="left-section__menu-container__closer" onClick={ state.hamburgerState ? handleHamburger : null }></div>
+        <ul className="left-section__menu-container">
 
-        { MENU_CATEGORIES.map((category, index) => {
-            return <MenuItem key={ index } value={ category } href="" isActive={ false } linkTo={ handleMenu } />
-          })
-        }
+          { MENU_CATEGORIES.map((category, index) => {
+              return <MenuItem key={ index } value={ category } href="" isActive={ false } linkTo={ handleMenu } />
+            })
+          }
 
-        <div className="left-section__menu-container__logo">
-          <img src={ logo } alt="Dietapp logo"></img>
-        </div>
+          <div className="left-section__menu-container__logo">
+            <img src={ logo } alt="Dietapp logo"></img>
+          </div>
 
-      </ul>
+        </ul>
       </>
     }
 
@@ -391,7 +416,7 @@ function App() {
 
       <aside className="left-section">
 
-        <header className="left-section__logo-container">
+        <header className="left-section__logo-container" onClick={ loginShortcut }>
           <Logo />
           <Title />
         </header>
@@ -481,7 +506,7 @@ function App() {
       </main>
 
 
-      <aside className="right-section">
+      <aside className="right-section" onClick={ settingsShortcut }>
 
         <Gauge 
           amount={ state.gaugesData.kcal.eaten }

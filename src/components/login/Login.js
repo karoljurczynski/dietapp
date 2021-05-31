@@ -61,6 +61,10 @@ export default function Login({ isLogout, setUserStatus, disableLoginWindows }) 
     disableLoginWindows();
   }
 
+  const handleForgottenPassword = (e) => {
+    e.preventDefault();
+  }
+
 
   // RETURN
 
@@ -121,22 +125,22 @@ export default function Login({ isLogout, setUserStatus, disableLoginWindows }) 
 
                 <span className="window__main__input-line">
                   <label className="window__main__input-line__label" htmlFor="login">Login</label>
-                  <input className="window__main__input-line__input" type="text" id="login" placeholder="Login"></input>
+                  <input className="window__main__input-line__input" type="text" id="login" placeholder="Type anything or try as guest"></input>
                 </span>
 
                 <span className="window__main__input-line">
                   <label className="window__main__input-line__label" htmlFor="email">Email</label>
-                  <input className="window__main__input-line__input" type="email" id="email" placeholder="Email"></input>
+                  <input className="window__main__input-line__input" type="email" id="email" placeholder="Type anything or try as guest"></input>
                 </span>
 
                 <span className="window__main__input-line">
                   <label className="window__main__input-line__label" htmlFor="password">Password</label>
-                  <input className="window__main__input-line__input" type="password" id="password" placeholder="Password"></input>
+                  <input className="window__main__input-line__input" type="password" id="password" placeholder="Type anything or try as guest"></input>
                 </span>
 
                 <span className="window__main__input-line">
                   <label className="window__main__input-line__label" htmlFor="confirmPassword">Confirm Password</label>
-                  <input className="window__main__input-line__input" type="password" id="confirmPassword" placeholder="Password"></input>
+                  <input className="window__main__input-line__input" type="password" id="confirmPassword" placeholder="Type anything or try as guest"></input>
                 </span>
 
                 <section className="window__main__login-options">
@@ -149,19 +153,23 @@ export default function Login({ isLogout, setUserStatus, disableLoginWindows }) 
                   </span>
                 </section>
 
+                <section className="window__main__login-options">
+                  <span className="window__main__login-options__line" style={{ color: "red" }}>Work in progress</span>
+                </section>
+
               </main>
 
             : <main className="window__main">
 
                 <span className="window__main__input-line">
                   <label className="window__main__input-line__label" htmlFor="login">Login</label>
-                  <input className="window__main__input-line__input" type="text" id="login" placeholder="Login"></input>
+                  <input className="window__main__input-line__input" type="text" id="login" placeholder="Type anything or try as guest"></input>
                 </span>
 
                 <span className="window__main__input-line">
                   <label className="window__main__input-line__label" htmlFor="password">Password</label>
-                  <input className="window__main__input-line__input" type="password" id="password" placeholder="Password"></input>
-                  <a className="window__main__input-line__link" href="">Forgot your password?</a>
+                  <input className="window__main__input-line__input" type="password" id="password" placeholder="Type anything or try as guest"></input>
+                  <a className="window__main__input-line__link" href="" onClick={ handleForgottenPassword }>Forgot your password?</a>
                 </span>
 
                 <section className="window__main__login-options">
@@ -172,6 +180,10 @@ export default function Login({ isLogout, setUserStatus, disableLoginWindows }) 
                   <span className="window__main__login-options__line">{`or `}
                     <a className="window__main__login-options__line__link" onClick={ handleTryAsGuest } href="">Try as guest</a>
                   </span>
+                </section>
+
+                <section className="window__main__login-options">
+                  <span className="window__main__login-options__line" style={{ color: "red" }}>Work in progress</span>
                 </section>
 
               </main>

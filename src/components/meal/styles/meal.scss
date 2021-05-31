@@ -150,7 +150,7 @@
       }
     }
 
-    &__add-button {
+    &__add-button, &__add-button--disabled {
       cursor: pointer;
       background: $purple-color;
       color: $white-color;
@@ -160,6 +160,11 @@
       font-size: 1.2rem;
       border-radius: 15px;
       box-shadow: 0 0 3px $gray-color;
+
+      &--disabled {
+        cursor: default;
+        opacity: 0.4;
+      }
     }
 
     &__tertiary, &__tertiary--disabled {
@@ -233,6 +238,23 @@
         }
       }
     }
+
+    &__buttons-section {  
+      &__remove-button, &__remove-button--disabled {
+        border-radius: 12px;
+        font-size: 1rem;
+      }
+  
+      &__add-button {
+        font-size: 1rem;
+        border-radius: 12px;
+      }
+  
+      &__tertiary, &__tertiary--disabled {
+        border-radius: 12px;
+        font-size: 1rem;
+      }
+    }
   }
 }
 
@@ -267,23 +289,6 @@
             font-size: 0.9rem;
           }
         }
-      }
-    }
-
-    &__buttons-section {  
-      &__remove-button, &__remove-button--disabled {
-        border-radius: 12px;
-        font-size: 1rem;
-      }
-  
-      &__add-button {
-        font-size: 1rem;
-        border-radius: 12px;
-      }
-  
-      &__tertiary, &__tertiary--disabled {
-        border-radius: 12px;
-        font-size: 1rem;
       }
     }
   }
