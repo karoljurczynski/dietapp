@@ -348,6 +348,7 @@
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
+    position: absolute;
     z-index: 9;
   }
   .left-section__quotation-container {

@@ -1,5 +1,7 @@
 // IMPORTS
 
+// portal isn't 100vh on mobile
+
 import { React, useReducer, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
@@ -18,6 +20,8 @@ import './styles/index/index.css';
 import './components/left/styles/left.css';
 import './components/center/styles/center.css';
 import './components/right/styles/right.css';
+
+
 
 
 // FUNCTIONS
@@ -246,7 +250,6 @@ function App() {
   // BLURING AND DISABLING POINTER EVENTS ON BACKGROUND AFTER LOG IN WINDOW MOUNTING 
   useEffect(() => {
     const wrapper = document.querySelector(".wrapper");
-
     if (state.isLoginWindowsEnabled) {
       wrapper.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
       wrapper.style.pointerEvents = "none";
@@ -254,6 +257,7 @@ function App() {
       if (state.hamburgerState)
         dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: false });
     }
+
     else {
       wrapper.style.filter = "blur(0px) opacity(100%) grayscale(0%)";
       wrapper.style.pointerEvents = "auto";

@@ -16,15 +16,18 @@ export default function MoreWindow(props) {
     const wrapper = document.querySelector(".wrapper");
     const iframe = document.querySelector(".window__main__section__iframe");
     const rootElement = document.querySelector("#root");
+    const hamburger = document.querySelector(".left-section__hamburger");
     wrapper.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
     wrapper.style.pointerEvents = "none";
     setTimeout(() => { iframe.style.opacity = "1" }, 500);
     rootElement.style.zIndex = 97;
+    hamburger.style.display = "none";
   
     return (() => {
       wrapper.style.filter = "blur(0px) opacity(100%) grayscale(0%)";
       wrapper.style.pointerEvents = "auto";
       rootElement.style.zIndex = 99;
+      hamburger.style.display = "block";
     })
 
   }, []);
