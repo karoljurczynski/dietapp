@@ -6,6 +6,11 @@ import RemoveWindow from '../product_removing_window/ProductRemovingWindow';
 import Product from './Product';
 import './styles/meal.css';
 
+import { db } from '../../index'; 
+import { collection, getDocs, setDoc, doc } from "firebase/firestore";
+
+
+
 
 // VARIABLES
 
@@ -31,13 +36,106 @@ const ACTIONS = {
   ADD_PRODUCT_TO_PRODUCTLIST: 'add-product-to-productlist'
 }
 
-
 // COMPONENT
 
 export default function Meal(props) {
 
   // VARIABLES
 
+  const saveProductInDatabase = async (product, moreThanOne = false) => {
+    let newProductList = [];
+    let oldProductList = [];
+
+    // CHECKING IF PRODUCTLIST EXIST
+    try {
+      const querySnapshot = await getDocs(collection(db, "users"));
+      querySnapshot.forEach(user => {
+        if (user.id === props.userId) {
+          if (user.data().productList)
+            oldProductList = user.data().productList;
+        }
+      });
+    }
+    catch (e) {
+      console.error(e);
+    }
+
+    // ADDING PRODUCT TO NEW LIST
+    if (moreThanOne) {
+      let modifiedSelectedProducts = product.map((item, index) => {
+        return {
+          ...item,
+          mealId: props.mealId,
+          dateIds: props.dateIds,
+          id: Date.now() + index * 10
+        }
+      });
+
+      newProductList = oldProductList.concat(modifiedSelectedProducts);
+    }
+
+    else {
+      newProductList = oldProductList.push(product);
+    }
+
+    console.log(newProductList);
+
+    // OVERWRITING OLD PRODUCTLIST USING NEW LIST
+    try {
+      await setDoc(doc(db, "users", String(props.userId)), {
+        productList: newProductList
+      },
+      { merge: true });
+    }
+    catch (e) {
+      console.error(e);
+    }
+
+    reloadProductListFromDatabase();
+  }
+
+  const removeProductsFromDatabase = async (selectedProducts) => {
+    let oldProductList = [];
+    let newProductList = [];
+
+    // GETTING ALL PRODUCTS SAVED IN DATABASE
+    try {
+      const querySnapshot = await getDocs(collection(db, "users"));
+      querySnapshot.forEach(user => {
+        if (user.id === props.userId) {
+          if (user.data().productList)
+            oldProductList = user.data().productList;
+        }
+      });
+    }
+    catch (e) {
+      console.error(e);
+    }
+
+    newProductList = oldProductList;
+
+    // DELETING SELECTED PRODUCTS
+    selectedProducts.forEach(selectedId => {
+      newProductList.forEach((product, index) => {
+        if (Number(product.id) === Number(selectedId)) {
+          newProductList.splice(index, 1);
+        }
+      });
+    });
+
+    // OVERWRITING PRODUCTLIST USING NEW
+    try {
+      await setDoc(doc(db, "users", String(props.userId)), {
+        productList: newProductList
+      },
+      { merge: true });
+    }
+    catch (e) {
+      console.error(e);
+    }
+  }
+
+  
   const initialState = {
     isMealOpened: false, 
     isAddingWindowOpened: false,
@@ -85,6 +183,7 @@ export default function Meal(props) {
         state.newProduct.dateIds = props.dateIds;
         state.productList.push(state.newProduct);
         localStorage.setItem(state.newProduct.id, JSON.stringify(state.newProduct));
+        saveProductInDatabase(state.newProduct);
         return {...state, newProduct: { id: 0, mealId: props.mealId, dateIds: { dayId: 0, monthId: 0, yearId: 0 }, name: '', weight: '', proteins: '', fats: '', carbs: '', kcal: ''}};
       }
 
@@ -103,7 +202,10 @@ export default function Meal(props) {
       case ACTIONS.REMOVE_PRODUCT: {
         let newProductList = state.productList;
         let checkedIdList = action.payload;
-        
+
+        if (props.userId.length > 1)
+          removeProductsFromDatabase(checkedIdList);
+
         checkedIdList.forEach(checkedId => {
           newProductList.forEach((product, index) => {
             if (Number(product.id) === Number(checkedId)) {
@@ -112,6 +214,7 @@ export default function Meal(props) {
             }
           });
         });
+        
         return {...state, productList: newProductList};
       }
 
@@ -147,27 +250,58 @@ export default function Meal(props) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [isPlaceholderEnabled, setPlaceholderState] = useState(false);
 
+  const reloadProductListFromDatabase = async () => {
+    dispatch({ type: ACTIONS.CLEAR_PRODUCTLIST_BEFORE_DAY_CHANGING });
+    try {
+      const querySnapshot = await getDocs(collection(db, "users"));
+      querySnapshot.forEach(user => {
+        if (user.id === props.userId) {
+          if (user.data().productList) {
+            user.data().productList.forEach(product => {
+              if (product.mealId === props.mealId && ((product.dateIds.dayId === props.dateIds.dayId) &&
+                                            (product.dateIds.monthId === props.dateIds.monthId) &&
+                                            (product.dateIds.yearId === props.dateIds.yearId)))
+                dispatch({ type: ACTIONS.ADD_PRODUCT_TO_PRODUCTLIST, payload: product });
+            });
+          }
+        }
+      });
+    }
+
+    catch (e) {
+      console.error(e);
+    }
+  }
 
   // EFFECTS
 
   // LOADS DATA FROM LOCAL STORAGE AFTER DAY CHANGE
   useEffect(() => {
-    let localStorageKeys = Object.keys(localStorage);
-    localStorageKeys.forEach(key => {
+    if (props.userId.length > 1) {
+      reloadProductListFromDatabase();
+    }
+
+    /*else {
+      let localStorageKeys = Object.keys(localStorage);
+      localStorageKeys.forEach(key => {
       let value = JSON.parse(localStorage.getItem(key));
       if (value.mealId === props.mealId && ((value.dateIds.dayId === props.dateIds.dayId) &&
                                             (value.dateIds.monthId === props.dateIds.monthId) &&
                                             (value.dateIds.yearId === props.dateIds.yearId)))
         dispatch({ type: ACTIONS.ADD_PRODUCT_TO_PRODUCTLIST, payload: value });
-    });
+      });
 
-  }, [ props.dateIds ]);
+    }
+    */
+   
+  }, [ props.userId, props.dateIds ]);
+
 
   // CLEARS PRODUCTLIST AFTER DAY CHANGE
-  useEffect(() => { 
+  useEffect(() => {
     return () => dispatch({ type: ACTIONS.CLEAR_PRODUCTLIST_BEFORE_DAY_CHANGING });
 
-  }, [ props.dateIds ]);
+  }, [ props.dateIds, props.userId ]);
 
   // CLOSES WINDOWS AFTER DAY CHANGE
   useEffect(() => {
@@ -212,7 +346,7 @@ export default function Meal(props) {
     
   }, [ state.isAddingWindowOpened, state.isRemovingWindowOpened ]);
 
-
+  
   // FUNCTIONS
 
   const handleMealOpening = () => {
@@ -259,20 +393,24 @@ export default function Meal(props) {
   }
 
   const handlePredefinedProductsAdding = (selectedProducts) => {
-    selectedProducts.forEach(product => {
+    if (props.userId) {
+      saveProductInDatabase(selectedProducts, true);
+    }
+    else {
+      selectedProducts.forEach(product => {
 
-      // TIMEOUT TO PREVENT DOUBLED IDS
-      setTimeout(() => {
-
-        Object.keys(product).forEach(key => {
-          dispatch({ type: ACTIONS.CHANGE_NEW_PRODUCT_DATA, payload: { key: key, value: product[key] }});
-        });
-
-        dispatch({ type: ACTIONS.ADD_PRODUCT });
-
-      }, 10);
-    });
-    
+        // TIMEOUT TO PREVENT DOUBLED IDS
+        setTimeout(() => {
+  
+          Object.keys(product).forEach(key => {
+            dispatch({ type: ACTIONS.CHANGE_NEW_PRODUCT_DATA, payload: { key: key, value: product[key] }});
+          });
+          dispatch({ type: ACTIONS.ADD_PRODUCT });
+  
+        }, 100);
+  
+      });
+    }
     dispatch({ type: ACTIONS.NEGATE_ADDING_WINDOW_STATE });
   }
 

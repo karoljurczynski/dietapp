@@ -8,7 +8,7 @@ import logo from '../../logo.png';
 
 // COMPONENT
 
-export default function About({ previousPage, changePageTitle }) {
+export default function About({ previousPage, closeWindow }) {
 
   // EFFECTS
 
@@ -27,7 +27,8 @@ export default function About({ previousPage, changePageTitle }) {
       wrapper.style.filter = "blur(0px) opacity(100%) grayscale(0%)";
       wrapper.style.pointerEvents = "auto";
       rootElement.style.zIndex = 99;
-      hamburger.style.display = "block";
+      if (window.innerWidth < 769)
+        hamburger.style.display = "block";
     })
 
   }, []);
@@ -37,7 +38,7 @@ export default function About({ previousPage, changePageTitle }) {
 
   const handleBackToPreviousPage = (e) => {
     e.preventDefault();
-    changePageTitle(previousPage);
+    closeWindow();
   }
 
 

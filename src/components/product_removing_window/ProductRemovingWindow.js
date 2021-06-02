@@ -47,7 +47,8 @@ export default function RemoveWindow(props) {
       wrapper.style.filter = "blur(0px) opacity(100%) grayscale(0%)";
       wrapper.style.pointerEvents = "auto";
       rootElement.style.zIndex = 99;
-      hamburger.style.display = "block";
+      if (window.innerWidth < 769)
+        hamburger.style.display = "block";
     })
 
   }, []);

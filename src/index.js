@@ -21,7 +21,8 @@ import './components/left/styles/left.css';
 import './components/center/styles/center.css';
 import './components/right/styles/right.css';
 
-
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, addDoc, getDocs, setDoc, doc } from "firebase/firestore";
 
 
 // FUNCTIONS
@@ -50,23 +51,28 @@ const ACTIONS = {
   CHANGE_DATE: 'change-date',
   CHANGE_PAGE_TITLE: 'change-page-title',
   LOAD_SETTINGS: 'load-settings',
-  SET_LOGIN_WINDOW: 'set-login-window',
+  SET_WINDOW: 'set-window',
   SET_USER_STATUS: 'set-user-status',
   CHANGE_HAMBURGER_STATE: 'change-hamburger-state',
-  UPDATE_WINDOW_WIDTH: 'update-window-width'
+  UPDATE_WINDOW_WIDTH: 'update-window-width',
+  SET_NEW_SETTINGS: 'set-new-settings',
+  SET_USER_ID: 'set-user-id'
 }
 
 const initialState = {
   dateIds: { dayId: 0, monthId: 0, yearId: 0 },
   pageTitle: 'Dashboard',
   previousPageTitle: 'Dashboard',
-  isLoginWindowsEnabled: false,
+  isLoginWindowEnabled: false,
+  isSettingsWindowEnabled: false,
+  isAboutWindowEnabled: false,
   isAddWindowsEnabled: false,
   isRemoveWindowsEnabled: false,
   isMoreWindowsEnabled: false,
   hamburgerState: false,
   windowWidth: window.innerWidth,
   userStatus: "Log in",
+  userId: 0,
   mealsIngredientsSummary: [],
   dailyIngredientsSummary: { kcal: 0, proteins: 0, fats: 0, carbs: 0 },
   gaugesData: {
@@ -95,6 +101,14 @@ const initialState = {
   clearAllSeries: false,
   isSettingsChanged: false
 }
+
+const firebaseApp = initializeApp({
+  apiKey: "AIzaSyBw4pfmnfKQq187qJJ4UZ0VLtxhg8Ymy3E",
+  authDomain: "dietapp-557db.firebaseapp.com",
+  projectId: "dietapp-557db"
+});
+
+export const db = getFirestore();
 
 
 // COMPONENTS
@@ -172,8 +186,8 @@ function App() {
         return {...state, settingsData: newSettings }
       }
 
-      case ACTIONS.SET_LOGIN_WINDOW: {
-        return {...state, isLoginWindowsEnabled: action.payload}
+      case ACTIONS.SET_WINDOW: {
+        return {...state, [action.payload.window]: action.payload.value }
       }
 
       case ACTIONS.SET_USER_STATUS: {
@@ -186,6 +200,18 @@ function App() {
 
       case ACTIONS.UPDATE_WINDOW_WIDTH: {
         return { ...state, windowWidth: window.innerWidth };
+      }
+
+      case ACTIONS.SET_USER_NAME: {
+        return { ...state, userName: action.payload }
+      }
+
+      case ACTIONS.SET_NEW_SETTINGS: {
+        return { ...state, settingsData: action.payload }
+      }
+
+      case ACTIONS.SET_USER_ID: {
+        return { ...state, userId: action.payload }
       }
 
       default: return console.error(`Unknown action type: ${action.type}`);
@@ -225,6 +251,12 @@ function App() {
 
   }, [ state.dateIds ]);
 
+  // UPDATES GAUGES AFTER CHANGING SETTINGS
+  useEffect(() => {
+    updateGauges();
+
+  }, [state.settingsData]);
+
   // DISABLES CENTER SECTION FUNCTIONS WITHOUT LOG IN
   useEffect(() => {
     const centerSection = document.querySelector(".center-section");
@@ -235,35 +267,89 @@ function App() {
 
   }, [ state.userStatus ])
 
-  // CHECKS IF SETTINGS ARE SAVED IN LOCAL STORAGE
+  // LOADS SETTINGS
   useEffect(() => {
-    const localStorageKeys = Object.keys(localStorage);
-    if (localStorageKeys.includes("settings"))
-      dispatch({ type: ACTIONS.LOAD_SETTINGS });   
-    else
-      saveSettingsToLocalStorage();
+    const saveSettingsToDatabase = async (user) => {
+      try {
+        await setDoc(doc(db, "users", String(user.id)), {
+          settings: state.settingsData
+        }, 
+        { merge: true });
+      }
+      catch (e) {
+        console.error(e);
+      }
+    }
+    const getSettingsFromDatabase = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "users"));
+        querySnapshot.forEach(user => {
+          if (user.id === state.userId) {
+            if (user.data().settings)
+              dispatch({ type: ACTIONS.SET_NEW_SETTINGS, payload: user.data().settings });
+            else
+              saveSettingsToDatabase(user);
+          }
+        });
+      }
+  
+      catch (e) {
+        console.error(e);
+      }
+    }
 
-    updateGauges();
+    if (state.userStatus === "Guest") {
+      const localStorageKeys = Object.keys(localStorage);
+      if (localStorageKeys.includes("settings"))
+        dispatch({ type: ACTIONS.LOAD_SETTINGS });   
+      else
+        saveSettingsToLocalStorage();
+    }
+    if (state.userStatus === "Logged") {
+      getSettingsFromDatabase();
+    }
 
+  }, [ state.userStatus ]);
+
+  // GET USER NAME AND STATUS FROM COOKIE
+  useEffect(() => {
+
+    // IF COOKIE EXIST THEN LOAD IT
+    if (document.cookie) {
+      const cookie = document.cookie.split(";");  // user=default; status=Log in
+      let cookieData = {};
+
+      cookie.forEach(data => {
+        let key = data.split("=")[0];
+        let value = data.split("=")[1];
+        cookieData[key.trim()] = value.trim();
+      });
+  
+      dispatch({ type: ACTIONS.SET_USER_STATUS, payload: cookieData.status });
+      dispatch({ type: ACTIONS.SET_USER_ID, payload: cookieData.user });
+    }
+
+    // IF COOKIE NOT EXIST THEN MAKE IT WITH DEFAULT DATA
+    else {
+      document.cookie = "user=" + state.userId;
+      document.cookie = "status=" + state.userStatus;
+    }
+    
   }, []);
+
+  // UPDATE COOKIE DATA AFTER CHANGE OF USER STATUS
+  useEffect(() => {
+    document.cookie = "user=" + state.userId;
+    document.cookie = "status=" + state.userStatus;
+
+  }, [ state.userStatus, state.userId ]);
 
   // BLURING AND DISABLING POINTER EVENTS ON BACKGROUND AFTER LOG IN WINDOW MOUNTING 
   useEffect(() => {
-    const wrapper = document.querySelector(".wrapper");
-    if (state.isLoginWindowsEnabled) {
-      wrapper.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
-      wrapper.style.pointerEvents = "none";
+    if (state.hamburgerState)
+      dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: false });
 
-      if (state.hamburgerState)
-        dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: false });
-    }
-
-    else {
-      wrapper.style.filter = "blur(0px) opacity(100%) grayscale(0%)";
-      wrapper.style.pointerEvents = "auto";
-    }
-
-  }, [ state.isLoginWindowsEnabled ]);
+  }, [ state.isLoginWindowsEnabled, state.isSettingsWindowEnabled, state.isAboutWindowEnabled ]);
 
   // TRANSFORMS HAMBURGER AND MENU
   useEffect(() => {
@@ -320,24 +406,20 @@ function App() {
   }
 
   const updateDateIds = (newDateIds) => {
-    dispatch({type: ACTIONS.CHANGE_DATE, payload: newDateIds })
+    dispatch({ type: ACTIONS.CHANGE_DATE, payload: newDateIds })
+  }
+
+  const setUserId = (newUserId) => {
+    dispatch({ type: ACTIONS.SET_USER_ID, payload: newUserId });
   }
 
   const changePageTitle = (categoryTitle) => {
     let newPageTitle = '';
 
-    if (state.userStatus === "Log in") {
-      newPageTitle = "Dashboard";
-      dispatch({ type: ACTIONS.SET_LOGIN_WINDOW, payload: true });
-
-    }
-
-    else {
-      if (categoryTitle === 'Nutrition')
-        newPageTitle = 'Dashboard';
-      else
-       newPageTitle = categoryTitle;
-    }
+    if (categoryTitle === 'Nutrition')
+      newPageTitle = 'Dashboard';
+    else
+      newPageTitle = categoryTitle;
 
     dispatch({type: ACTIONS.CHANGE_PAGE_TITLE, payload: newPageTitle });
     dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: false });
@@ -346,19 +428,44 @@ function App() {
   }
 
   const handleMenu = (categoryTitle) => {
-    if (categoryTitle === state.userStatus)
-      dispatch({ type: ACTIONS.SET_LOGIN_WINDOW, payload: true });
-
-    else
-      changePageTitle(categoryTitle);
+    switch (categoryTitle) {
+      case state.userStatus: {
+        dispatch({ type: ACTIONS.SET_WINDOW, payload: { window: "isLoginWindowEnabled", value: true } });
+        break;
+      }
+      case "Nutrition": {
+        changePageTitle(categoryTitle);
+        break;
+      }
+      case "Training": {
+        changePageTitle(categoryTitle);
+        break;
+      }
+      case "Settings": {
+        dispatch({ type: ACTIONS.SET_WINDOW, payload: { window: "isSettingsWindowEnabled", value: true } });
+        break;
+      }
+      case "About": {
+        dispatch({ type: ACTIONS.SET_WINDOW, payload: { window: "isAboutWindowEnabled", value: true } });
+        break;
+      }
+    }
   }
 
   const saveSettingsToLocalStorage = () => {
     localStorage.setItem("settings", JSON.stringify(state.settingsData));
   }
 
-  const disableLoginWindows = () => {
-    dispatch({ type: ACTIONS.SET_LOGIN_WINDOW, payload: false }); 
+  const closeLoginWindow = () => {
+    dispatch({ type: ACTIONS.SET_WINDOW, payload: { window: "isLoginWindowEnabled", value: false } });
+  }
+
+  const closeSettingsWindow = () => {
+    dispatch({ type: ACTIONS.SET_WINDOW, payload: { window: "isSettingsWindowEnabled", value: false } });
+  }
+
+  const closeAboutWindow = () => {
+    dispatch({ type: ACTIONS.SET_WINDOW, payload: { window: "isAboutWindowEnabled", value: false } });
   }
 
   const setUserStatus = (newStatus) => {
@@ -388,12 +495,32 @@ function App() {
   return (
     <>
 
-    { state.isLoginWindowsEnabled &&
+    { state.isLoginWindowEnabled &&
+
           <Login 
-            setUserStatus={ setUserStatus } 
-            disableLoginWindows={ disableLoginWindows } 
+            setUserStatus={ setUserStatus }
+            setUserId={ setUserId }
             isLogout={ state.userStatus === "Logged" ? true : false }
+            closeWindow={ closeLoginWindow }
           /> 
+
+    }
+
+    { state.isSettingsWindowEnabled  &&
+  
+          <Settings 
+            initialData={ initialState.settingsData }
+            updateGauges={ updateGauges } 
+            closeWindow={ closeSettingsWindow } 
+          />
+
+    }
+
+    { state.isAboutWindowEnabled  &&
+
+          <About 
+            closeWindow={ closeAboutWindow }
+          />
     }
 
     <Hamburger handleHamburger={ handleHamburger } />
@@ -463,7 +590,8 @@ function App() {
           state.settingsData.training.selectedExercises.map(selectedExerciseId => {
             return (
               <Exercise
-                key={ selectedExerciseId } 
+                key={ selectedExerciseId }
+                userId={ state.userId }
                 exerciseId={ selectedExerciseId } 
                 dateIds={ state.dateIds } 
                 name={ exercises[selectedExerciseId].name } 
@@ -480,28 +608,9 @@ function App() {
 
           Object.values(state.settingsData.nutrition.namesOfMeals).map((meal, index) => {
             if (state.settingsData.nutrition.numberOfMeals > index)
-              return <Meal key={ index } name={ meal } mealId={ index } dateIds={ state.dateIds } updateGauges={ updateMealSummary } />
+              return <Meal key={ index } userId={ state.userId } name={ meal } mealId={ index } dateIds={ state.dateIds } updateGauges={ updateMealSummary } />
             })
 
-        }
-
-        { state.pageTitle === 'Settings' &&
-
-          <>
-          <Settings 
-            initialData={ initialState.settingsData }
-            updateGauges={ updateGauges } 
-            pageTitle={ state.pageTitle } 
-            previousPage={ state.previousPageTitle }
-            changePageTitle={ changePageTitle } />
-          </>
-
-        }
-
-        { state.pageTitle === 'About' &&
-
-          <About previousPage={ state.previousPageTitle } changePageTitle={ changePageTitle } />
-        
         }
 
         </section>

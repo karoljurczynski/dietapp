@@ -7,6 +7,9 @@ import AddWindow from '../product_adding_window/ProductAddingWindow';
 import RemoveWindow from '../product_removing_window/ProductRemovingWindow';
 import MoreWindow from '../MoreWindow/MoreWindow';
 
+import { db } from '../../index'; 
+import { collection, getDocs, setDoc, doc } from "firebase/firestore";
+
 
 // VARIABLES
 
@@ -49,6 +52,99 @@ export default function Exercise(props) {
     seriesList: [],
     warning: ['', ''],
     newSerie: { id: 0, exerciseId: props.exerciseId, trainingId: 0, dateIds: { dayId: 0, monthId: 0, yearId: 0 }, serieCount: '', weight: '', reps:'' }
+  }
+
+  const saveExerciseInDatabase = async (product, moreThanOne = false) => {
+    let newProductList = [];
+    let oldProductList = [];
+
+    // CHECKING IF PRODUCTLIST EXIST
+    try {
+      const querySnapshot = await getDocs(collection(db, "users"));
+      querySnapshot.forEach(user => {
+        if (user.id === props.userId) {
+          if (user.data().productList)
+            oldProductList = user.data().productList;
+        }
+      });
+    }
+    catch (e) {
+      console.error(e);
+    }
+
+    // ADDING PRODUCT TO NEW LIST
+    if (moreThanOne) {
+      let modifiedSelectedProducts = product.map((item, index) => {
+        return {
+          ...item,
+          mealId: props.mealId,
+          dateIds: props.dateIds,
+          id: Date.now() + index * 10
+        }
+      });
+
+      newProductList = oldProductList.concat(modifiedSelectedProducts);
+    }
+
+    else {
+      newProductList = oldProductList.push(product);
+    }
+
+    console.log(newProductList);
+
+    // OVERWRITING OLD PRODUCTLIST USING NEW LIST
+    try {
+      await setDoc(doc(db, "users", String(props.userId)), {
+        productList: newProductList
+      },
+      { merge: true });
+    }
+    catch (e) {
+      console.error(e);
+    }
+
+    //reloadProductListFromDatabase();
+  }
+
+  const removeExercisesFromDatabase = async (selectedProducts) => {
+    let oldProductList = [];
+    let newProductList = [];
+
+    // GETTING ALL PRODUCTS SAVED IN DATABASE
+    try {
+      const querySnapshot = await getDocs(collection(db, "users"));
+      querySnapshot.forEach(user => {
+        if (user.id === props.userId) {
+          if (user.data().productList)
+            oldProductList = user.data().productList;
+        }
+      });
+    }
+    catch (e) {
+      console.error(e);
+    }
+
+    newProductList = oldProductList;
+
+    // DELETING SELECTED PRODUCTS
+    selectedProducts.forEach(selectedId => {
+      newProductList.forEach((product, index) => {
+        if (Number(product.id) === Number(selectedId)) {
+          newProductList.splice(index, 1);
+        }
+      });
+    });
+
+    // OVERWRITING PRODUCTLIST USING NEW
+    try {
+      await setDoc(doc(db, "users", String(props.userId)), {
+        productList: newProductList
+      },
+      { merge: true });
+    }
+    catch (e) {
+      console.error(e);
+    }
   }
 
   // HOOKS
@@ -109,14 +205,11 @@ export default function Exercise(props) {
         let serieCount = 1;
         
         checkedIdList.forEach(checkedId => {
-
           updatedSeriesList.forEach((serie, index) => {
             localStorage.removeItem(serie.id);
             if (Number(serie.id) === Number(checkedId))
               updatedSeriesList.splice(index, 1);
-              
           });
-
         });
 
         // SERIE ORDER COUNTING

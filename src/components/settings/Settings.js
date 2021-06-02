@@ -203,7 +203,8 @@ export default function Settings(props) {
       wrapper.style.filter = "blur(0px) opacity(100%) grayscale(0%)";
       wrapper.style.pointerEvents = "auto";
       rootElement.style.zIndex = 99;
-      hamburger.style.display = "block";
+      if (window.innerWidth < 769)
+        hamburger.style.display = "block";
     })
 
   }, []);
@@ -292,10 +293,6 @@ export default function Settings(props) {
     dispatch({ type: ACTIONS.SET_CLEAR_ALL_SERIES, payload: false });
   }
 
-  const handleBackToPreviousPage = () => {
-    props.changePageTitle(props.previousPage);
-  }
-
   const handleSettingsSaved = (e) => {
     e.preventDefault();
 
@@ -318,8 +315,8 @@ export default function Settings(props) {
     e.preventDefault();
     restoreSettingFromLocalStorage();
     resetOptionsStates();
+    props.closeWindow();
     props.updateGauges();
-    handleBackToPreviousPage();
   }
 
   const handleSettingsReset = (e) => {

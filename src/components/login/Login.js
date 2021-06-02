@@ -1,10 +1,10 @@
 // IMPORTS
 
 import { React, useReducer, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import { FaChevronCircleLeft, FaChevronCircleRight } from 'react-icons/fa';
 
-import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { db } from '../../index'; 
 import { collection, addDoc, getDocs } from "firebase/firestore";
 
 
@@ -29,18 +29,10 @@ const ACTIONS = {
   CHANGE_IS_FORM_COMPLETED: 'changer-is-form-completed'
 }
 
-const firebaseApp = initializeApp({
-  apiKey: "AIzaSyBw4pfmnfKQq187qJJ4UZ0VLtxhg8Ymy3E",
-  authDomain: "dietapp-557db.firebaseapp.com",
-  projectId: "dietapp-557db"
-});
-
-const db = getFirestore();
-
 
 // COMPONENT
 
-export default function Login({ isLogout, setUserStatus, disableLoginWindows }) {
+export default function Login({ isLogout, setUserStatus, setUserId, closeWindow }) {
 
   // HOOKS
 
@@ -63,6 +55,26 @@ export default function Login({ isLogout, setUserStatus, disableLoginWindows }) 
 
 
   // EFFECTS
+
+  // BLURING AND DISABLING POINTER EVENTS ON BACKGROUND AFTER MOUNTING
+  useEffect(() => {
+    const wrapper = document.querySelector(".wrapper");
+    const rootElement = document.querySelector("#root");
+    const hamburger = document.querySelector(".left-section__hamburger");
+    wrapper.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
+    wrapper.style.pointerEvents = "none";
+    rootElement.style.zIndex = 97;
+    hamburger.style.display = "none";
+    
+    return (() => {
+      wrapper.style.filter = "blur(0px) opacity(100%) grayscale(0%)";
+      wrapper.style.pointerEvents = "auto";
+      rootElement.style.zIndex = 99;
+      if (window.innerWidth < 769)
+        hamburger.style.display = "block";
+    })
+
+  }, []);
 
   // CHECKS IF FORM IS COMPLETED
   useEffect(() => {
@@ -96,7 +108,7 @@ export default function Login({ isLogout, setUserStatus, disableLoginWindows }) 
   const handleTryAsGuest = (e) => {
     e.preventDefault();
     setUserStatus("Guest");
-    disableLoginWindows();
+    closeWindow();
   }
 
   const handlePrimaryButton = (e) => {
@@ -110,7 +122,7 @@ export default function Login({ isLogout, setUserStatus, disableLoginWindows }) 
     if (isPasswordsCorrect) {
       addUser();
       setUserStatus("Logged");
-      disableLoginWindows();
+      closeWindow();
     }
 
     else
@@ -124,6 +136,20 @@ export default function Login({ isLogout, setUserStatus, disableLoginWindows }) 
         password: state.formData.signUpPassword,
         email: state.formData.signUpEmail
       });
+      
+      try {
+        const querySnapshot = await getDocs(collection(db, "users"));
+        querySnapshot.forEach(user => {
+          if (user.data().username === state.formData.signUpUsername) {
+            if (user.data().password === state.formData.signUpPassword)
+              setUserId(user.id);
+          }
+        });
+      }
+  
+      catch (e) {
+        console.error(e);
+      }
     } 
     catch (e) {
       console.error(e);
@@ -133,7 +159,7 @@ export default function Login({ isLogout, setUserStatus, disableLoginWindows }) 
   const handleLoginUser = async () => {
     if (await logInUser()) {
       setUserStatus("Logged");
-      disableLoginWindows();
+      closeWindow();
     }
 
     else
@@ -146,8 +172,10 @@ export default function Login({ isLogout, setUserStatus, disableLoginWindows }) 
       const querySnapshot = await getDocs(collection(db, "users"));
       querySnapshot.forEach(user => {
         if (user.data().username === state.formData.logInUsername) {
-          if (user.data().password === state.formData.logInPassword)
+          if (user.data().password === state.formData.logInPassword) {
             status = true;
+            setUserId(user.id);
+          }
           else
             status = false;
         }
@@ -166,12 +194,13 @@ export default function Login({ isLogout, setUserStatus, disableLoginWindows }) 
   const handleLogoutUser = (e) => {
     e.preventDefault();
     setUserStatus("Log in");
-    disableLoginWindows();
+    setUserId(0);
+    closeWindow();
   }
 
   const handleCancel = (e) => {
     e.preventDefault();
-    disableLoginWindows();
+    closeWindow();
   }
   
   const clearFormData = () => {
@@ -214,7 +243,7 @@ export default function Login({ isLogout, setUserStatus, disableLoginWindows }) 
 
   // RETURN
 
-  return (
+  return ReactDOM.createPortal (
     <>
     { isLogout 
       ? <div className="window window--logout">
@@ -389,6 +418,7 @@ export default function Login({ isLogout, setUserStatus, disableLoginWindows }) 
           </section>
         </div>
     }
-    </>
+    </>,
+    document.getElementById('portal')
   )
 }
