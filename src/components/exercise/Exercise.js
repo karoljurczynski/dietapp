@@ -40,6 +40,81 @@ export default function Exercise(props) {
     CLEAR_SERIESLIST_BEFORE_DAY_CHANGING: 'clear-serieslist-before-day-change'
   }
 
+  const getPreviousTrainingDate = (previousDateIds) => {
+    const isLeapYear = () => {
+      if (((previousDateIds.yearId % 4 === 0) && (previousDateIds.yearId % 100 !== 0)) || previousDateIds.yearId % 400 === 0)
+         return true;
+      
+      else
+         return false;
+    }
+    const isDayFirstInMonth = () => {
+      if(previousDateIds.dayId === 1)
+        return true;
+      else
+        return false;
+    }
+    const isDayFirstInJanuary = () => {
+      if ((previousDateIds.dayId === 1) && (previousDateIds.monthId === 1))
+        return true;
+      
+      else
+        return false;
+    }
+    const isDayFirstInMarch = () => {
+      if ((previousDateIds.dayId === 1) && (previousDateIds.monthId === 3))
+        return true;
+      
+      else
+        return false;
+    }
+    const isDayFirstIn30DayMonths = () => {
+      if ((previousDateIds.dayId === 1) && ((previousDateIds.monthId === 4) || (previousDateIds.monthId === 6) || (previousDateIds.monthId === 8) || (previousDateIds.monthId === 9) || (previousDateIds.monthId === 11)))
+        return true;
+      
+      else
+        return false;
+    }
+
+    let potentialPreviousDateIds = { dayId: 0, monthId: 0, yearId: 0 };
+
+    if (isDayFirstInJanuary()) {
+      potentialPreviousDateIds.dayId = 31;
+      potentialPreviousDateIds.monthId = 12;
+      potentialPreviousDateIds.yearId = previousDateIds.yearId - 1;
+    }
+
+    else if (isDayFirstInMarch()) {
+      if(isLeapYear())
+        potentialPreviousDateIds.dayId = 29;
+      else
+        potentialPreviousDateIds.dayId = 28;
+      
+      potentialPreviousDateIds.monthId = 2;
+      potentialPreviousDateIds.yearId = previousDateIds.yearId;
+    }
+
+    else if (isDayFirstIn30DayMonths()) {
+      potentialPreviousDateIds.dayId = 31;
+      potentialPreviousDateIds.monthId = previousDateIds.monthId - 1;
+      potentialPreviousDateIds.yearId = previousDateIds.yearId;
+    }
+
+    else if (isDayFirstInMonth()) {
+      potentialPreviousDateIds.dayId = 30
+      potentialPreviousDateIds.monthId = previousDateIds.monthId - 1;
+      potentialPreviousDateIds.yearId = previousDateIds.yearId;
+    }
+    
+    else {
+      potentialPreviousDateIds.dayId = previousDateIds.dayId - 1;
+      potentialPreviousDateIds.monthId = previousDateIds.monthId;
+      potentialPreviousDateIds.yearId = previousDateIds.yearId;
+    }
+    console.log(potentialPreviousDateIds);
+    return potentialPreviousDateIds;
+  }
+
   const initialState = {
     isExerciseOpened: false,
     isAddWindowOpened: false,
@@ -54,17 +129,16 @@ export default function Exercise(props) {
     newSerie: { id: 0, exerciseId: props.exerciseId, trainingId: 0, dateIds: { dayId: 0, monthId: 0, yearId: 0 }, serieCount: '', weight: '', reps:'' }
   }
 
-  const saveExerciseInDatabase = async (product, moreThanOne = false) => {
-    let newProductList = [];
-    let oldProductList = [];
+  const saveSerieInDatabase = async (serie) => {
+    let newSeriesList = [];
 
-    // CHECKING IF PRODUCTLIST EXIST
+    // CHECKING IF SERIESLIST EXIST
     try {
       const querySnapshot = await getDocs(collection(db, "users"));
       querySnapshot.forEach(user => {
         if (user.id === props.userId) {
-          if (user.data().productList)
-            oldProductList = user.data().productList;
+          if (user.data().seriesList)
+            newSeriesList = user.data().seriesList;
         }
       });
     }
@@ -73,29 +147,12 @@ export default function Exercise(props) {
     }
 
     // ADDING PRODUCT TO NEW LIST
-    if (moreThanOne) {
-      let modifiedSelectedProducts = product.map((item, index) => {
-        return {
-          ...item,
-          mealId: props.mealId,
-          dateIds: props.dateIds,
-          id: Date.now() + index * 10
-        }
-      });
+    newSeriesList.push(serie);
 
-      newProductList = oldProductList.concat(modifiedSelectedProducts);
-    }
-
-    else {
-      newProductList = oldProductList.push(product);
-    }
-
-    console.log(newProductList);
-
-    // OVERWRITING OLD PRODUCTLIST USING NEW LIST
+    // OVERWRITING OLD SERIESLIST USING NEW LIST
     try {
       await setDoc(doc(db, "users", String(props.userId)), {
-        productList: newProductList
+        seriesList: newSeriesList
       },
       { merge: true });
     }
@@ -106,17 +163,18 @@ export default function Exercise(props) {
     //reloadProductListFromDatabase();
   }
 
-  const removeExercisesFromDatabase = async (selectedProducts) => {
-    let oldProductList = [];
-    let newProductList = [];
+  const removeSeriesFromDatabase = async (selectedSeries) => {
+    let newSeriesList = [];
+    let serieCount = 1;
 
-    // GETTING ALL PRODUCTS SAVED IN DATABASE
+
+    // GETTING ALL SERIES SAVED IN DATABASE
     try {
       const querySnapshot = await getDocs(collection(db, "users"));
       querySnapshot.forEach(user => {
         if (user.id === props.userId) {
-          if (user.data().productList)
-            oldProductList = user.data().productList;
+          if (user.data().seriesList)
+            newSeriesList = user.data().seriesList;
         }
       });
     }
@@ -124,21 +182,21 @@ export default function Exercise(props) {
       console.error(e);
     }
 
-    newProductList = oldProductList;
-
-    // DELETING SELECTED PRODUCTS
-    selectedProducts.forEach(selectedId => {
-      newProductList.forEach((product, index) => {
-        if (Number(product.id) === Number(selectedId)) {
-          newProductList.splice(index, 1);
+    // DELETING SERIES PRODUCTS
+    selectedSeries.forEach(selectedId => {
+      newSeriesList.forEach((serie, index) => {
+        if (Number(serie.id) === Number(selectedId)) {
+          newSeriesList.splice(index, 1);
         }
       });
     });
 
+
+
     // OVERWRITING PRODUCTLIST USING NEW
     try {
       await setDoc(doc(db, "users", String(props.userId)), {
-        productList: newProductList
+        seriesList: newSeriesList
       },
       { merge: true });
     }
@@ -192,7 +250,8 @@ export default function Exercise(props) {
 
         // SAVING CHANGES IN LOCAL STORAGE
         localStorage.setItem(state.newSerie.id, JSON.stringify(state.newSerie));
-        
+        saveSerieInDatabase(state.newSerie);
+
         return {
           ...state,
           newSerie: { id: 0, exerciseId: props.exerciseId, dateIds: { dayId: 0, monthId: 0, yearId: 0 }, serieCount: '', weight: '', reps: '' },
@@ -203,6 +262,9 @@ export default function Exercise(props) {
         let updatedSeriesList = state.seriesList;
         let checkedIdList = action.payload;
         let serieCount = 1;
+
+        if (props.userId.length > 1)
+          removeSeriesFromDatabase(checkedIdList);
         
         checkedIdList.forEach(checkedId => {
           updatedSeriesList.forEach((serie, index) => {
@@ -341,14 +403,42 @@ export default function Exercise(props) {
   }
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  const reloadSeriesListFromDatabase = async () => {
+    dispatch({ type: ACTIONS.CLEAR_SERIESLIST_BEFORE_DAY_CHANGING });
+    try {
+      const querySnapshot = await getDocs(collection(db, "users"));
+      querySnapshot.forEach(user => {
+        if (user.id === props.userId) {
+          if (user.data().seriesList) {
+            user.data().seriesList.forEach(serie => {
+              if (serie.exerciseId === props.exerciseId && ((serie.dateIds.dayId === props.dateIds.dayId) &&
+                                            (serie.dateIds.monthId === props.dateIds.monthId) &&
+                                            (serie.dateIds.yearId === props.dateIds.yearId)))
+                dispatch({ type: ACTIONS.ADD_SERIE_TO_SERIESLIST, payload: serie });
+            });
+          }
+        }
+      });
+    }
+
+    catch (e) {
+      console.error(e);
+    }
+  }
+
 
   // EFFECTS
 
   // LOADS DATA FROM LOCAL STORAGE AFTER DAY CHANGE
   useEffect(() => {
-    let localStorageKeys = Object.keys(localStorage);
+    if (props.userId.length > 1) {
+      reloadSeriesListFromDatabase();
+    }
 
-    localStorageKeys.forEach(key => {
+    /*else {
+      let localStorageKeys = Object.keys(localStorage);
+
+      localStorageKeys.forEach(key => {
       let value = JSON.parse(localStorage.getItem(key));
       if (value.exerciseId === props.exerciseId && ((value.dateIds.dayId === props.dateIds.dayId) &&
                                             (value.dateIds.monthId === props.dateIds.monthId) &&
@@ -356,15 +446,18 @@ export default function Exercise(props) {
         dispatch({ type: ACTIONS.ADD_SERIE_TO_SERIESLIST, payload: value });
     });
 
+    }
+    */
+    dispatch({ type: ACTIONS.UPDATE_LASTTIME_DATA });
     dispatch({ type: ACTIONS.SORT_SERIESLIST });
 
-  }, [ props.dateIds ]);
+  }, [ props.userId, props.dateIds ]);
 
   // CLEARS SERIESLIST AFTER DATE CHANGE
   useEffect(() => { 
     return () => dispatch({ type: ACTIONS.CLEAR_SERIESLIST_BEFORE_DAY_CHANGING });
 
-  }, [ props.dateIds ]);
+  }, [ props.userId, props.dateIds ]);
 
   // CLOSES WINDOWS AFTER DATE CHANGE
   useEffect(() => {
@@ -414,80 +507,6 @@ export default function Exercise(props) {
 
   // FUNCTIONS
 
-  const getPreviousTrainingDate = (previousDateIds) => {
-    const isLeapYear = () => {
-      if (((previousDateIds.yearId % 4 === 0) && (previousDateIds.yearId % 100 !== 0)) || previousDateIds.yearId % 400 === 0)
-         return true;
-      
-      else
-         return false;
-    }
-    const isDayFirstInMonth = () => {
-      if(previousDateIds.dayId === 1)
-        return true;
-      else
-        return false;
-    }
-    const isDayFirstInJanuary = () => {
-      if ((previousDateIds.dayId === 1) && (previousDateIds.monthId === 1))
-        return true;
-      
-      else
-        return false;
-    }
-    const isDayFirstInMarch = () => {
-      if ((previousDateIds.dayId === 1) && (previousDateIds.monthId === 3))
-        return true;
-      
-      else
-        return false;
-    }
-    const isDayFirstIn30DayMonths = () => {
-      if ((previousDateIds.dayId === 1) && ((previousDateIds.monthId === 4) || (previousDateIds.monthId === 6) || (previousDateIds.monthId === 8) || (previousDateIds.monthId === 9) || (previousDateIds.monthId === 11)))
-        return true;
-      
-      else
-        return false;
-    }
-
-    let potentialPreviousDateIds = { dayId: 0, monthId: 0, yearId: 0 };
-
-    if (isDayFirstInJanuary()) {
-      potentialPreviousDateIds.dayId = 31;
-      potentialPreviousDateIds.monthId = 12;
-      potentialPreviousDateIds.yearId = previousDateIds.yearId - 1;
-    }
-
-    else if (isDayFirstInMarch()) {
-      if(isLeapYear())
-        potentialPreviousDateIds.dayId = 29;
-      else
-        potentialPreviousDateIds.dayId = 28;
-      
-      potentialPreviousDateIds.monthId = 2;
-      potentialPreviousDateIds.yearId = previousDateIds.yearId;
-    }
-
-    else if (isDayFirstIn30DayMonths()) {
-      potentialPreviousDateIds.dayId = 31;
-      potentialPreviousDateIds.monthId = previousDateIds.monthId - 1;
-      potentialPreviousDateIds.yearId = previousDateIds.yearId;
-    }
-
-    else if (isDayFirstInMonth()) {
-      potentialPreviousDateIds.dayId = 30
-      potentialPreviousDateIds.monthId = previousDateIds.monthId - 1;
-      potentialPreviousDateIds.yearId = previousDateIds.yearId;
-    }
-    
-    else {
-      potentialPreviousDateIds.dayId = previousDateIds.dayId - 1;
-      potentialPreviousDateIds.monthId = previousDateIds.monthId;
-      potentialPreviousDateIds.yearId = previousDateIds.yearId;
-    }
-
-    return potentialPreviousDateIds;
-  }
 
   const handleExerciseOpening = () => {
     dispatch({ type: ACTIONS.NEGATE_EXERCISE_OPENED });
@@ -512,7 +531,7 @@ export default function Exercise(props) {
     let percentValue = 0;
     let progressValue = 0;
     let previousDateIds = props.dateIds;
-  
+    
     // FILTERING LOCAL STORAGE TO SEARCH A EXERCISE WITH CORRECT EXERCISEID AND NUMBER OF SERIE
     if (Object.keys(localStorage).length !== 0) {
 
