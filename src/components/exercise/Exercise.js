@@ -22,6 +22,56 @@ export const warnings = {
 
 export default function Exercise(props) {
 
+  const removeSeriesFromDatabase = async (selectedSeries, state) => {
+    let newSeriesList = [];
+    let currentExerciseSeries = state;
+    let serieCount = 1;
+
+    // GETTING ALL SERIES SAVED IN DATABASE
+    try {
+      const querySnapshot = await getDocs(collection(db, "users"));
+      querySnapshot.forEach(user => {
+        if (user.id === props.userId) {
+          if (user.data().seriesList)
+            newSeriesList = user.data().seriesList;
+        }
+      });
+    }
+    catch (e) {
+      console.error(e);
+    }
+
+    // DELETING SERIES PRODUCTS
+    selectedSeries.forEach(selectedId => {
+      newSeriesList.forEach((serie, index) => {
+        if (Number(serie.id) === Number(selectedId)) {
+          newSeriesList.splice(index, 1);
+        }
+      });
+    });
+
+    // SERIE ORDER COUNTING
+    currentExerciseSeries.forEach(serie => {
+      serie.serieCount = serieCount;
+      newSeriesList.forEach(databaseSerie => {
+        if (databaseSerie.id === serie.id)
+          databaseSerie.serieCount = serieCount;
+      });
+      serieCount++;
+    });
+
+    // OVERWRITING PRODUCTLIST USING NEW
+    try {
+      await setDoc(doc(db, "users", String(props.userId)), {
+        seriesList: newSeriesList
+      },
+      { merge: true });
+    }
+    catch (e) {
+      console.error(e);
+    }
+  }
+
   // VARIABLES
 
   const ACTIONS = {
@@ -163,47 +213,7 @@ export default function Exercise(props) {
     //reloadProductListFromDatabase();
   }
 
-  const removeSeriesFromDatabase = async (selectedSeries) => {
-    let newSeriesList = [];
-    let serieCount = 1;
-
-
-    // GETTING ALL SERIES SAVED IN DATABASE
-    try {
-      const querySnapshot = await getDocs(collection(db, "users"));
-      querySnapshot.forEach(user => {
-        if (user.id === props.userId) {
-          if (user.data().seriesList)
-            newSeriesList = user.data().seriesList;
-        }
-      });
-    }
-    catch (e) {
-      console.error(e);
-    }
-
-    // DELETING SERIES PRODUCTS
-    selectedSeries.forEach(selectedId => {
-      newSeriesList.forEach((serie, index) => {
-        if (Number(serie.id) === Number(selectedId)) {
-          newSeriesList.splice(index, 1);
-        }
-      });
-    });
-
-
-
-    // OVERWRITING PRODUCTLIST USING NEW
-    try {
-      await setDoc(doc(db, "users", String(props.userId)), {
-        seriesList: newSeriesList
-      },
-      { merge: true });
-    }
-    catch (e) {
-      console.error(e);
-    }
-  }
+  
 
   // HOOKS
 
@@ -264,7 +274,7 @@ export default function Exercise(props) {
         let serieCount = 1;
 
         if (props.userId.length > 1)
-          removeSeriesFromDatabase(checkedIdList);
+          removeSeriesFromDatabase(checkedIdList, updatedSeriesList);
         
         checkedIdList.forEach(checkedId => {
           updatedSeriesList.forEach((serie, index) => {
