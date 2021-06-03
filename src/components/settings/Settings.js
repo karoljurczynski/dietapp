@@ -16,20 +16,20 @@ const initialState = {
   isAccountCategory: false,
   isNutritionCategory: true,
   isTrainingCategory: false,
-  warning: ['carbs', 'fff'],
+  warning: ['', ''],
   settingsData: {
     account: {
 
     },
 
     nutrition: {
-      dailyDemand: { kcal: 2000, proteins: 120, fats: 55, carbs: 240 },
-      namesOfMeals: { 0: "Breakfast", 1: "II Breakfast", 2: "Lunch", 3: "Snack", 4: "Dinner", 5: "", 6: "", 7: "", 8: "", 9: "" },
-      numberOfMeals: 5
+      dailyDemand: { kcal: 0, proteins: 0, fats: 0, carbs: 0 },
+      namesOfMeals: { 0: "", 1: "", 2: "", 3: "", 4: "", 5: "", 6: "", 7: "", 8: "", 9: "" },
+      numberOfMeals: 0
     },
 
     training: {
-      selectedExercises: [0, 1, 2, 3, 5]
+      selectedExercises: []
     }
   },
   clearAllProducts: false,

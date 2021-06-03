@@ -83,20 +83,21 @@ const initialState = {
   },
 
   settingsData: {
-    main: {
+    account: {
 
     },
 
     nutrition: {
-      dailyDemand: { kcal: 2000, proteins: 120, fats: 55, carbs: 240 },
+      dailyDemand: { kcal: 0, proteins: 0, fats: 0, carbs: 0 },
       namesOfMeals: { 0: "Breakfast", 1: "II Breakfast", 2: "Lunch", 3: "Snack", 4: "Dinner", 5: "", 6: "", 7: "", 8: "", 9: "" },
       numberOfMeals: 5
     },
 
     training: {
-      selectedExercises: [0, 1, 2, 3, 5]
+      selectedExercises: [0, 1, 2, 3, 4]
     }
   },
+
   clearAllProducts: false,
   clearAllSeries: false,
   isSettingsChanged: false
@@ -232,11 +233,18 @@ function App() {
 
     // WINDOW REAL HEIGHT COUNTING
     let vh = window.innerHeight * 0.01;
+    const hamburger = document.querySelector(".left-section__hamburger");
+    
     document.documentElement.style.setProperty('--vh', `${vh}px`);
 
     window.addEventListener("resize", () => {
       dispatch({ type: ACTIONS.UPDATE_WINDOW_WIDTH });
       dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: false });
+
+      if (window.innerWidth < 769)
+        hamburger.style.display = "block";
+      else
+        hamburger.style.display = "none";
 
       // WINDOW REAL HEIGHT COUNTING AFTER RESIZING
       vh = window.innerHeight * 0.01;
@@ -244,19 +252,6 @@ function App() {
     });
 
   }, []);
-
-  // UPDATES GAUGES AFTER DATE CHANGE
-  useEffect(() => { 
-    updateGauges();
-
-  }, [ state.dateIds ]);
-
-  // UPDATES GAUGES AFTER CHANGING SETTINGS
-  useEffect(() => {
-    updateGauges();
-
-  }, [state.settingsData]);
-
 
   const saveSettingsToDatabase = async (user) => {
     try {
@@ -269,6 +264,7 @@ function App() {
       console.error(e);
     }
   }
+
   const getSettingsFromDatabase = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "users"));
@@ -285,17 +281,11 @@ function App() {
     catch (e) {
       console.error(e);
     }
+    updateGauges();
   }
 
   // LOADS SETTINGS
   useEffect(() => {
-    if (state.userStatus === "Guest") {
-      const localStorageKeys = Object.keys(localStorage);
-      if (localStorageKeys.includes("settings"))
-        dispatch({ type: ACTIONS.LOAD_SETTINGS });   
-      else
-        saveSettingsToLocalStorage();
-    }
     if (state.userStatus === "Logged") {
       getSettingsFromDatabase();
     }

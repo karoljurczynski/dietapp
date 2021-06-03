@@ -43,6 +43,7 @@ export default function Meal(props) {
   // VARIABLES
 
   const saveProductInDatabase = async (product, moreThanOne = false) => {
+    console.log(product);
     let newProductList = [];
     let oldProductList = [];
 
@@ -75,11 +76,10 @@ export default function Meal(props) {
     }
 
     else {
-      newProductList = oldProductList.push(product);
+      newProductList = oldProductList;
+      newProductList.push(product);
     }
-
-    console.log(newProductList);
-
+    
     // OVERWRITING OLD PRODUCTLIST USING NEW LIST
     try {
       await setDoc(doc(db, "users", String(props.userId)), {
@@ -91,7 +91,8 @@ export default function Meal(props) {
       console.error(e);
     }
 
-    reloadProductListFromDatabase();
+    clearProductList();
+    loadProductListFromDatabase();
   }
 
   const removeProductsFromDatabase = async (selectedProducts) => {
@@ -134,8 +135,7 @@ export default function Meal(props) {
       console.error(e);
     }
   }
-
-  
+ 
   const initialState = {
     isMealOpened: false, 
     isAddingWindowOpened: false,
@@ -182,7 +182,6 @@ export default function Meal(props) {
         state.newProduct.id = Date.now();
         state.newProduct.dateIds = props.dateIds;
         state.productList.push(state.newProduct);
-        localStorage.setItem(state.newProduct.id, JSON.stringify(state.newProduct));
         saveProductInDatabase(state.newProduct);
         return {...state, newProduct: { id: 0, mealId: props.mealId, dateIds: { dayId: 0, monthId: 0, yearId: 0 }, name: '', weight: '', proteins: '', fats: '', carbs: '', kcal: ''}};
       }
@@ -250,8 +249,7 @@ export default function Meal(props) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [isPlaceholderEnabled, setPlaceholderState] = useState(false);
 
-  const reloadProductListFromDatabase = async () => {
-    dispatch({ type: ACTIONS.CLEAR_PRODUCTLIST_BEFORE_DAY_CHANGING });
+  const loadProductListFromDatabase = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "users"));
       querySnapshot.forEach(user => {
@@ -273,35 +271,19 @@ export default function Meal(props) {
     }
   }
 
+  const clearProductList = () => {
+    dispatch({ type: ACTIONS.CLEAR_PRODUCTLIST_BEFORE_DAY_CHANGING });
+  }
+
   // EFFECTS
 
-  // LOADS DATA FROM LOCAL STORAGE AFTER DAY CHANGE
+  // LOADS PRODUCTS FROM DATABASE
   useEffect(() => {
-    if (props.userId.length > 1) {
-      reloadProductListFromDatabase();
-    }
+    clearProductList();
+    loadProductListFromDatabase();
 
-    /*else {
-      let localStorageKeys = Object.keys(localStorage);
-      localStorageKeys.forEach(key => {
-      let value = JSON.parse(localStorage.getItem(key));
-      if (value.mealId === props.mealId && ((value.dateIds.dayId === props.dateIds.dayId) &&
-                                            (value.dateIds.monthId === props.dateIds.monthId) &&
-                                            (value.dateIds.yearId === props.dateIds.yearId)))
-        dispatch({ type: ACTIONS.ADD_PRODUCT_TO_PRODUCTLIST, payload: value });
-      });
-
-    }
-    */
-   
   }, [ props.userId, props.dateIds ]);
 
-
-  // CLEARS PRODUCTLIST AFTER DAY CHANGE
-  useEffect(() => {
-    return () => dispatch({ type: ACTIONS.CLEAR_PRODUCTLIST_BEFORE_DAY_CHANGING });
-
-  }, [ props.dateIds, props.userId ]);
 
   // CLOSES WINDOWS AFTER DAY CHANGE
   useEffect(() => {

@@ -3,6 +3,9 @@
 import { React, useState, useEffect } from 'react';
 import { FaPlusCircle } from 'react-icons/fa';
 
+import { db } from '../../index'; 
+import { getDoc, setDoc, doc } from "firebase/firestore";
+
 
 // VARIABLES
 
@@ -32,6 +35,32 @@ export default function AddingForm(props) {
 
   
   // FUNCTIONS
+
+  const updatePredefinedProductsInDatabase = async (newList) => {
+    try {
+      await setDoc(doc(db, "predefinedProducts", "predefinedProductsList"), {
+        list: newList
+      },
+      { merge: true });
+    }
+    catch (e) {
+      console.error(e);
+    }
+  }
+
+  const getPredefinedProductsFromDatabase = async () => {
+    let predefinedProductsList = [];
+    try {
+      const querySnapshot = await getDoc(doc(db, "predefinedProducts", "predefinedProductsList"));
+      predefinedProductsList = querySnapshot.data().list;
+      if (!predefinedProductsList)
+        updatePredefinedProductsInDatabase([]);
+    }    
+    catch (e) {
+      console.error(e);
+    }
+    return predefinedProductsList;
+  }
 
   const handleClearButton = () => {
     setOptionsStates(initialOptionsStates);
@@ -127,10 +156,10 @@ export default function AddingForm(props) {
 
   }
 
-  const saveNewProductToList = (newProduct) => {
-    const newList =  JSON.parse(localStorage.getItem("predefined"));
+  const saveNewProductToList = async (newProduct) => {
+    const newList =  await getPredefinedProductsFromDatabase();
     newList.push(newProduct);
-    localStorage.setItem("predefined", JSON.stringify(newList));
+    updatePredefinedProductsInDatabase(newList);
   }
 
   const handleCheckboxOnClick = (e) => {

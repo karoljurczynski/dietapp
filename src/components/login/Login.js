@@ -71,7 +71,7 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
       wrapper.style.pointerEvents = "auto";
       rootElement.style.zIndex = 99;
       if (window.innerWidth < 769)
-        hamburger.style.display = "block";
+        hamburger.style.display = "flex";
     })
 
   }, []);

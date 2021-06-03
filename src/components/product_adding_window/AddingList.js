@@ -4,6 +4,9 @@ import { React, useReducer, useEffect } from 'react';
 import EditForm from './EditForm';
 import { FaPlusCircle } from 'react-icons/fa';
 
+import { db } from '../../index'; 
+import { getDoc, setDoc, doc } from "firebase/firestore";
+
 
 // VARIABLES
 
@@ -21,12 +24,7 @@ const initialState = {
     { id: 1, name: "Skyr", weight: 100, proteins: 20, fats: 0, carbs: 12, kcal: 100 },
     { id: 2, name: "Potatos", weight: 100, proteins: 9, fats: 2, carbs: 80, kcal: 126 },
     { id: 3, name: "Coca Cola", weight: 100, proteins: 0, fats: 0, carbs: 100, kcal: 400 },
-    { id: 4, name: "Banana", weight: 100, proteins: 5, fats: 3, carbs: 52, kcal: 173 },
-    { id: 5, name: "Cottage cheese", weight: 100, proteins: 20, fats: 10, carbs: 15, kcal: 250 },
-    { id: 6, name: "Skyr", weight: 100, proteins: 20, fats: 0, carbs: 12, kcal: 100 },
-    { id: 7, name: "Potatos", weight: 100, proteins: 9, fats: 2, carbs: 80, kcal: 126 },
-    { id: 8, name: "Coca Cola", weight: 100, proteins: 0, fats: 0, carbs: 100, kcal: 400 },
-    { id: 9, name: "Banana", weight: 100, proteins: 5, fats: 3, carbs: 52, kcal: 173 }],
+    { id: 4, name: "Banana", weight: 100, proteins: 5, fats: 3, carbs: 52, kcal: 173 }],
   
   productSendForEdit: { id: 0, name: '', weight: 0, proteins: 0, fats: 0, carbs: 0, kcal: 0 },
   isEditWindowOpened: false,
@@ -81,20 +79,35 @@ export default function AddingList(props) {
 
   // EFFECTS
 
+  const updatePredefinedProductsInDatabase = async (newList) => {
+    try {
+      await setDoc(doc(db, "predefinedProducts", "predefinedProductsList"), {
+        list: newList
+      },
+      { merge: true });
+    }
+    catch (e) {
+      console.error(e);
+    }
+  }
+
+  const getPredefinedProductsFromDatabase = async () => {
+    let predefinedProductsList = [];
+    try {
+      const querySnapshot = await getDoc(doc(db, "predefinedProducts", "predefinedProductsList"));
+      predefinedProductsList = querySnapshot.data().list;
+      if (!predefinedProductsList)
+        updatePredefinedProductsInDatabase(state.savedProductList)
+    }    
+    catch (e) {
+      console.error(e);
+    }
+    dispatch({ type: ACTIONS.LOAD_PREDEFINED_PRODUCTS_LIST_FROM_LOCAL_STORAGE, payload: predefinedProductsList });
+  }
+
   // LOADS PREDEFINED PRODUCTS LIST FROM LOCALSTORAGE OR CREATES IF DOESN'T EXIST
   useEffect(() => { 
-    let predefinedProductsList = [];
-    const localStorageKeys = Object.keys(localStorage);
-
-    if (localStorageKeys.includes('predefined')) {
-      predefinedProductsList = JSON.parse(localStorage.getItem("predefined"));
-      dispatch({ type: ACTIONS.LOAD_PREDEFINED_PRODUCTS_LIST_FROM_LOCAL_STORAGE, payload: predefinedProductsList });
-    }
-    else {
-      predefinedProductsList = state.savedProductList;
-      localStorage.setItem("predefined", JSON.stringify(predefinedProductsList)); 
-    }
-
+    getPredefinedProductsFromDatabase();
   }, []);
 
   // DISABLES ADD BUTTON AFTER MOUNTING
@@ -136,9 +149,7 @@ export default function AddingList(props) {
     dispatch({ type: ACTIONS.UPDATE_SAVED_PRODUCTS_LIST, payload: { index: indexOfEditedProduct, newProduct: editedProduct }})
     
     // SAVING CHANGES TO LOCAL STORAGE
-    const predefinedProductsList = state.savedProductList;
-    localStorage.setItem("predefined", JSON.stringify(predefinedProductsList));
-    
+    updatePredefinedProductsInDatabase(state.savedProductList);
     handleEditingWindow();
   }
 
