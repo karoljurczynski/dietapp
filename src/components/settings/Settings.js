@@ -23,13 +23,13 @@ const initialState = {
     },
 
     nutrition: {
-      dailyDemand: { kcal: 0, proteins: 0, fats: 0, carbs: 0 },
-      namesOfMeals: { 0: "", 1: "", 2: "", 3: "", 4: "", 5: "", 6: "", 7: "", 8: "", 9: "" },
-      numberOfMeals: 0
+      dailyDemand: { kcal: 2000, proteins: 120, fats: 55, carbs: 240 },
+      namesOfMeals: { 0: "Breakfast", 1: "II Breakfast", 2: "Lunch", 3: "Snack", 4: "Dinner", 5: "", 6: "", 7: "", 8: "", 9: "" },
+      numberOfMeals: 5
     },
 
     training: {
-      selectedExercises: []
+      selectedExercises: [0, 1, 2, 3, 4]
     }
   },
   clearAllProducts: false,
@@ -153,12 +153,11 @@ export default function Settings(props) {
       }
 
       case ACTIONS.RESET_NUTRITION_SETTINGS_TO_INITIAL: {
-        return { ...state, settingsData: { ...state.settingsData, nutrition: props.initialData.nutrition }};
+        return { ...state, settingsData: { ...state.settingsData, nutrition: initialState.settingsData.nutrition }};
       }
 
       case ACTIONS.RESET_TRAINING_SETTINGS_TO_INITIAL: {
-        console.log(state.settingsData.training.selectedExercises);
-        return { ...state, settingsData: { ...state.settingsData, training: props.initialData.training }};
+        return { ...state, settingsData: { ...state.settingsData, training: initialState.settingsData.training }};
       }
 
       case ACTIONS.SET_CATEGORY: {
@@ -217,8 +216,8 @@ export default function Settings(props) {
       querySnapshot.forEach(user => {
         if (user.id === props.userId) {
           if (user.data().settings) {
-            console.log(user.data().settings);
             dispatch({ type: ACTIONS.SET_NEW_SETTINGS, payload: user.data().settings });
+            localStorage.setItem("settingsBackup", JSON.stringify(user.data().settings));
           }
             
           else
@@ -231,26 +230,13 @@ export default function Settings(props) {
       console.error(e);
     }
   }
-  useEffect(() => {
-    if (props.userStatus === "Guest") {
-      const localStorageKeys = Object.keys(localStorage);
-      if (localStorageKeys.includes("settings"))
-        dispatch({ type: ACTIONS.LOAD_SETTINGS });   
-      else
-        saveSettingsToLocalStorage();
-    }
-    if (props.userStatus === "Logged") {
-      saveSettingsToLocalStorage();
-      getSettingsFromDatabase();
-    }
-
-  }, []);
 
   // LOADS SETTINGS FROM DATABASE
   useEffect(() => {
     getSettingsFromDatabase();
-  }, [])
 
+  }, []);
+  
   // BLURING AND DISABLING POINTER EVENTS ON BACKGROUND AFTER MOUNTING
   useEffect(() => {
     const wrapper = document.querySelector(".wrapper");
@@ -287,12 +273,15 @@ export default function Settings(props) {
 
   // CHECKS IF SETTINGS WERE CHANGED
   useEffect(() => {
-    const localStorageSettings = localStorage.getItem("settings");
+    const backupSettings = localStorage.getItem("settingsBackup");
     const currentSettings = JSON.stringify(state.settingsData);
-    if (localStorageSettings === currentSettings)
+
+    if (backupSettings === currentSettings)
       dispatch({ type: ACTIONS.SET_SETTINGS_CHANGED_STATE, payload: false });
     else
       dispatch({ type: ACTIONS.SET_SETTINGS_CHANGED_STATE, payload: true });
+
+    return () => dispatch({ type: ACTIONS.SET_SETTINGS_CHANGED_STATE, payload: false });
 
   }, [ state.settingsData ]);
 
@@ -319,14 +308,6 @@ export default function Settings(props) {
     });
   }
 
-  const saveSettingsToLocalStorage = () => {
-    localStorage.setItem("settings", JSON.stringify(state.settingsData));
-  }
-
-  const restoreSettingFromLocalStorage = () => {
-    dispatch({ type: ACTIONS.LOAD_SETTINGS });
-  }
-
   const confirmClearAllProducts = () => {
     dispatch({ type: ACTIONS.SET_CLEAR_ALL_PRODUCTS, payload: false });
     clearDatabase("productList");
@@ -339,12 +320,6 @@ export default function Settings(props) {
   const confirmClearAllSeries = () => {
     dispatch({ type: ACTIONS.SET_CLEAR_ALL_SERIES, payload: false });
     clearDatabase("seriesList");
-
-    Object.keys(localStorage).forEach(key => {
-      let value = JSON.parse(localStorage.getItem(key));
-      if (value.exerciseId >= 0)
-        localStorage.removeItem(key);
-    });
   }
 
   const cancelClearAllSeries = () => {
@@ -365,8 +340,8 @@ export default function Settings(props) {
 
     dispatch({ type: ACTIONS.SET_SETTINGS_CHANGED_STATE, payload: false });
     saveSettingsToDatabase();
+    getSettingsFromDatabase();
     resetOptionsStates();
-    props.updateGauges();
   }
 
   const handleSettingsCanceled = (e) => {
@@ -374,14 +349,12 @@ export default function Settings(props) {
     getSettingsFromDatabase();
     resetOptionsStates();
     props.closeWindow();
-    props.updateGauges();
   }
 
   const handleSettingsReset = (e) => {
     e.preventDefault();
     getSettingsFromDatabase();
     resetOptionsStates();
-    props.updateGauges();
   }
 
   const handleExerciseChoosing = (e) => {
@@ -419,7 +392,6 @@ export default function Settings(props) {
     }
     
     if (isNumber.test(e.target.value[e.target.value.length - 1])) {
-
       if (isZero.test(e.target.value)) {
         dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: e.target.id, value: 1 }});
         dispatch({ type: ACTIONS.SET_WARNING, payload: e.target.id });
@@ -433,8 +405,6 @@ export default function Settings(props) {
       dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: e.target.id, value: "" }});
       dispatch({ type: ACTIONS.SET_WARNING, payload: e.target.id });
     }
-
-    props.updateGauges();
   }
 
   const handleCheckboxOnClick = (e) => {
@@ -447,7 +417,7 @@ export default function Settings(props) {
     dispatch({type: ACTIONS.SET_CATEGORY, payload: { category: 'isNutritionCategory', value: false }});
     dispatch({type: ACTIONS.SET_CATEGORY, payload: { category: 'isTrainingCategory', value: false }});
     dispatch({type: ACTIONS.SET_CATEGORY, payload: { category: e.target.id, value: true }});
-    restoreSettingFromLocalStorage();
+    getSettingsFromDatabase();
     resetOptionsStates();
   }
 

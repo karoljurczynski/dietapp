@@ -499,7 +499,7 @@ export default function Exercise(props) {
     disableVisibilityIfEnabled(state.isRemoveWindowOpened, ACTIONS.NEGATE_REMOVE_WINDOW_STATE);
     disableVisibilityIfEnabled(state.isMoreWindowOpened, ACTIONS.NEGATE_MORE_WINDOW_STATE);
 
-  }, [ props.dateIds ]);
+  }, [ props.userId, props.dateIds ]);
 
   // DISABLES POINTER EVENTS WHEN ONE OF FORM WINDOWS IS OPENED 
   useEffect(() => {

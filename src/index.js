@@ -88,7 +88,7 @@ const initialState = {
     },
 
     nutrition: {
-      dailyDemand: { kcal: 0, proteins: 0, fats: 0, carbs: 0 },
+      dailyDemand: { kcal: 2000, proteins: 120, fats: 55, carbs: 240 },
       namesOfMeals: { 0: "Breakfast", 1: "II Breakfast", 2: "Lunch", 3: "Snack", 4: "Dinner", 5: "", 6: "", 7: "", 8: "", 9: "" },
       numberOfMeals: 5
     },
@@ -228,6 +228,38 @@ function App() {
 
   // EFFECTS
 
+  // GET USER NAME AND STATUS FROM COOKIE
+  useEffect(() => {
+    // IF COOKIE EXIST THEN LOAD IT
+    if (document.cookie) {
+      const cookie = document.cookie.split(";");  // user=default; status=Log in
+      let cookieData = {};
+
+      cookie.forEach(data => {
+        let key = data.split("=")[0];
+        let value = data.split("=")[1];
+        cookieData[key.trim()] = value.trim();
+      });
+  
+      dispatch({ type: ACTIONS.SET_USER_STATUS, payload: cookieData.status });
+      dispatch({ type: ACTIONS.SET_USER_ID, payload: cookieData.user });
+    }
+
+    // IF COOKIE NOT EXIST THEN MAKE IT WITH DEFAULT DATA
+    else {
+      document.cookie = "user=" + state.userId;
+      document.cookie = "status=" + state.userStatus;
+    }
+    
+  }, []);
+
+  // UPDATE COOKIE DATA AFTER CHANGE OF USER STATUS
+  useEffect(() => {
+    document.cookie = "user=" + state.userId;
+    document.cookie = "status=" + state.userStatus;
+
+  }, [ state.userStatus, state.userId ]);
+
   // WINDOW WIDTH STUFF
   useEffect(() => {
 
@@ -281,49 +313,17 @@ function App() {
     catch (e) {
       console.error(e);
     }
-    updateGauges();
   }
 
   // LOADS SETTINGS
   useEffect(() => {
-    if (state.userStatus === "Logged") {
+    if (state.userStatus === "Logged")
       getSettingsFromDatabase();
-    }
-
-  }, [ state.userStatus ]);
-
-  // GET USER NAME AND STATUS FROM COOKIE
-  useEffect(() => {
-
-    // IF COOKIE EXIST THEN LOAD IT
-    if (document.cookie) {
-      const cookie = document.cookie.split(";");  // user=default; status=Log in
-      let cookieData = {};
-
-      cookie.forEach(data => {
-        let key = data.split("=")[0];
-        let value = data.split("=")[1];
-        cookieData[key.trim()] = value.trim();
-      });
-  
-      dispatch({ type: ACTIONS.SET_USER_STATUS, payload: cookieData.status });
-      dispatch({ type: ACTIONS.SET_USER_ID, payload: cookieData.user });
-    }
-
-    // IF COOKIE NOT EXIST THEN MAKE IT WITH DEFAULT DATA
     else {
-      document.cookie = "user=" + state.userId;
-      document.cookie = "status=" + state.userStatus;
+      dispatch({ type: ACTIONS.SET_NEW_SETTINGS, payload: initialState.settingsData });
     }
-    
-  }, []);
-
-  // UPDATE COOKIE DATA AFTER CHANGE OF USER STATUS
-  useEffect(() => {
-    document.cookie = "user=" + state.userId;
-    document.cookie = "status=" + state.userStatus;
-
-  }, [ state.userStatus, state.userId ]);
+      
+  }, [ state.userStatus ]);
 
   // BLURING AND DISABLING POINTER EVENTS ON BACKGROUND AFTER LOG IN WINDOW MOUNTING 
   useEffect(() => {
@@ -410,8 +410,6 @@ function App() {
 
     dispatch({type: ACTIONS.CHANGE_PAGE_TITLE, payload: newPageTitle });
     dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: false });
-    dispatch({ type: ACTIONS.LOAD_SETTINGS });
-    updateGauges();
   }
 
   const handleMenu = (categoryTitle) => {
@@ -443,10 +441,6 @@ function App() {
     else {
       dispatch({ type: ACTIONS.SET_WINDOW, payload: { window: "isLoginWindowEnabled", value: true } });
     }
-  }
-
-  const saveSettingsToLocalStorage = () => {
-    localStorage.setItem("settings", JSON.stringify(state.settingsData));
   }
 
   const closeLoginWindow = () => {

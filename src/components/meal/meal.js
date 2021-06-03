@@ -204,15 +204,6 @@ export default function Meal(props) {
 
         if (props.userId.length > 1)
           removeProductsFromDatabase(checkedIdList);
-
-        checkedIdList.forEach(checkedId => {
-          newProductList.forEach((product, index) => {
-            if (Number(product.id) === Number(checkedId)) {
-              newProductList.splice(index, 1);
-              localStorage.removeItem(product.id);
-            }
-          });
-        });
         
         return {...state, productList: newProductList};
       }
@@ -296,7 +287,7 @@ export default function Meal(props) {
     disableVisibilityIfEnabled(state.isAddingWindowOpened, ACTIONS.NEGATE_ADDING_WINDOW_STATE);
     disableVisibilityIfEnabled(state.isRemovingWindowOpened, ACTIONS.NEGATE_REMOVING_WINDOW_STATE);
 
-  }, [ props.dateIds ])
+  }, [ props.userId, props.dateIds ])
 
   // SENDS DATA FROM MEAL TO GAUGES
   useEffect(() => { 

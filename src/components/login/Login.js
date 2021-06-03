@@ -115,8 +115,7 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
 
     if (isPasswordsCorrect) {
       addUser();
-      setUserStatus("Logged");
-      closeWindow();
+      dispatch({ type: ACTIONS.NEGATE_SIGN_UP_WINDOW });
     }
 
     else
@@ -131,19 +130,6 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
         email: state.formData.signUpEmail
       });
       
-      try {
-        const querySnapshot = await getDocs(collection(db, "users"));
-        querySnapshot.forEach(user => {
-          if (user.data().username === state.formData.signUpUsername) {
-            if (user.data().password === state.formData.signUpPassword)
-              setUserId(user.id);
-          }
-        });
-      }
-  
-      catch (e) {
-        console.error(e);
-      }
     } 
     catch (e) {
       console.error(e);
@@ -151,38 +137,38 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
   }
 
   const handleLoginUser = async () => {
-    if (await logInUser()) {
-      setUserStatus("Logged");
-      closeWindow();
-    }
-
-    else
-      clearFormData(); 
+    await logInUser();  
   }
 
   const logInUser = async () => {
-    let status = false;
+    let isLoggedSuccessfully = false;
     try {
       const querySnapshot = await getDocs(collection(db, "users"));
       querySnapshot.forEach(user => {
         if (user.data().username === state.formData.logInUsername) {
           if (user.data().password === state.formData.logInPassword) {
-            status = true;
+            isLoggedSuccessfully = true;
             setUserId(user.id);
+            setUserStatus("Logged");
+            closeWindow();
           }
-          else
-            status = false;
+          else {
+            isLoggedSuccessfully = false;
+            clearFormData();
+          }   
         }
 
-        else
-          status = false;
+        else {
+          isLoggedSuccessfully = false;
+          clearFormData(); 
+        }
       });
     }
 
     catch (e) {
       console.error(e);
     }
-    return status;
+    return isLoggedSuccessfully;
   }
 
   const handleLogoutUser = (e) => {
@@ -342,6 +328,8 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
 
                 <section className="window__main__login-options">
                   <span className="window__main__login-options__line">{`Already had an account? `}
+                  </span>
+                  <span className="window__main__login-options__line">
                     <a className="window__main__login-options__line__link" onClick={ handleFormTypeChanging } href="">Log in</a>
                   </span>
                 </section>
@@ -376,6 +364,8 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
 
                 <section className="window__main__login-options">
                   <span className="window__main__login-options__line">{`Don't have an account? `}
+                  </span>
+                  <span className="window__main__login-options__line">
                     <a className="window__main__login-options__line__link" onClick={ handleFormTypeChanging } href="">Sign up</a>
                   </span>
                 </section>
