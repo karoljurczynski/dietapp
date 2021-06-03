@@ -29,6 +29,7 @@
 
   &__logo-container {
     @include flexSetup(column, center, space-between);
+    cursor: pointer;
     width: 55%;
 
     &__logo {

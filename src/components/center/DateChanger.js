@@ -178,7 +178,7 @@ export default function DateChanger(props) {
 
       <button 
         className="center-section__top__date-changer__previous-button"
-        onClick={ handlePreviousButton }>
+        onClick={ props.userStatus === "Log in" ? props.loginShortcut : handlePreviousButton }>
         <FaChevronCircleLeft />
       </button>
 
@@ -186,7 +186,7 @@ export default function DateChanger(props) {
 
       <button 
         className="center-section__top__date-changer__next-button"
-        onClick={ handleNextButton }>
+        onClick={ props.userStatus === "Log in" ? props.loginShortcut : handleNextButton }>
         <FaChevronCircleRight />
       </button>
 

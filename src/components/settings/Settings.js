@@ -5,6 +5,9 @@ import ReactDOM from 'react-dom';
 import { FaChevronCircleLeft, FaSave } from 'react-icons/fa';
 import { exercises } from '../../exercisesList';
 
+import { db } from '../../index'; 
+import { collection, getDocs, setDoc, doc } from "firebase/firestore";
+
 
 // VARIABLES
 
@@ -54,7 +57,8 @@ const ACTIONS = {
   SET_SETTINGS_CHANGED_STATE: 'set-settings-changed-state',
   RESET_NUTRITION_SETTINGS_TO_INITIAL: 'reset-nutrition-settings-to-initial',
   RESET_TRAINING_SETTINGS_TO_INITIAL: 'reset-training-settings-to-initial',
-  SET_CATEGORY: 'set-category'
+  SET_CATEGORY: 'set-category',
+  SET_NEW_SETTINGS: 'set-new-settings'
 }
 
 const warnings = {
@@ -107,6 +111,10 @@ export default function Settings(props) {
       case ACTIONS.LOAD_SETTINGS: {
         let newSettings = JSON.parse(localStorage.getItem("settings"));
         return {...state, settingsData: newSettings }
+      }
+
+      case ACTIONS.SET_NEW_SETTINGS: {
+        return { ...state, settingsData: action.payload }
       }
 
       case ACTIONS.SET_CLEAR_ALL_PRODUCTS: {
@@ -179,15 +187,69 @@ export default function Settings(props) {
   // EFFECTS
 
   // SEARCH FOR SETTINGS IN LOCALSTORAGE
-  useEffect(() => {
-    const localStorageKeys = Object.keys(localStorage);
+  const saveSettingsToDatabase = async () => {
+    try {
+      await setDoc(doc(db, "users", String(props.userId)), {
+        settings: state.settingsData
+      }, 
+      { merge: true });
+    }
+    catch (e) {
+      console.error(e);
+    }
+  }
 
-    if (localStorageKeys.includes("settings"))
-      dispatch({ type: ACTIONS.LOAD_SETTINGS });   
-    else
-      saveSettingsToLocalStorage(); 
+  const clearDatabase = async (data) => {
+    try {
+      await setDoc(doc(db, "users", String(props.userId)), {
+        [data]: []
+      }, 
+      { merge: true });
+    }
+    catch (e) {
+      console.error(e);
+    }
+  }
+
+  const getSettingsFromDatabase = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "users"));
+      querySnapshot.forEach(user => {
+        if (user.id === props.userId) {
+          if (user.data().settings) {
+            console.log(user.data().settings);
+            dispatch({ type: ACTIONS.SET_NEW_SETTINGS, payload: user.data().settings });
+          }
+            
+          else
+            saveSettingsToDatabase();
+        }
+      });
+    }
+
+    catch (e) {
+      console.error(e);
+    }
+  }
+  useEffect(() => {
+    if (props.userStatus === "Guest") {
+      const localStorageKeys = Object.keys(localStorage);
+      if (localStorageKeys.includes("settings"))
+        dispatch({ type: ACTIONS.LOAD_SETTINGS });   
+      else
+        saveSettingsToLocalStorage();
+    }
+    if (props.userStatus === "Logged") {
+      saveSettingsToLocalStorage();
+      getSettingsFromDatabase();
+    }
 
   }, []);
+
+  // LOADS SETTINGS FROM DATABASE
+  useEffect(() => {
+    getSettingsFromDatabase();
+  }, [])
 
   // BLURING AND DISABLING POINTER EVENTS ON BACKGROUND AFTER MOUNTING
   useEffect(() => {
@@ -267,12 +329,7 @@ export default function Settings(props) {
 
   const confirmClearAllProducts = () => {
     dispatch({ type: ACTIONS.SET_CLEAR_ALL_PRODUCTS, payload: false });
-
-    Object.keys(localStorage).forEach(key => {
-      let value = JSON.parse(localStorage.getItem(key));
-      if (value.mealId >= 0)
-        localStorage.removeItem(key);
-    });
+    clearDatabase("productList");
   }
 
   const cancelClearAllProducts = () => {
@@ -281,6 +338,7 @@ export default function Settings(props) {
 
   const confirmClearAllSeries = () => {
     dispatch({ type: ACTIONS.SET_CLEAR_ALL_SERIES, payload: false });
+    clearDatabase("seriesList");
 
     Object.keys(localStorage).forEach(key => {
       let value = JSON.parse(localStorage.getItem(key));
@@ -306,14 +364,14 @@ export default function Settings(props) {
       dispatch({ type: ACTIONS.RESET_TRAINING_SETTINGS_TO_INITIAL });
 
     dispatch({ type: ACTIONS.SET_SETTINGS_CHANGED_STATE, payload: false });
-    saveSettingsToLocalStorage();
+    saveSettingsToDatabase();
     resetOptionsStates();
     props.updateGauges();
   }
 
   const handleSettingsCanceled = (e) => {
     e.preventDefault();
-    restoreSettingFromLocalStorage();
+    getSettingsFromDatabase();
     resetOptionsStates();
     props.closeWindow();
     props.updateGauges();
@@ -321,7 +379,7 @@ export default function Settings(props) {
 
   const handleSettingsReset = (e) => {
     e.preventDefault();
-    restoreSettingFromLocalStorage();
+    getSettingsFromDatabase();
     resetOptionsStates();
     props.updateGauges();
   }

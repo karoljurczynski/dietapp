@@ -65,6 +65,7 @@
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
+  cursor: pointer;
   width: 55%;
 }
 .left-section__logo-container__logo {

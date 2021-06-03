@@ -3,6 +3,7 @@
 import { React, useEffect, useReducer } from 'react';
 import './style/exercise.css';
 import './../meal/styles/meal.css';
+
 import AddWindow from '../product_adding_window/ProductAddingWindow';
 import RemoveWindow from '../product_removing_window/ProductRemovingWindow';
 import MoreWindow from '../MoreWindow/MoreWindow';
@@ -21,6 +22,38 @@ export const warnings = {
 // COMPONENT
 
 export default function Exercise(props) {
+
+  // VARIABLES
+
+  const ACTIONS = {
+    NEGATE_EXERCISE_OPENED: 'negate-exercise-opened',
+    NEGATE_ADD_WINDOW_STATE: 'negate-add-window-state',
+    NEGATE_REMOVE_WINDOW_STATE: 'negate-remove-window-state',
+    NEGATE_MORE_WINDOW_STATE: 'negate-more-window-state',
+    SORT_SERIESLIST: 'sort-serieslist',
+    CHANGE_NEW_SERIE_DATA: 'change-new-serie-data',
+    UPDATE_LASTTIME_DATA: 'update-lasttime-data',
+    SET_WARNING: 'set-warning',
+    CLEAR_WARNING: 'clear-warning',
+    ADD_SERIE: 'add-serie',
+    REMOVE_SERIE: 'remove-serie',
+    ADD_SERIE_TO_SERIESLIST: 'add-serie-to-serieslist',
+    CLEAR_SERIESLIST_BEFORE_DAY_CHANGING: 'clear-serieslist-before-day-change'
+  }
+
+  const initialState = {
+    isExerciseOpened: false,
+    isAddWindowOpened: false,
+    isRemoveWindowOpened: false,
+    isMoreWindowOpened: false,
+    lastTimeData: { 
+      training: { weight: "First time", reps: "First time" },
+      serie: { weight: "First time", reps: "First time" } 
+    },
+    seriesList: [],
+    warning: ['', ''],
+    newSerie: { id: 0, exerciseId: props.exerciseId, trainingId: 0, dateIds: { dayId: 0, monthId: 0, yearId: 0 }, serieCount: '', weight: '', reps:'' }
+  }
 
   const removeSeriesFromDatabase = async (selectedSeries, state) => {
     let newSeriesList = [];
@@ -72,22 +105,38 @@ export default function Exercise(props) {
     }
   }
 
-  // VARIABLES
+  const saveSerieInDatabase = async (serie) => {
+    let newSeriesList = [];
 
-  const ACTIONS = {
-    NEGATE_EXERCISE_OPENED: 'negate-exercise-opened',
-    NEGATE_ADD_WINDOW_STATE: 'negate-add-window-state',
-    NEGATE_REMOVE_WINDOW_STATE: 'negate-remove-window-state',
-    NEGATE_MORE_WINDOW_STATE: 'negate-more-window-state',
-    SORT_SERIESLIST: 'sort-serieslist',
-    CHANGE_NEW_SERIE_DATA: 'change-new-serie-data',
-    UPDATE_LASTTIME_DATA: 'update-lasttime-data',
-    SET_WARNING: 'set-warning',
-    CLEAR_WARNING: 'clear-warning',
-    ADD_SERIE: 'add-serie',
-    REMOVE_SERIE: 'remove-serie',
-    ADD_SERIE_TO_SERIESLIST: 'add-serie-to-serieslist',
-    CLEAR_SERIESLIST_BEFORE_DAY_CHANGING: 'clear-serieslist-before-day-change'
+    // CHECKING IF SERIESLIST EXIST
+    try {
+      const querySnapshot = await getDocs(collection(db, "users"));
+      querySnapshot.forEach(user => {
+        if (user.id === props.userId) {
+          if (user.data().seriesList)
+            newSeriesList = user.data().seriesList;
+        }
+      });
+    }
+    catch (e) {
+      console.error(e);
+    }
+
+    // ADDING PRODUCT TO NEW LIST
+    newSeriesList.push(serie);
+
+    // OVERWRITING OLD SERIESLIST USING NEW LIST
+    try {
+      await setDoc(doc(db, "users", String(props.userId)), {
+        seriesList: newSeriesList
+      },
+      { merge: true });
+    }
+    catch (e) {
+      console.error(e);
+    }
+
+    //reloadProductListFromDatabase();
   }
 
   const getPreviousTrainingDate = (previousDateIds) => {
@@ -161,59 +210,26 @@ export default function Exercise(props) {
       potentialPreviousDateIds.monthId = previousDateIds.monthId;
       potentialPreviousDateIds.yearId = previousDateIds.yearId;
     }
-    console.log(potentialPreviousDateIds);
     return potentialPreviousDateIds;
   }
 
-  const initialState = {
-    isExerciseOpened: false,
-    isAddWindowOpened: false,
-    isRemoveWindowOpened: false,
-    isMoreWindowOpened: false,
-    lastTimeData: { 
-      training: { weight: "First time", reps: "First time" },
-      serie: { weight: "First time", reps: "First time" } 
-    },
-    seriesList: [],
-    warning: ['', ''],
-    newSerie: { id: 0, exerciseId: props.exerciseId, trainingId: 0, dateIds: { dayId: 0, monthId: 0, yearId: 0 }, serieCount: '', weight: '', reps:'' }
-  }
-
-  const saveSerieInDatabase = async (serie) => {
-    let newSeriesList = [];
-
-    // CHECKING IF SERIESLIST EXIST
+  const getSerieslistFromDatabase = async () => {
+    let returnedArray = [];
     try {
       const querySnapshot = await getDocs(collection(db, "users"));
       querySnapshot.forEach(user => {
         if (user.id === props.userId) {
           if (user.data().seriesList)
-            newSeriesList = user.data().seriesList;
+            returnedArray = user.data().seriesList;
         }
       });
     }
     catch (e) {
       console.error(e);
     }
-
-    // ADDING PRODUCT TO NEW LIST
-    newSeriesList.push(serie);
-
-    // OVERWRITING OLD SERIESLIST USING NEW LIST
-    try {
-      await setDoc(doc(db, "users", String(props.userId)), {
-        seriesList: newSeriesList
-      },
-      { merge: true });
-    }
-    catch (e) {
-      console.error(e);
-    }
-
-    //reloadProductListFromDatabase();
+    return returnedArray;
   }
 
-  
 
   // HOOKS
 
@@ -331,7 +347,6 @@ export default function Exercise(props) {
       }
 
       case ACTIONS.UPDATE_LASTTIME_DATA: {
-
         let currentlyAddingSerieNumber = 0;
         let indexOfLastSerie = 0;
         let updatedLastSerieData = { weight: "First serie", reps: "First serie" };
@@ -362,7 +377,10 @@ export default function Exercise(props) {
         let previousDateIds = props.dateIds;
       
         // FILTERING LOCAL STORAGE TO SEARCH A EXERCISE WITH CORRECT EXERCISEID AND NUMBER OF SERIE
-        if (Object.keys(localStorage).length !== 0) {
+        if (props.userId.length > 1) {
+
+        }
+        else if (Object.keys(localStorage).length !== 0) {
 
           Object.keys(localStorage).forEach(key => {
             let value = JSON.parse(localStorage.getItem(key));
@@ -686,7 +704,7 @@ export default function Exercise(props) {
   return (
     <div className="meal exercise" style={ (state.isExerciseOpened && window.innerWidth > 768) ? {left: '-10px'} : {left: '0px'} }>
       
-      <section className="meal__top-section exercise__top-section" onClick={ handleExerciseOpening }>
+      <section className="meal__top-section exercise__top-section" onClick={ props.userStatus === "Log in" ? props.loginShortcut : handleExerciseOpening }>
 
         <h2 className="meal__top-section__meal-title">{ props.name }</h2>
 

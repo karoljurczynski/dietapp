@@ -257,47 +257,38 @@ function App() {
 
   }, [state.settingsData]);
 
-  // DISABLES CENTER SECTION FUNCTIONS WITHOUT LOG IN
-  useEffect(() => {
-    const centerSection = document.querySelector(".center-section");
-    if (state.userStatus === "Log in")
-      centerSection.style.pointerEvents = "none";
-    else
-      centerSection.style.pointerEvents = "auto";
 
-  }, [ state.userStatus ])
+  const saveSettingsToDatabase = async (user) => {
+    try {
+      await setDoc(doc(db, "users", String(user.id)), {
+        settings: state.settingsData
+      }, 
+      { merge: true });
+    }
+    catch (e) {
+      console.error(e);
+    }
+  }
+  const getSettingsFromDatabase = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "users"));
+      querySnapshot.forEach(user => {
+        if (user.id === state.userId) {
+          if (user.data().settings)
+            dispatch({ type: ACTIONS.SET_NEW_SETTINGS, payload: user.data().settings });
+          else
+            saveSettingsToDatabase(user);
+        }
+      });
+    }
+
+    catch (e) {
+      console.error(e);
+    }
+  }
 
   // LOADS SETTINGS
   useEffect(() => {
-    const saveSettingsToDatabase = async (user) => {
-      try {
-        await setDoc(doc(db, "users", String(user.id)), {
-          settings: state.settingsData
-        }, 
-        { merge: true });
-      }
-      catch (e) {
-        console.error(e);
-      }
-    }
-    const getSettingsFromDatabase = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "users"));
-        querySnapshot.forEach(user => {
-          if (user.id === state.userId) {
-            if (user.data().settings)
-              dispatch({ type: ACTIONS.SET_NEW_SETTINGS, payload: user.data().settings });
-            else
-              saveSettingsToDatabase(user);
-          }
-        });
-      }
-  
-      catch (e) {
-        console.error(e);
-      }
-    }
-
     if (state.userStatus === "Guest") {
       const localStorageKeys = Object.keys(localStorage);
       if (localStorageKeys.includes("settings"))
@@ -349,7 +340,7 @@ function App() {
     if (state.hamburgerState)
       dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: false });
 
-  }, [ state.isLoginWindowsEnabled, state.isSettingsWindowEnabled, state.isAboutWindowEnabled ]);
+  }, [ state.isLoginWindowEnabled, state.isSettingsWindowEnabled, state.isAboutWindowEnabled ]);
 
   // TRANSFORMS HAMBURGER AND MENU
   useEffect(() => {
@@ -378,13 +369,19 @@ function App() {
         hamburgerLines[1].style.cssText ="left: 10px; background: #7500AF; visibility: visible";
         hamburgerLines[2].style.cssText ="left: 20px; background: #7500AF; width: 8px; transform: rotate(0deg); border-radius: 50%";
         
-        if (!state.isLoginWindowsEnabled && (state.pageTitle === "Dashboard" || state.pageTitle === "Training")) {
+        if (!state.isLoginWindowEnabled && !state.isSettingsWindowEnabled && !state.isAboutWindowEnabled) {
           wrapper.style.filter = "blur(0px) opacity(100%) grayscale(0%)";
           wrapper.style.pointerEvents = "auto";
         }
       }
     }
+    
   }, [ state.hamburgerState ])
+
+  useEffect(() => {
+    getSettingsFromDatabase();
+
+  }, [ state.isSettingsWindowEnabled ])
 
   
   // FUNCTIONS
@@ -428,27 +425,33 @@ function App() {
   }
 
   const handleMenu = (categoryTitle) => {
-    switch (categoryTitle) {
-      case state.userStatus: {
-        dispatch({ type: ACTIONS.SET_WINDOW, payload: { window: "isLoginWindowEnabled", value: true } });
-        break;
+    if (state.userStatus !== "Log in") {
+      switch (categoryTitle) {
+        case state.userStatus: {
+          dispatch({ type: ACTIONS.SET_WINDOW, payload: { window: "isLoginWindowEnabled", value: true } });
+          break;
+        }
+        case "Nutrition": {
+          changePageTitle(categoryTitle);
+          break;
+        }
+        case "Training": {
+          changePageTitle(categoryTitle);
+          break;
+        }
+        case "Settings": {
+          dispatch({ type: ACTIONS.SET_WINDOW, payload: { window: "isSettingsWindowEnabled", value: true } });
+          break;
+        }
+        case "About": {
+          dispatch({ type: ACTIONS.SET_WINDOW, payload: { window: "isAboutWindowEnabled", value: true } });
+          break;
+        }
       }
-      case "Nutrition": {
-        changePageTitle(categoryTitle);
-        break;
-      }
-      case "Training": {
-        changePageTitle(categoryTitle);
-        break;
-      }
-      case "Settings": {
-        dispatch({ type: ACTIONS.SET_WINDOW, payload: { window: "isSettingsWindowEnabled", value: true } });
-        break;
-      }
-      case "About": {
-        dispatch({ type: ACTIONS.SET_WINDOW, payload: { window: "isAboutWindowEnabled", value: true } });
-        break;
-      }
+    }
+
+    else {
+      dispatch({ type: ACTIONS.SET_WINDOW, payload: { window: "isLoginWindowEnabled", value: true } });
     }
   }
 
@@ -506,11 +509,12 @@ function App() {
 
     }
 
-    { state.isSettingsWindowEnabled  &&
+    { state.isSettingsWindowEnabled &&
   
           <Settings 
             initialData={ initialState.settingsData }
-            updateGauges={ updateGauges } 
+            updateGauges={ updateGauges }
+            userId={ state.userId } 
             closeWindow={ closeSettingsWindow } 
           />
 
@@ -577,7 +581,10 @@ function App() {
           <h3 className="center-section__top__title">{ state.pageTitle }</h3>
 
           { ((state.pageTitle === 'Dashboard') || (state.pageTitle === 'Training')) && 
-            <DateChanger changeDate={ updateDateIds } />
+            <DateChanger 
+              changeDate={ updateDateIds } 
+              loginShortcut={ loginShortcut }
+              userStatus={ state.userStatus } />
           }
 
         </section>
@@ -592,6 +599,7 @@ function App() {
               <Exercise
                 key={ selectedExerciseId }
                 userId={ state.userId }
+                userStatus={ state.userStatus }
                 exerciseId={ selectedExerciseId } 
                 dateIds={ state.dateIds } 
                 name={ exercises[selectedExerciseId].name } 
@@ -599,7 +607,8 @@ function App() {
                 description={ exercises[selectedExerciseId].description } 
                 muscles={ exercises[selectedExerciseId].muscles } 
                 typeOfExercise={ exercises[selectedExerciseId].typeOfExercise } 
-                properFormLink={ exercises[selectedExerciseId].properFormLink }>
+                properFormLink={ exercises[selectedExerciseId].properFormLink }
+                loginShortcut={ loginShortcut }>
               </Exercise>
             )})
         }
@@ -608,7 +617,7 @@ function App() {
 
           Object.values(state.settingsData.nutrition.namesOfMeals).map((meal, index) => {
             if (state.settingsData.nutrition.numberOfMeals > index)
-              return <Meal key={ index } userId={ state.userId } name={ meal } mealId={ index } dateIds={ state.dateIds } updateGauges={ updateMealSummary } />
+              return <Meal key={ index } userId={ state.userId } userStatus={ state.userStatus } name={ meal } mealId={ index } dateIds={ state.dateIds } updateGauges={ updateMealSummary } loginShortcut={ loginShortcut } />
             })
 
         }

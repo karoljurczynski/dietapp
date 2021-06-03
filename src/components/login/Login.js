@@ -105,12 +105,6 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
     dispatch({ type: ACTIONS.NEGATE_SIGN_UP_WINDOW });
   }
 
-  const handleTryAsGuest = (e) => {
-    e.preventDefault();
-    setUserStatus("Guest");
-    closeWindow();
-  }
-
   const handlePrimaryButton = (e) => {
     e.preventDefault();
     state.isSignUpWindow ? handleSignUpUser() : handleLoginUser();
@@ -299,14 +293,14 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
             ? <main className="window__main">
 
                 <span className="window__main__input-line">
-                  <label className="window__main__input-line__label" htmlFor="signUpUsername">Login</label>
+                  <label className="window__main__input-line__label" htmlFor="signUpUsername">Username</label>
                   <input 
                     className="window__main__input-line__input" 
                     type="text" 
                     id="signUpUsername" 
                     value={ state.formData.signUpUsername }
                     onChange={ handleOnChange } 
-                    placeholder="Type anything or try as guest">
+                    placeholder="">
                   </input>
                 </span>
 
@@ -318,7 +312,7 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
                     id="signUpEmail" 
                     value={ state.formData.signUpEmail } 
                     onChange={ handleOnChange } 
-                    placeholder="Type anything or try as guest">
+                    placeholder="">
                   </input>
                 </span>
 
@@ -330,7 +324,7 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
                     id="signUpPassword" 
                     value={ state.formData.signUpPassword } 
                     onChange={ handleOnChange } 
-                    placeholder="Type anything or try as guest">
+                    placeholder="">
                   </input>
                 </span>
 
@@ -342,7 +336,7 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
                     id="signUpConfirmPassword" 
                     value={ state.formData.signUpConfirmPassword }
                     onChange={ handleOnChange } 
-                    placeholder="Type anything or try as guest">
+                    placeholder="">
                   </input>
                 </span>
 
@@ -350,16 +344,7 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
                   <span className="window__main__login-options__line">{`Already had an account? `}
                     <a className="window__main__login-options__line__link" onClick={ handleFormTypeChanging } href="">Log in</a>
                   </span>
-
-                  <span className="window__main__login-options__line">{`or `}
-                    <a className="window__main__login-options__line__link" onClick={ handleTryAsGuest } href="">Try as guest</a>
-                  </span>
                 </section>
-
-                <section className="window__main__login-options">
-                  <span className="window__main__login-options__line" style={{ color: "red" }}>Work in progress</span>
-                </section>
-
               </main>
 
             : <main className="window__main">
@@ -372,7 +357,7 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
                     id="logInUsername" 
                     value={ state.formData.logInUsername } 
                     onChange={ handleOnChange } 
-                    placeholder="Type anything or try as guest">
+                    placeholder="">
                   </input>
                 </span>
 
@@ -384,7 +369,7 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
                     id="logInPassword" 
                     value={ state.formData.logInPassword } 
                     onChange={ handleOnChange } 
-                    placeholder="Type anything or try as guest">
+                    placeholder="">
                   </input>
                   <a className="window__main__input-line__link" href="" onClick={ handleForgottenPassword }>Forgot your password?</a>
                 </span>
@@ -393,16 +378,7 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
                   <span className="window__main__login-options__line">{`Don't have an account? `}
                     <a className="window__main__login-options__line__link" onClick={ handleFormTypeChanging } href="">Sign up</a>
                   </span>
-
-                  <span className="window__main__login-options__line">{`or `}
-                    <a className="window__main__login-options__line__link" onClick={ handleTryAsGuest } href="">Try as guest</a>
-                  </span>
                 </section>
-
-                <section className="window__main__login-options">
-                  <span className="window__main__login-options__line" style={{ color: "red" }}>Work in progress</span>
-                </section>
-
               </main>
           }
           

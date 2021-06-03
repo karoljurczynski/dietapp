@@ -471,7 +471,7 @@ export default function Meal(props) {
 
   return (
     <div className="meal" style={ (state.isMealOpened && window.innerWidth > 768) ? {left: '-10px'} : {left: '0px'} }>
-      <section className="meal__top-section" onClick={ handleMealOpening }>
+      <section className="meal__top-section" onClick={ props.userStatus === "Log in" ? props.loginShortcut : handleMealOpening }>
         
         <h2 className="meal__top-section__meal-title">{props.name}</h2>        
         
