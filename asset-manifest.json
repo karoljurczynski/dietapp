@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/dietapp/static/css/main.e7926aaa.chunk.css",
-    "main.js": "/dietapp/static/js/main.a2007e42.chunk.js",
-    "main.js.map": "/dietapp/static/js/main.a2007e42.chunk.js.map",
+    "main.js": "/dietapp/static/js/main.9c2ff805.chunk.js",
+    "main.js.map": "/dietapp/static/js/main.9c2ff805.chunk.js.map",
     "runtime-main.js": "/dietapp/static/js/runtime-main.7d24b099.js",
     "runtime-main.js.map": "/dietapp/static/js/runtime-main.7d24b099.js.map",
     "static/js/2.6048c9cc.chunk.js": "/dietapp/static/js/2.6048c9cc.chunk.js",
@@ -17,6 +17,6 @@
     "static/js/runtime-main.7d24b099.js",
     "static/js/2.6048c9cc.chunk.js",
     "static/css/main.e7926aaa.chunk.css",
-    "static/js/main.a2007e42.chunk.js"
+    "static/js/main.9c2ff805.chunk.js"
   ]
 }
