@@ -135,7 +135,6 @@ export default function DateChanger(props) {
   }
 
   const changePreviousDay = () => {
-
     if (isDayFirstInJanuary()) {
       setCurrentDay(31);
       setCurrentMonth(12);

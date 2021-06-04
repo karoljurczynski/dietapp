@@ -52,7 +52,7 @@
         }
 
         &__count {
-          width: 40%;
+          width: 100%;
           @include flexSetup(column, flex-start, flex-start);
 
           & > * {

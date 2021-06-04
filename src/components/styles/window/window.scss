@@ -53,7 +53,7 @@
       position: absolute;
       cursor: pointer;
       display: none;
-      width: 1.6rem;
+      width: 1.4rem;
       top: 20px;
       background: transparent;
 
@@ -416,6 +416,8 @@
     width: 100%;
     min-height: 100vh;
     max-height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100);
+    max-height: calc(var(--vh, 1vh) * 100);
     min-width: 360px;
     top: 0;
     left: 0;
@@ -464,10 +466,16 @@
     }
     &__form {
       min-height: calc(100vh - 125px);
+      min-height: calc(calc(var(--vh, 1vh) * 100) - 125px);
     }
 
     &__main {
       height: 100%;
+      &__input-line {
+        &__input {
+          font-size: 1rem;
+        }
+      }
 
       &__section {
         &--halfed {

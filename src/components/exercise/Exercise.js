@@ -93,7 +93,7 @@ export default function Exercise(props) {
       serieCount++;
     });
 
-    // OVERWRITING PRODUCTLIST USING NEW
+    // OVERWRITING PRODUCTLIST USING NEW LIST
     try {
       await setDoc(doc(db, "users", String(props.userId)), {
         seriesList: newSeriesList
@@ -122,7 +122,6 @@ export default function Exercise(props) {
       console.error(e);
     }
 
-    // ADDING PRODUCT TO NEW LIST
     newSeriesList.push(serie);
 
     // OVERWRITING OLD SERIESLIST USING NEW LIST
@@ -135,8 +134,6 @@ export default function Exercise(props) {
     catch (e) {
       console.error(e);
     }
-
-    //reloadProductListFromDatabase();
   }
 
   const getPreviousTrainingDate = (previousDateIds) => {
@@ -213,24 +210,7 @@ export default function Exercise(props) {
     return potentialPreviousDateIds;
   }
 
-  const getSerieslistFromDatabase = async () => {
-    let returnedArray = [];
-    try {
-      const querySnapshot = await getDocs(collection(db, "users"));
-      querySnapshot.forEach(user => {
-        if (user.id === props.userId) {
-          if (user.data().seriesList)
-            returnedArray = user.data().seriesList;
-        }
-      });
-    }
-    catch (e) {
-      console.error(e);
-    }
-    return returnedArray;
-  }
-
-
+  
   // HOOKS
 
   const reducer = (state, action) => {
@@ -260,28 +240,27 @@ export default function Exercise(props) {
       }
 
       case ACTIONS.ADD_SERIE: {
-        const updatedSeriesList = state.seriesList;
+        const newSeriesList = state.seriesList;
         let serieCount = 1;
-        
-        // ADDING SERIE TO SERIESLIST
         state.newSerie.id = Date.now();
         state.newSerie.dateIds = props.dateIds;
-        updatedSeriesList.push(state.newSerie);
+
+        // SAVING IN DATABASE
+        saveSerieInDatabase(state.newSerie);
+        
+        // SAVING IN STATE
+        newSeriesList.push(state.newSerie);
 
         // SERIE ORDER COUNTING
-        updatedSeriesList.forEach(serie => {
+        newSeriesList.forEach(serie => {
           serie.serieCount = serieCount;
           serieCount++;
         });
 
-        // SAVING CHANGES IN LOCAL STORAGE
-        localStorage.setItem(state.newSerie.id, JSON.stringify(state.newSerie));
-        saveSerieInDatabase(state.newSerie);
-
         return {
           ...state,
           newSerie: { id: 0, exerciseId: props.exerciseId, dateIds: { dayId: 0, monthId: 0, yearId: 0 }, serieCount: '', weight: '', reps: '' },
-          seriesList: updatedSeriesList };
+          seriesList: newSeriesList };
       }
 
       case ACTIONS.REMOVE_SERIE: {
@@ -289,23 +268,22 @@ export default function Exercise(props) {
         let checkedIdList = action.payload;
         let serieCount = 1;
 
-        if (props.userId.length > 1)
-          removeSeriesFromDatabase(checkedIdList, updatedSeriesList);
-        
-        checkedIdList.forEach(checkedId => {
+        // DELETING SERIES PRODUCTS
+        checkedIdList.forEach(selectedId => {
           updatedSeriesList.forEach((serie, index) => {
-            localStorage.removeItem(serie.id);
-            if (Number(serie.id) === Number(checkedId))
+            if (Number(serie.id) === Number(selectedId)) {
               updatedSeriesList.splice(index, 1);
+            }
           });
         });
 
         // SERIE ORDER COUNTING
         updatedSeriesList.forEach(serie => {
           serie.serieCount = serieCount;
-          localStorage.setItem(serie.id, JSON.stringify(serie));
           serieCount++;
         });
+
+        removeSeriesFromDatabase(checkedIdList, updatedSeriesList);
 
         return { ...state, seriesList: updatedSeriesList };
       }
@@ -356,44 +334,38 @@ export default function Exercise(props) {
 
         // SEARCHING FOR LAST SERIE NUMBER
         if (state.seriesList.length !== 0) {
-
           state.seriesList.forEach((serie, index) => {
             if (serie.serieCount > currentlyAddingSerieNumber) {
               currentlyAddingSerieNumber = serie.serieCount;
               indexOfLastSerie = index;
             }
           });
-
+  
           updatedLastSerieData = { 
             weight: state.seriesList[indexOfLastSerie].weight,
             reps: state.seriesList[indexOfLastSerie].reps 
           };
         }
-      
+        
         // LAST TRAINING DATA
 
         const potentialSeries = [];
+        const seriesBackup = JSON.parse(localStorage.getItem("seriesBackup"));
         let previousTrainingSerie = {};
         let previousDateIds = props.dateIds;
       
-        // FILTERING LOCAL STORAGE TO SEARCH A EXERCISE WITH CORRECT EXERCISEID AND NUMBER OF SERIE
-        if (props.userId.length > 1) {
-
-        }
-        else if (Object.keys(localStorage).length !== 0) {
-
-          Object.keys(localStorage).forEach(key => {
-            let value = JSON.parse(localStorage.getItem(key));
-
-            if (value.exerciseId === props.exerciseId) {
-              if (value.serieCount === currentlyAddingSerieNumber + 1) {
+        // SELECTING POTENTIAL SERIES WITH CORRECT ID AND SERIE NUMBER
+        if (seriesBackup.length !== 0) {
+          seriesBackup.forEach(serie => {
+            if (serie.exerciseId === props.exerciseId) {
+              if (serie.serieCount === currentlyAddingSerieNumber + 1) {
                 if (
-                  (value.dateIds.dayId < props.dateIds.dayId) && (value.dateIds.monthId < props.dateIds.monthId) && (value.dateIds.yearId === props.dateIds.yearId) ||
-                  (value.dateIds.dayId < props.dateIds.dayId) && (value.dateIds.monthId === props.dateIds.monthId) && (value.dateIds.yearId === props.dateIds.yearId) ||
-                  (value.dateIds.dayId >= props.dateIds.dayId) && (value.dateIds.monthId < props.dateIds.monthId) && (value.dateIds.yearId === props.dateIds.yearId) ||
-                  (value.dateIds.dayId >= props.dateIds.dayId) && (value.dateIds.monthId >= props.dateIds.monthId) && (value.dateIds.yearId < props.dateIds.yearId)
+                  (serie.dateIds.dayId < props.dateIds.dayId) && (serie.dateIds.monthId < props.dateIds.monthId) && (serie.dateIds.yearId === props.dateIds.yearId) ||
+                  (serie.dateIds.dayId < props.dateIds.dayId) && (serie.dateIds.monthId === props.dateIds.monthId) && (serie.dateIds.yearId === props.dateIds.yearId) ||
+                  (serie.dateIds.dayId >= props.dateIds.dayId) && (serie.dateIds.monthId < props.dateIds.monthId) && (serie.dateIds.yearId === props.dateIds.yearId) ||
+                  (serie.dateIds.dayId >= props.dateIds.dayId) && (serie.dateIds.monthId >= props.dateIds.monthId) && (serie.dateIds.yearId < props.dateIds.yearId)
                 )
-                  potentialSeries.push(value);
+                  potentialSeries.push(serie);
               }
             }
           });
@@ -401,12 +373,14 @@ export default function Exercise(props) {
           if (potentialSeries.length !== 0) {
             while (true) {
               previousDateIds = getPreviousTrainingDate(previousDateIds);
-  
               potentialSeries.forEach(serie => {
-                if (JSON.stringify(previousDateIds) === JSON.stringify(serie.dateIds))
-                  previousTrainingSerie = serie;
+                if ((previousDateIds.dayId === serie.dateIds.dayId) &&
+                    (previousDateIds.monthId === serie.dateIds.monthId) &&
+                    (previousDateIds.yearId === serie.dateIds.yearId)) {
+                      previousTrainingSerie = serie;
+                }
               });
-  
+
               if (previousTrainingSerie.weight !== undefined) {
                 updatedLastTrainingData = { 
                   weight: previousTrainingSerie.weight,
@@ -430,9 +404,21 @@ export default function Exercise(props) {
     }
   }
   const [state, dispatch] = useReducer(reducer, initialState);
-
-  const reloadSeriesListFromDatabase = async () => {
+  
+  const clearSeriesList = () => {
     dispatch({ type: ACTIONS.CLEAR_SERIESLIST_BEFORE_DAY_CHANGING });
+  }
+
+  const sortSeriesList = () => {
+    dispatch({ type: ACTIONS.SORT_SERIESLIST });
+  }
+
+  const updateLastTimeData = () => {
+    dispatch({ type: ACTIONS.UPDATE_LASTTIME_DATA });
+  }
+
+  const loadSeriesListFromDatabase = async () => {
+    clearSeriesList();
     try {
       const querySnapshot = await getDocs(collection(db, "users"));
       querySnapshot.forEach(user => {
@@ -441,8 +427,9 @@ export default function Exercise(props) {
             user.data().seriesList.forEach(serie => {
               if (serie.exerciseId === props.exerciseId && ((serie.dateIds.dayId === props.dateIds.dayId) &&
                                             (serie.dateIds.monthId === props.dateIds.monthId) &&
-                                            (serie.dateIds.yearId === props.dateIds.yearId)))
-                dispatch({ type: ACTIONS.ADD_SERIE_TO_SERIESLIST, payload: serie });
+                                            (serie.dateIds.yearId === props.dateIds.yearId))) {
+                  dispatch({ type: ACTIONS.ADD_SERIE_TO_SERIESLIST, payload: serie });
+              }
             });
           }
         }
@@ -457,35 +444,20 @@ export default function Exercise(props) {
 
   // EFFECTS
 
-  // LOADS DATA FROM LOCAL STORAGE AFTER DAY CHANGE
+  // LOADS SERIES FROM DATABASE
   useEffect(() => {
-    if (props.userId.length > 1) {
-      reloadSeriesListFromDatabase();
-    }
-
-    /*else {
-      let localStorageKeys = Object.keys(localStorage);
-
-      localStorageKeys.forEach(key => {
-      let value = JSON.parse(localStorage.getItem(key));
-      if (value.exerciseId === props.exerciseId && ((value.dateIds.dayId === props.dateIds.dayId) &&
-                                            (value.dateIds.monthId === props.dateIds.monthId) &&
-                                            (value.dateIds.yearId === props.dateIds.yearId)))
-        dispatch({ type: ACTIONS.ADD_SERIE_TO_SERIESLIST, payload: value });
-    });
-
-    }
-    */
-    dispatch({ type: ACTIONS.UPDATE_LASTTIME_DATA });
-    dispatch({ type: ACTIONS.SORT_SERIESLIST });
+    clearSeriesList();
+    loadSeriesListFromDatabase();
+    sortSeriesList();
 
   }, [ props.userId, props.dateIds ]);
 
-  // CLEARS SERIESLIST AFTER DATE CHANGE
-  useEffect(() => { 
-    return () => dispatch({ type: ACTIONS.CLEAR_SERIESLIST_BEFORE_DAY_CHANGING });
+  // LOADS SERIES FROM DATABASE
+  useEffect(() => {
+    console.log(state.seriesList);
 
-  }, [ props.userId, props.dateIds ]);
+
+  }, [ state.seriesList ]);
 
   // CLOSES WINDOWS AFTER DATE CHANGE
   useEffect(() => {
@@ -500,6 +472,29 @@ export default function Exercise(props) {
     disableVisibilityIfEnabled(state.isMoreWindowOpened, ACTIONS.NEGATE_MORE_WINDOW_STATE);
 
   }, [ props.userId, props.dateIds ]);
+
+  useEffect(async () => {
+    const getPotentialSeries = async () => {
+      let seriesList = [];
+      try {
+        const querySnapshot = await getDocs(collection(db, "users"));
+        querySnapshot.forEach(user => {
+          if (user.id === props.userId) {
+            if (user.data().seriesList) {
+              seriesList = user.data().seriesList;
+            }
+          }
+        });
+      }
+
+      catch (e) {
+        console.error(e);
+      }
+      return seriesList;
+    }
+    localStorage.setItem("seriesBackup", JSON.stringify(await getPotentialSeries()));
+  
+  }, [ props.dateIds ])
 
   // DISABLES POINTER EVENTS WHEN ONE OF FORM WINDOWS IS OPENED 
   useEffect(() => {
@@ -525,12 +520,13 @@ export default function Exercise(props) {
   }, [ state.isAddWindowOpened, state.isRemoveWindowOpened, state.isMoreWindowOpened ]);
 
   // UPDATES LAST TIME DATA AFTER OPENING CHANGING WINDOWS
+
   useEffect(() => {
     if (state.isAddWindowOpened)
-      dispatch({ type: ACTIONS.UPDATE_LASTTIME_DATA });
+      updateLastTimeData();
     countProgress();
 
-  }, [ state.isAddWindowOpened ]);
+  }, [ state.isAddWindowOpened ])
 
 
   // FUNCTIONS
@@ -554,40 +550,41 @@ export default function Exercise(props) {
 
   const countProgress = () => {
     const potentialTrainings = [];
+    const seriesBackup = JSON.parse(localStorage.getItem("seriesBackup"));
     const lastTrainingData = [];
     let message = {};
     let percentValue = 0;
     let progressValue = 0;
     let previousDateIds = props.dateIds;
     
-    // FILTERING LOCAL STORAGE TO SEARCH A EXERCISE WITH CORRECT EXERCISEID AND NUMBER OF SERIE
-    if (Object.keys(localStorage).length !== 0) {
-
-      Object.keys(localStorage).forEach(key => {
-        let value = JSON.parse(localStorage.getItem(key));
-
-        if (value.exerciseId === props.exerciseId) {
-          if (
-            (value.dateIds.dayId < props.dateIds.dayId) && (value.dateIds.monthId < props.dateIds.monthId) && (value.dateIds.yearId === props.dateIds.yearId) ||
-            (value.dateIds.dayId < props.dateIds.dayId) && (value.dateIds.monthId === props.dateIds.monthId) && (value.dateIds.yearId === props.dateIds.yearId) ||
-            (value.dateIds.dayId >= props.dateIds.dayId) && (value.dateIds.monthId < props.dateIds.monthId) && (value.dateIds.yearId === props.dateIds.yearId) ||
-            (value.dateIds.dayId >= props.dateIds.dayId) && (value.dateIds.monthId >= props.dateIds.monthId) && (value.dateIds.yearId < props.dateIds.yearId)
-          )
-            potentialTrainings.push(value);
+    // SELECTING POTENTIAL SERIES WITH CORRECT ID AND SERIE NUMBER
+    if (seriesBackup.length !== 0) {
+      seriesBackup.forEach(serie => {
+        if (serie.exerciseId === props.exerciseId) {
+            if (
+              (serie.dateIds.dayId < props.dateIds.dayId) && (serie.dateIds.monthId < props.dateIds.monthId) && (serie.dateIds.yearId === props.dateIds.yearId) ||
+              (serie.dateIds.dayId < props.dateIds.dayId) && (serie.dateIds.monthId === props.dateIds.monthId) && (serie.dateIds.yearId === props.dateIds.yearId) ||
+              (serie.dateIds.dayId >= props.dateIds.dayId) && (serie.dateIds.monthId < props.dateIds.monthId) && (serie.dateIds.yearId === props.dateIds.yearId) ||
+              (serie.dateIds.dayId >= props.dateIds.dayId) && (serie.dateIds.monthId >= props.dateIds.monthId) && (serie.dateIds.yearId < props.dateIds.yearId)
+            )
+              potentialTrainings.push(serie);
         }
       });
 
       if (potentialTrainings.length !== 0) {
         while (true) {
           previousDateIds = getPreviousTrainingDate(previousDateIds);
-
           potentialTrainings.forEach(training => {
-            if (JSON.stringify(previousDateIds) === JSON.stringify(training.dateIds))
-              lastTrainingData.push(training); 
+            if ((previousDateIds.dayId === training.dateIds.dayId) &&
+                (previousDateIds.monthId === training.dateIds.monthId) &&
+                (previousDateIds.yearId === training.dateIds.yearId)) {
+                  lastTrainingData.push(training);
+            }
           });
 
-          if (lastTrainingData.length !== 0)
+          if (lastTrainingData.length !== 0) {
             break;
+          }
         }
       }
     }

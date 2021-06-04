@@ -22,7 +22,7 @@ import './components/center/styles/center.css';
 import './components/right/styles/right.css';
 
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, getDocs, setDoc, doc } from "firebase/firestore";
+import { getFirestore, collection, getDocs, setDoc, doc } from "firebase/firestore";
 
 
 // FUNCTIONS
@@ -50,6 +50,7 @@ const ACTIONS = {
   COUNT_GAUGES_DATA: 'count-gauges-data',
   CHANGE_DATE: 'change-date',
   CHANGE_PAGE_TITLE: 'change-page-title',
+  RESET_GAUGES: 'reset-gauges',
   LOAD_SETTINGS: 'load-settings',
   SET_WINDOW: 'set-window',
   SET_USER_STATUS: 'set-user-status',
@@ -172,6 +173,10 @@ function App() {
         }
       }
 
+      case ACTIONS.RESET_GAUGES: {
+        return { ...state, gaugesData: initialState.gaugesData }
+      }
+
       case ACTIONS.CHANGE_DATE: {
         return {...state, dateIds: { dayId: action.payload.currentDay,  
                                      monthId: action.payload.currentMonth,
@@ -273,7 +278,7 @@ function App() {
       dispatch({ type: ACTIONS.UPDATE_WINDOW_WIDTH });
       dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: false });
 
-      if (window.innerWidth < 769)
+      if (window.innerWidth < 769 && (state.isLoginWindowEnabled || state.isSettingsWindowEnabled || state.isAboutWindowEnabled))
         hamburger.style.display = "block";
       else
         hamburger.style.display = "none";
@@ -317,13 +322,25 @@ function App() {
 
   // LOADS SETTINGS
   useEffect(() => {
-    if (state.userStatus === "Logged")
+    if (state.userStatus === "Logged") {
       getSettingsFromDatabase();
+      updateGauges();
+    }
+      
     else {
       dispatch({ type: ACTIONS.SET_NEW_SETTINGS, payload: initialState.settingsData });
+      dispatch({ type: ACTIONS.RESET_GAUGES });
     }
       
   }, [ state.userStatus ]);
+
+  // TIMEOUT AFTER CHANGING DATE
+  useEffect(() => {
+    const dateChanger = document.querySelector(".center-section__top__date-changer");
+    dateChanger.style.pointerEvents = "none";
+    setTimeout(() => { dateChanger.style.pointerEvents = "auto" }, 100);
+
+  }, [ state.dateIds ])
 
   // BLURING AND DISABLING POINTER EVENTS ON BACKGROUND AFTER LOG IN WINDOW MOUNTING 
   useEffect(() => {
@@ -601,7 +618,7 @@ function App() {
 
           Object.values(state.settingsData.nutrition.namesOfMeals).map((meal, index) => {
             if (state.settingsData.nutrition.numberOfMeals > index)
-              return <Meal key={ index } userId={ state.userId } userStatus={ state.userStatus } name={ meal } mealId={ index } dateIds={ state.dateIds } updateGauges={ updateMealSummary } loginShortcut={ loginShortcut } />
+              return <Meal key={ index } userId={ state.userId } userStatus={ state.userStatus } isSettingsOpened={ state.isSettingsWindowEnabled } name={ meal } mealId={ index } dateIds={ state.dateIds } updateGauges={ updateMealSummary } loginShortcut={ loginShortcut } />
             })
 
         }

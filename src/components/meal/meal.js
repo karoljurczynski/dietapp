@@ -42,8 +42,7 @@ export default function Meal(props) {
 
   // VARIABLES
 
-  const saveProductInDatabase = async (product, moreThanOne = false) => {
-    console.log(product);
+  const saveProductInDatabase = async (productList) => {
     let newProductList = [];
     let oldProductList = [];
 
@@ -61,24 +60,7 @@ export default function Meal(props) {
       console.error(e);
     }
 
-    // ADDING PRODUCT TO NEW LIST
-    if (moreThanOne) {
-      let modifiedSelectedProducts = product.map((item, index) => {
-        return {
-          ...item,
-          mealId: props.mealId,
-          dateIds: props.dateIds,
-          id: Date.now() + index * 10
-        }
-      });
-
-      newProductList = oldProductList.concat(modifiedSelectedProducts);
-    }
-
-    else {
-      newProductList = oldProductList;
-      newProductList.push(product);
-    }
+    newProductList = oldProductList.concat(productList);
     
     // OVERWRITING OLD PRODUCTLIST USING NEW LIST
     try {
@@ -90,9 +72,6 @@ export default function Meal(props) {
     catch (e) {
       console.error(e);
     }
-
-    clearProductList();
-    loadProductListFromDatabase();
   }
 
   const removeProductsFromDatabase = async (selectedProducts) => {
@@ -179,11 +158,18 @@ export default function Meal(props) {
       }
 
       case ACTIONS.ADD_PRODUCT: {
+        const newProductList = state.productList;
         state.newProduct.id = Date.now();
         state.newProduct.dateIds = props.dateIds;
-        state.productList.push(state.newProduct);
-        saveProductInDatabase(state.newProduct);
-        return {...state, newProduct: { id: 0, mealId: props.mealId, dateIds: { dayId: 0, monthId: 0, yearId: 0 }, name: '', weight: '', proteins: '', fats: '', carbs: '', kcal: ''}};
+
+        // SAVING IN DATABASE
+        saveProductInDatabase([state.newProduct]);
+
+        // SAVING IN STATE
+        newProductList.push(state.newProduct);
+
+        return {...state, newProduct: { id: 0, mealId: props.mealId, dateIds: { dayId: 0, monthId: 0, yearId: 0 }, name: '', weight: '', proteins: '', fats: '', carbs: '', kcal: ''},
+                          productList: newProductList };
       }
 
       case ACTIONS.SET_WARNING: {
@@ -202,9 +188,16 @@ export default function Meal(props) {
         let newProductList = state.productList;
         let checkedIdList = action.payload;
 
-        if (props.userId.length > 1)
-          removeProductsFromDatabase(checkedIdList);
-        
+        // DELETING FROM DATABASE
+        removeProductsFromDatabase(checkedIdList);
+
+        // DELETING FROM STATE
+        checkedIdList.forEach(selectedId => {
+          newProductList.forEach((product, index) => {
+            if (Number(product.id) === Number(selectedId)) { newProductList.splice(index, 1) }
+          });
+        });
+
         return {...state, productList: newProductList};
       }
 
@@ -241,6 +234,7 @@ export default function Meal(props) {
   const [isPlaceholderEnabled, setPlaceholderState] = useState(false);
 
   const loadProductListFromDatabase = async () => {
+    clearProductList();
     try {
       const querySnapshot = await getDocs(collection(db, "users"));
       querySnapshot.forEach(user => {
@@ -266,6 +260,7 @@ export default function Meal(props) {
     dispatch({ type: ACTIONS.CLEAR_PRODUCTLIST_BEFORE_DAY_CHANGING });
   }
 
+
   // EFFECTS
 
   // LOADS PRODUCTS FROM DATABASE
@@ -275,6 +270,12 @@ export default function Meal(props) {
 
   }, [ props.userId, props.dateIds ]);
 
+  // RELOADS PRODUCTS FROM DATABASE AFTER ENTERING SETTINGS PAGE
+  useEffect(() => {
+    clearProductList();
+    loadProductListFromDatabase();
+    
+  }, [ props.isSettingsOpened ])
 
   // CLOSES WINDOWS AFTER DAY CHANGE
   useEffect(() => {
@@ -319,7 +320,7 @@ export default function Meal(props) {
     
   }, [ state.isAddingWindowOpened, state.isRemovingWindowOpened ]);
 
-  
+
   // FUNCTIONS
 
   const handleMealOpening = () => {
@@ -366,24 +367,25 @@ export default function Meal(props) {
   }
 
   const handlePredefinedProductsAdding = (selectedProducts) => {
-    if (props.userId) {
-      saveProductInDatabase(selectedProducts, true);
-    }
-    else {
-      selectedProducts.forEach(product => {
+    let modifiedSelectedProducts = [];
 
-        // TIMEOUT TO PREVENT DOUBLED IDS
-        setTimeout(() => {
-  
-          Object.keys(product).forEach(key => {
-            dispatch({ type: ACTIONS.CHANGE_NEW_PRODUCT_DATA, payload: { key: key, value: product[key] }});
-          });
-          dispatch({ type: ACTIONS.ADD_PRODUCT });
-  
-        }, 100);
-  
-      });
-    }
+    modifiedSelectedProducts = selectedProducts.map((item, index) => {
+      return {
+        ...item,
+        mealId: props.mealId,
+        dateIds: props.dateIds,
+        id: Date.now() + index * 10
+      }
+    });
+
+    // ADDING TO STATE
+    modifiedSelectedProducts.forEach(product => {
+      dispatch({ type: ACTIONS.ADD_PRODUCT_TO_PRODUCTLIST, payload: product });
+    });
+
+    // ADDING TO DATABASE
+    saveProductInDatabase(modifiedSelectedProducts, true);
+
     dispatch({ type: ACTIONS.NEGATE_ADDING_WINDOW_STATE });
   }
 
