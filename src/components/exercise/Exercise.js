@@ -355,7 +355,7 @@ export default function Exercise(props) {
         let previousDateIds = props.dateIds;
       
         // SELECTING POTENTIAL SERIES WITH CORRECT ID AND SERIE NUMBER
-        if (seriesBackup.length !== 0) {
+        if (seriesBackup) {
           seriesBackup.forEach(serie => {
             if (serie.exerciseId === props.exerciseId) {
               if (serie.serieCount === currentlyAddingSerieNumber + 1) {
@@ -451,13 +451,6 @@ export default function Exercise(props) {
     sortSeriesList();
 
   }, [ props.userId, props.dateIds ]);
-
-  // LOADS SERIES FROM DATABASE
-  useEffect(() => {
-    console.log(state.seriesList);
-
-
-  }, [ state.seriesList ]);
 
   // CLOSES WINDOWS AFTER DATE CHANGE
   useEffect(() => {
@@ -558,7 +551,7 @@ export default function Exercise(props) {
     let previousDateIds = props.dateIds;
     
     // SELECTING POTENTIAL SERIES WITH CORRECT ID AND SERIE NUMBER
-    if (seriesBackup.length !== 0) {
+    if (seriesBackup) {
       seriesBackup.forEach(serie => {
         if (serie.exerciseId === props.exerciseId) {
             if (
