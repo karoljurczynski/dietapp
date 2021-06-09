@@ -10,9 +10,26 @@ import { collection, addDoc, getDocs } from "firebase/firestore";
 
 // VARIABLES
 
+const warnings = {
+  "loginFail": "Incorrect login or password!",
+  "passwordsFail": "Passwords are not the same!",
+  "emailFail": "Incorrect email!",
+  "minLengthFail": "Field is too short!",
+  "maxLengthFail": "Field is too long!",
+  "emptyFail": "Field is empty!"
+}
+
 const initialState = {
   isSignUpWindow: false,
   isFormCompleted: false,
+  warnings: {
+    signUpUsername: "",
+    signUpPassword: "",
+    signUpConfirmPassword: "",
+    signUpEmail: "",
+    logInUsername: "",
+    logInPassword: ""
+  },
   formData: {
     signUpUsername: "",
     signUpPassword: "",
@@ -26,7 +43,9 @@ const initialState = {
 const ACTIONS = {
   NEGATE_SIGN_UP_WINDOW: 'negate-sign-up-window',
   CHANGE_USER_DATA: 'change-user-data',
-  CHANGE_IS_FORM_COMPLETED: 'changer-is-form-completed'
+  CHANGE_IS_FORM_COMPLETED: 'changer-is-form-completed',
+  SET_WARNING: 'set-warning',
+  CLEAR_ALL_WARNINGS: 'clear-all-warnings'
 }
 
 
@@ -48,6 +67,14 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
 
       case ACTIONS.CHANGE_IS_FORM_COMPLETED: {
         return { ...state, isFormCompleted: action.payload }
+      }
+
+      case ACTIONS.SET_WARNING: {
+        return { ...state, warnings: { ...state.warnings, [action.payload.field]: action.payload.warning }}
+      }
+
+      case ACTIONS.CLEAR_ALL_WARNINGS: {
+        return { ...state, warnings: initialState.warnings }
       }
     }
   }
@@ -100,6 +127,35 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
 
   // FUNCTIONS
 
+  const isFieldTooShort = (field) => {
+    if (field.length < 3)
+      return true;
+    else
+      return false;
+  }
+
+  const isFieldTooLong = (field) => {
+    if (field.length > 16)
+      return true;
+    else
+      return false;
+  }
+
+  const isFieldEmpty = (field) => {
+    if (field.length === 0)
+      return true;
+    else
+      return false;
+  }
+
+  const isEmailCorrect = (email) => {
+    const regEx = /^\w{3,}@{1}\w{1,}[.]{1}\w{1,}/i;
+    if (regEx.test(email))
+      return true;
+    else
+      return false;
+  }
+
   const handleFormTypeChanging = (e) => {
     e.preventDefault();
     dispatch({ type: ACTIONS.NEGATE_SIGN_UP_WINDOW });
@@ -110,16 +166,119 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
     state.isSignUpWindow ? handleSignUpUser() : handleLoginUser();
   }
 
-  const handleSignUpUser = async () => {
-    const isPasswordsCorrect = state.formData.signUpConfirmPassword === state.formData.signUpPassword;
+  const validateSignUpInputs = () => {
+    const formDataValues = [ 
+      state.formData.signUpUsername, 
+      state.formData.signUpPassword, 
+      state.formData.signUpConfirmPassword, 
+      state.formData.signUpEmail
+    ];
+    const formDataKeys = [ 
+      "signUpUsername", 
+      "signUpPassword",   
+      "signUpConfirmPassword", 
+      "signUpEmail"
+    ];
+    let isValidatedSuccessfully = true;
 
-    if (isPasswordsCorrect) {
+    formDataValues.forEach((formValue, index) => {
+      if (!isFieldEmpty(formValue)) {
+        if (!isFieldTooShort(formValue)) {
+          if (!isFieldTooLong(formValue)) {
+            dispatch({type: ACTIONS.SET_WARNING, payload: {field: formDataKeys[index], warning: ''}});
+          }
+          else {
+            dispatch({ type: ACTIONS.SET_WARNING, payload: {field: formDataKeys[index], warning: warnings["maxLengthFail"]} });
+            dispatch({type: ACTIONS.CHANGE_USER_DATA, payload: { key: formDataKeys[index], value: "" }});
+            isValidatedSuccessfully = false;
+          }
+        }
+        else {
+          dispatch({ type: ACTIONS.SET_WARNING, payload: {field: formDataKeys[index], warning: warnings["minLengthFail"]} });
+          dispatch({type: ACTIONS.CHANGE_USER_DATA, payload: { key: formDataKeys[index], value: "" }});
+          isValidatedSuccessfully = false;
+        }
+      }
+      else {
+        dispatch({ type: ACTIONS.SET_WARNING, payload: {field: formDataKeys[index], warning: warnings["emptyFail"]} });
+        dispatch({type: ACTIONS.CHANGE_USER_DATA, payload: { key: formDataKeys[index], value: "" }});
+        isValidatedSuccessfully = false;
+      }
+      
+      if (formDataKeys[index] === "signUpEmail") {
+        if (!isEmailCorrect(formDataValues[index])) {
+          dispatch({ type: ACTIONS.SET_WARNING, payload: {field: formDataKeys[index], warning: warnings["emailFail"]} });
+          dispatch({ type: ACTIONS.CHANGE_USER_DATA, payload: { key: formDataKeys[index], value: "" }});
+          isValidatedSuccessfully = false;
+        }
+        else {
+          dispatch({type: ACTIONS.SET_WARNING, payload: {field: formDataKeys[index], warning: ''}});
+        }
+      }
+
+      if (formDataKeys[index] === "signUpConfirmPassword") {
+        if (state.formData.signUpConfirmPassword !== state.formData.signUpPassword) {
+          dispatch({ type: ACTIONS.SET_WARNING, payload: {field: formDataKeys[index], warning: warnings["passwordsFail"]} });
+          dispatch({ type: ACTIONS.SET_WARNING, payload: {field: "signUpPassword", warning: warnings["passwordsFail"]} });
+          dispatch({type: ACTIONS.CHANGE_USER_DATA, payload: { key: formDataKeys[index], value: "" }});
+          dispatch({type: ACTIONS.CHANGE_USER_DATA, payload: { key: "signUpPassword", value: "" }});
+          isValidatedSuccessfully = false;
+        }
+        else {
+          dispatch({type: ACTIONS.SET_WARNING, payload: {field: formDataKeys[index], warning: ''}});
+        }
+      }
+    });
+
+    if (isValidatedSuccessfully) {
       addUser();
       dispatch({ type: ACTIONS.NEGATE_SIGN_UP_WINDOW });
+      dispatch({ type: ACTIONS.CLEAR_ALL_WARNINGS });
     }
+  }
 
-    else
-      clearFormData();
+  const validateLogInInputs = async () => {
+    const formDataValues = [ 
+      state.formData.logInUsername, 
+      state.formData.logInPassword, 
+    ];
+    const formDataKeys = [ 
+      "logInUsername", 
+      "logInPassword",   
+    ];
+    let isValidatedSuccessfully = true;
+
+    formDataValues.forEach((formValue, index) => {
+      if (!isFieldEmpty(formValue)) {
+        if (!isFieldTooShort(formValue)) {
+          if (!isFieldTooLong(formValue)) {
+            dispatch({type: ACTIONS.SET_WARNING, payload: {field: formDataKeys[index], warning: ''}});
+          }
+          else {
+            dispatch({ type: ACTIONS.SET_WARNING, payload: {field: formDataKeys[index], warning: warnings["maxLengthFail"]} });
+            dispatch({type: ACTIONS.CHANGE_USER_DATA, payload: { key: formDataKeys[index], value: "" }});
+            isValidatedSuccessfully = false;
+          }
+        }
+        else {
+          dispatch({ type: ACTIONS.SET_WARNING, payload: {field: formDataKeys[index], warning: warnings["minLengthFail"]} });
+          dispatch({type: ACTIONS.CHANGE_USER_DATA, payload: { key: formDataKeys[index], value: "" }});
+          isValidatedSuccessfully = false;
+        }
+      }
+      else {
+        dispatch({ type: ACTIONS.SET_WARNING, payload: {field: formDataKeys[index], warning: warnings["emptyFail"]} });
+        dispatch({type: ACTIONS.CHANGE_USER_DATA, payload: { key: formDataKeys[index], value: "" }});
+        isValidatedSuccessfully = false;
+      }
+    });
+
+    if (isValidatedSuccessfully)
+      await logInUser();
+  }
+
+  const handleSignUpUser = async () => {
+    validateSignUpInputs();
   }
 
   const addUser = async () => {
@@ -137,7 +296,7 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
   }
 
   const handleLoginUser = async () => {
-    await logInUser();  
+    validateLogInInputs(); 
   }
 
   const logInUser = async () => {
@@ -192,7 +351,8 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
   const handleOnChange = (e) => {
     if (e.target.id !== "confirmSignUpPassword")
       dispatch({type: ACTIONS.CHANGE_USER_DATA, payload: { key: e.target.id, value: e.target.value }});
-    /*switch(e.target.id) {
+    
+      /*switch(e.target.id) {
       case "signUpUsername": {
         dispatch({type: ACTIONS.CHANGE_USER_DATA, payload: { key: e.target.id, value: e.target.value }});
         break;
@@ -286,7 +446,7 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
                     id="signUpUsername" 
                     value={ state.formData.signUpUsername }
                     onChange={ handleOnChange } 
-                    placeholder="">
+                    placeholder={ state.warnings["signUpUsername" ] ? state.warnings["signUpUsername" ] : null }>
                   </input>
                 </span>
 
@@ -298,7 +458,7 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
                     id="signUpEmail" 
                     value={ state.formData.signUpEmail } 
                     onChange={ handleOnChange } 
-                    placeholder="">
+                    placeholder={ state.warnings["signUpEmail"] ? state.warnings["signUpEmail"] : null }>
                   </input>
                 </span>
 
@@ -310,7 +470,7 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
                     id="signUpPassword" 
                     value={ state.formData.signUpPassword } 
                     onChange={ handleOnChange } 
-                    placeholder="">
+                    placeholder={ state.warnings["signUpPassword"] ? state.warnings["signUpPassword"] : null }>
                   </input>
                 </span>
 
@@ -322,7 +482,7 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
                     id="signUpConfirmPassword" 
                     value={ state.formData.signUpConfirmPassword }
                     onChange={ handleOnChange } 
-                    placeholder="">
+                    placeholder={ state.warnings["signUpConfirmPassword"] ? state.warnings["signUpConfirmPassword"] : null }>
                   </input>
                 </span>
 
@@ -345,7 +505,7 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
                     id="logInUsername" 
                     value={ state.formData.logInUsername } 
                     onChange={ handleOnChange } 
-                    placeholder="">
+                    placeholder={ state.warnings["logInUsername"] ? state.warnings["logInUsername"] : null }>
                   </input>
                 </span>
 
@@ -357,7 +517,7 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
                     id="logInPassword" 
                     value={ state.formData.logInPassword } 
                     onChange={ handleOnChange } 
-                    placeholder="">
+                    placeholder={ state.warnings["logInPassword"] ? state.warnings["logInPassword"] : null }>
                   </input>
                   <a className="window__main__input-line__link" href="" onClick={ handleForgottenPassword }>Forgot your password?</a>
                 </span>
