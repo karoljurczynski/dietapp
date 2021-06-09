@@ -29,8 +29,12 @@
     display: none;
   }
   
-  &--login, &--logout {
+  &--login, &--logout, &--forgotpassword {
     width: 300px;
+  }
+
+  &--forgotpassword {
+    z-index: 100;
   }
 
   &__header {
@@ -442,6 +446,7 @@
       &__heading {
         font-size: 1.1rem;
         color: $white-color;
+        line-height: 1.1;
       }
 
       &__back-button, &__add-button {

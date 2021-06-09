@@ -4,8 +4,13 @@ import { React, useReducer, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { FaChevronCircleLeft, FaChevronCircleRight } from 'react-icons/fa';
 
+
 import { db } from '../../index'; 
 import { collection, addDoc, getDocs } from "firebase/firestore";
+
+import { init, send } from 'emailjs-com'
+
+init("user_f86s58XiiAbqNCi2GgiUB");
 
 
 // VARIABLES
@@ -13,14 +18,17 @@ import { collection, addDoc, getDocs } from "firebase/firestore";
 const warnings = {
   "loginFail": "Incorrect login or password!",
   "passwordsFail": "Passwords are not the same!",
-  "emailFail": "Incorrect email!",
+  "emailFail": "Incorrect e-mail!",
   "minLengthFail": "Field is too short!",
   "maxLengthFail": "Field is too long!",
-  "emptyFail": "Field is empty!"
+  "emptyFail": "Field is empty!",
+  "usernameExist": "Username exists in database!",
+  "emailExist": "E-mail exists in database!",
 }
 
 const initialState = {
   isSignUpWindow: false,
+  isPasswordForgotten: false,
   isFormCompleted: false,
   warnings: {
     signUpUsername: "",
@@ -35,13 +43,15 @@ const initialState = {
     signUpPassword: "",
     signUpConfirmPassword: "",
     signUpEmail: "",
-    logInUsername: "",
-    logInPassword: ""
+    logInUsername: "user",
+    logInPassword: "password",
+    forgotPasswordEmail: ""
   }
 }
 
 const ACTIONS = {
   NEGATE_SIGN_UP_WINDOW: 'negate-sign-up-window',
+  NEGATE_IS_PASSWORD_FORGOTTEN: 'negate-is-password-forgotten',
   CHANGE_USER_DATA: 'change-user-data',
   CHANGE_IS_FORM_COMPLETED: 'changer-is-form-completed',
   SET_WARNING: 'set-warning',
@@ -59,6 +69,10 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
     switch (action.type) {
       case ACTIONS.NEGATE_SIGN_UP_WINDOW: {
         return { ...state, isSignUpWindow: !state.isSignUpWindow }
+      }
+
+      case ACTIONS.NEGATE_IS_PASSWORD_FORGOTTEN: {
+        return { ...state, isPasswordForgotten: !state.isPasswordForgotten }
       }
 
       case ACTIONS.CHANGE_USER_DATA: {
@@ -103,6 +117,22 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
 
   }, []);
 
+  // BLURING AND DISABLING POINTER EVENTS ON LOGIN WINDOW AFTER RESTORING PASSWORD WINDOW MOUNTING
+  useEffect(() => {
+    const loginWindow = document.querySelector(".window--login");
+    if (loginWindow) {
+      if (state.isPasswordForgotten) {
+        loginWindow.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
+        loginWindow.style.pointerEvents = "none";
+      }
+      else {
+        loginWindow.style.filter = "blur(0px) opacity(100%) grayscale(0%)";
+        loginWindow.style.pointerEvents = "auto";
+      }
+    }
+
+  }, [ state.isPasswordForgotten ]);
+
   // CHECKS IF FORM IS COMPLETED
   useEffect(() => {
     const signUpCondition = state.formData.signUpUsername && state.formData.signUpPassword && state.formData.signUpConfirmPassword && state.formData.signUpEmail;
@@ -135,7 +165,7 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
   }
 
   const isFieldTooLong = (field) => {
-    if (field.length > 16)
+    if (field.length > 32)
       return true;
     else
       return false;
@@ -149,7 +179,7 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
   }
 
   const isEmailCorrect = (email) => {
-    const regEx = /^\w{3,}@{1}\w{1,}[.]{1}\w{1,}/i;
+    const regEx = /^[\w.-]{3,}@{1}[\w.-]{1,}[.]{1}\w{1,}/i;
     if (regEx.test(email))
       return true;
     else
@@ -166,7 +196,7 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
     state.isSignUpWindow ? handleSignUpUser() : handleLoginUser();
   }
 
-  const validateSignUpInputs = () => {
+  const validateSignUpInputs = async () => {
     const formDataValues = [ 
       state.formData.signUpUsername, 
       state.formData.signUpPassword, 
@@ -229,6 +259,20 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
         }
       }
     });
+
+    if (await isEmailExist(formDataValues[3])) {
+      console.log("exist");
+      dispatch({ type: ACTIONS.SET_WARNING, payload: {field: formDataKeys[3], warning: warnings["emailExist"]} });
+      dispatch({ type: ACTIONS.CHANGE_USER_DATA, payload: { key: formDataKeys[3], value: "" }});
+      isValidatedSuccessfully = false;
+    }
+
+    if (await isUsernameExist(formDataValues[0])) {
+      console.log("exist");
+      dispatch({ type: ACTIONS.SET_WARNING, payload: {field: formDataKeys[0], warning: warnings["usernameExist"]} });
+      dispatch({ type: ACTIONS.CHANGE_USER_DATA, payload: { key: formDataKeys[0], value: "" }});
+      isValidatedSuccessfully = false;
+    }
 
     if (isValidatedSuccessfully) {
       addUser();
@@ -348,43 +392,137 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
     });
   }
 
+  const handlePasswordRestoringWindow = (e) => {
+    e.preventDefault();
+    dispatch({ type: ACTIONS.NEGATE_IS_PASSWORD_FORGOTTEN });
+    clearFormData();
+  }
+
+  const isEmailExist = async (email) => {
+    let isExist = false;
+    try {
+      const querySnapshot = await getDocs(collection(db, "users"));
+      querySnapshot.forEach(user => {
+        if (user.data().email === email) {
+          isExist = true;
+        }});
+    }
+    catch (e) {
+      console.error(e);
+    }
+
+    return isExist;
+  }
+
+  const isUsernameExist = async (username) => {
+    let isExist = false;
+    try {
+      const querySnapshot = await getDocs(collection(db, "users"));
+      querySnapshot.forEach(user => {
+        if (user.data().username === username) {
+          isExist = true;
+        }});
+    }
+    catch (e) {
+      console.error(e);
+    }
+
+    return isExist;
+  }
+
+  const getUserPasswordFromEmail = async () => {
+    let password = "";
+    try {
+      const querySnapshot = await getDocs(collection(db, "users"));
+      querySnapshot.forEach(user => {
+        if (user.data().email === state.formData.forgotPasswordEmail) {
+          password = user.data().password;
+        }});
+    }
+    catch (e) {
+      console.error(e);
+    }
+
+    return password;
+  }
+
+  const handlePasswordRestoring = async (e) => {
+    e.preventDefault();
+
+    if (await isEmailExist(state.formData.forgotPasswordEmail)) {
+      const templateParams = {
+        user_email: state.formData.forgotPasswordEmail,
+        user_password: await getUserPasswordFromEmail()
+      };
+
+      await send("service_vvs15qe", "template_698pq4k", templateParams)
+      .then(res => { alert("Check your e-mail inbox.") })
+      .catch(err => { alert("Error with email sending, check console."); console.error(err) })
+    }
+    else {
+      alert("Account with entered e-mail does not exist!");
+    }
+    
+    clearFormData();
+    dispatch({ type: ACTIONS.NEGATE_IS_PASSWORD_FORGOTTEN });
+  }
+
   const handleOnChange = (e) => {
     if (e.target.id !== "confirmSignUpPassword")
       dispatch({type: ACTIONS.CHANGE_USER_DATA, payload: { key: e.target.id, value: e.target.value }});
-    
-      /*switch(e.target.id) {
-      case "signUpUsername": {
-        dispatch({type: ACTIONS.CHANGE_USER_DATA, payload: { key: e.target.id, value: e.target.value }});
-        break;
-      }
-
-      case "signUpPassword": {
-        break;
-        
-      }
-      case "signUpEmail": {
-        
-      }
-      case "logInUsername": {
-        
-      }
-      case "logInPassword": {
-        
-      }
-      case "logInEmail": {
-        
-      }
-    }*/
   }
 
-  const handleForgottenPassword = (e) => {
-    e.preventDefault();
-  }
-
+  
   // RETURN
 
   return ReactDOM.createPortal (
     <>
+    { state.isPasswordForgotten 
+    ? <div className="window window--forgotpassword">
+
+        <header className="window__header">
+          <h2 className="window__header__heading">Forgotten password</h2>
+          <button
+            className="window__header__back-button"
+            type="button"
+            onClick={ handlePasswordRestoringWindow }
+            style={{ zIndex: 11 }}><FaChevronCircleLeft />
+          </button>
+          <button 
+            className="window__header__add-button"
+            type="button"
+            onClick={ handlePasswordRestoring }
+            style={{ zIndex: 11 }}><FaChevronCircleRight />
+          </button>
+        </header>
+
+        <main className="window__main">
+          <span className="window__main__input-line">
+            <label className="window__main__input-line__label" htmlFor="forgotPasswordEmail">E-mail</label>
+            <input 
+              className="window__main__input-line__input" 
+              type="email" 
+              id="forgotPasswordEmail" 
+              value={ state.formData.forgotPasswordEmail } 
+              onChange={ handleOnChange } 
+              placeholder={ state.warnings["forgotPasswordEmail"] ? state.warnings["forgotPasswordEmail"] : null }>
+            </input>
+          </span>
+        </main>
+
+        <section className="window__bottom">
+          <button className="window__bottom__secondary-button" type="button" onClick={ handlePasswordRestoringWindow }>Cancel</button>
+          <button 
+            className={ state.formData.forgotPasswordEmail ? "window__bottom__primary-button" : "window__bottom__primary-button window__bottom__primary-button--disabled"} 
+            type="submit" 
+            disabled={ state.formData.forgotPasswordEmail ? false : true } 
+            onClick={ state.formData.forgotPasswordEmail ? handlePasswordRestoring : null }>
+            Send
+          </button>
+        </section>
+      </div>
+    : null }
+
     { isLogout 
       ? <div className="window window--logout">
           <header className="window__header">
@@ -519,7 +657,7 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
                     onChange={ handleOnChange } 
                     placeholder={ state.warnings["logInPassword"] ? state.warnings["logInPassword"] : null }>
                   </input>
-                  <a className="window__main__input-line__link" href="" onClick={ handleForgottenPassword }>Forgot your password?</a>
+                  <a className="window__main__input-line__link" href="" onClick={ handlePasswordRestoringWindow }>Forgot your password?</a>
                 </span>
 
                 <section className="window__main__login-options">

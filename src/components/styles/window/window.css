@@ -58,8 +58,11 @@
 .window::-webkit-scrollbar {
   display: none;
 }
-.window--login, .window--logout {
+.window--login, .window--logout, .window--forgotpassword {
   width: 300px;
+}
+.window--forgotpassword {
+  z-index: 100;
 }
 .window__header {
   display: -webkit-box;
@@ -618,6 +621,7 @@
   .window__header__heading {
     font-size: 1.1rem;
     color: #FFFFFF;
+    line-height: 1.1;
   }
   .window__header__back-button, .window__header__add-button {
     display: -webkit-box;
