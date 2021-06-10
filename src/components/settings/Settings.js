@@ -81,7 +81,9 @@ const warnings = {
   minLengthFail: "Field is too short!",
   maxLengthFail: "Field is too long!",
   emptyFail: "Field is empty!",
-  isZero: "Number must be higher than zero!"
+  isZero: "Number must be higher than zero!",
+  usernameExist: "Username exist in database!",
+  emailExist: "E-mail exist in database!"
 }
 
 
@@ -257,7 +259,6 @@ export default function Settings(props) {
             dispatch({ type: ACTIONS.SET_NEW_SETTINGS, payload: user.data().settings });
             localStorage.setItem("settingsBackup", JSON.stringify(user.data().settings));
           }
-            
           else
             saveSettingsToDatabase();
         }
@@ -378,7 +379,8 @@ export default function Settings(props) {
     dispatch({ type: ACTIONS.SET_CLEAR_ALL_SERIES, payload: false });
   }
 
-  const handleSettingsSaved = (e) => {
+  const handleSettingsSaved = async (e) => {
+    const backupSettings = JSON.parse(localStorage.getItem("settingsBackup"));
     e.preventDefault();
 
     if (optionsStates['clear-all-products'])
@@ -442,6 +444,22 @@ export default function Settings(props) {
       }
     }));
 
+    // CHECKS IF ENTERED EMAIL ALREADY EXIST IN DATABASE
+    if (await isEmailExist(personalDataValues[1]) && state.settingsData.account.email !== backupSettings.account.email) {
+      console.log("exist");
+      dispatch({ type: ACTIONS.SET_WARNING, payload: {field: personalDataKeys[1], warning: warnings.emailExist} });
+      dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: personalDataKeys[1], value: "" }});
+      isValidatedSuccessfully = false;
+    }
+
+    // CHECKS IF ENTERED USERNAME ALREADY EXIST IN DATABASE
+    if (await isUsernameExist(personalDataValues[0]) && state.settingsData.account.username !== backupSettings.account.username) {
+      console.log("exist");
+      dispatch({ type: ACTIONS.SET_WARNING, payload: {field: personalDataKeys[0], warning: warnings.usernameExist} });
+      dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: personalDataKeys[0], value: "" }});
+      isValidatedSuccessfully = false;
+    }
+
     if (isValidatedSuccessfully)
       saveSettingsToDatabase();
     props.updateGauges();
@@ -487,6 +505,38 @@ export default function Settings(props) {
       return true;
     else
       return false;
+  }
+
+  const isEmailExist = async (email) => {
+    let isExist = false;
+    try {
+      const querySnapshot = await getDocs(collection(db, "users"));
+      querySnapshot.forEach(user => {
+        if (user.data().email === email) {
+          isExist = true;
+        }});
+    }
+    catch (e) {
+      console.error(e);
+    }
+
+    return isExist;
+  }
+
+  const isUsernameExist = async (username) => {
+    let isExist = false;
+    try {
+      const querySnapshot = await getDocs(collection(db, "users"));
+      querySnapshot.forEach(user => {
+        if (user.data().username === username) {
+          isExist = true;
+        }});
+    }
+    catch (e) {
+      console.error(e);
+    }
+
+    return isExist;
   }
 
   const handleExerciseChoosing = (e) => {

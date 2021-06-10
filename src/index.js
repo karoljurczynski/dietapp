@@ -1,6 +1,8 @@
 // IMPORTS
 
 // portal isn't 100vh on mobile
+// login info
+// sometimes gauges don't refresh after saving settings
 
 import { React, useReducer, useEffect } from 'react';
 import ReactDOM from 'react-dom';
@@ -314,18 +316,19 @@ function App() {
       const querySnapshot = await getDocs(collection(db, "users"));
       querySnapshot.forEach(user => {
         if (user.id === state.userId) {
-          if (user.data().settings)
+          if (user.data().settings) {
             dispatch({ type: ACTIONS.SET_NEW_SETTINGS, payload: user.data().settings });
+          }
           else
             saveSettingsToDatabase(user);
+
+          updateGauges();
         }
       });
     }
-
     catch (e) {
       console.error(e);
     }
-    updateGauges();
   }
 
   // LOADS SETTINGS
