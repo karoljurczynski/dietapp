@@ -262,20 +262,19 @@ export default function Meal(props) {
 
 
   // EFFECTS
-
+  
   // LOADS PRODUCTS FROM DATABASE
   useEffect(() => {
-    clearProductList();
     loadProductListFromDatabase();
 
   }, [ props.userId, props.dateIds ]);
 
-  // RELOADS PRODUCTS FROM DATABASE AFTER ENTERING SETTINGS PAGE
+  // RELOADS PRODUCTS FROM DATABASE AFTER CLOSING SETTINGS PAGE
   useEffect(() => {
-    clearProductList();
-    loadProductListFromDatabase();
-    
-  }, [ props.isSettingsOpened ])
+    if (props.isSettingsOpened)
+      return () => loadProductListFromDatabase();
+
+  }, [ props.isSettingsOpened ]);
 
   // CLOSES WINDOWS AFTER DAY CHANGE
   useEffect(() => {
@@ -288,7 +287,7 @@ export default function Meal(props) {
     disableVisibilityIfEnabled(state.isAddingWindowOpened, ACTIONS.NEGATE_ADDING_WINDOW_STATE);
     disableVisibilityIfEnabled(state.isRemovingWindowOpened, ACTIONS.NEGATE_REMOVING_WINDOW_STATE);
 
-  }, [ props.userId, props.dateIds ])
+  }, [ props.userId, props.dateIds ]);
 
   // SENDS DATA FROM MEAL TO GAUGES
   useEffect(() => { 

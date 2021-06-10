@@ -16,10 +16,22 @@ const initialState = {
   isAccountCategory: false,
   isNutritionCategory: true,
   isTrainingCategory: false,
-  warning: ['', ''],
+  warnings: {
+    username: "",
+    email: "",
+    password: "",
+    editMealName: "",
+    setMealsNumber: "",
+    proteins: "",
+    fats: "",
+    carbs: "",
+    kcal: ""
+  },
   settingsData: {
     account: {
-
+      username: "",
+      email: "",
+      password: ""
     },
 
     nutrition: {
@@ -64,7 +76,12 @@ const ACTIONS = {
 const warnings = {
   editMealName:   "Meal name must be a string of letters only",
   setMealsNumber: "Number of meals must be a positive number",
-  macros: "Macronutrient must be a positive number"
+  macros: "Macronutrient must be a positive number",
+  emailFail: "Incorrect e-mail!",
+  minLengthFail: "Field is too short!",
+  maxLengthFail: "Field is too long!",
+  emptyFail: "Field is empty!",
+  isZero: "Number must be higher than zero!"
 }
 
 
@@ -83,6 +100,29 @@ export default function Settings(props) {
 
       case ACTIONS.CHANGE_SETTINGS_DATA: {
         switch (action.payload.key) {
+          case 'username': {
+            return {...state, 
+              settingsData: { ...state.settingsData, 
+              account: {...state.settingsData.account,
+              username: action.payload.value }}
+            };
+          }
+
+          case 'email': {
+            return {...state, 
+              settingsData: { ...state.settingsData, 
+              account: {...state.settingsData.account,
+              email: action.payload.value }}
+            };
+          }
+
+          case 'password': {
+            return {...state, 
+              settingsData: { ...state.settingsData, 
+              account: {...state.settingsData.account,
+              password: action.payload.value }}
+            };
+          }
 
           case 'editMealName': {
             return {...state, 
@@ -166,11 +206,7 @@ export default function Settings(props) {
       }
 
       case ACTIONS.SET_WARNING: {
-        switch (action.payload) {
-          case 'editMealName':  return { ...state, warning: [warnings.editMealName, action.payload] }
-          case 'setMealsNumber':  return { ...state, warning: [warnings.setMealsNumber, action.payload] }
-          default:  return { ...state, warning: [warnings.macros, action.payload] }
-        };
+        return { ...state, warnings: { ...state.warnings, [action.payload.field]: action.payload.warning }}
       }
 
       case ACTIONS.CLEAR_WARNING: {
@@ -196,6 +232,8 @@ export default function Settings(props) {
     catch (e) {
       console.error(e);
     }
+
+    updateUserPersonalData(state.settingsData.account.username, state.settingsData.account.email, state.settingsData.account.password);
   }
 
   const clearDatabase = async (data) => {
@@ -226,6 +264,20 @@ export default function Settings(props) {
       });
     }
 
+    catch (e) {
+      console.error(e);
+    }
+  }
+
+  const updateUserPersonalData = async (newUsername, newEmail, newPassword) => {
+    try {
+      await setDoc(doc(db, "users", String(props.userId)), {
+        username: newUsername,
+        email: newEmail,
+        password: newPassword
+      }, 
+      { merge: true });
+    }
     catch (e) {
       console.error(e);
     }
@@ -339,8 +391,60 @@ export default function Settings(props) {
       dispatch({ type: ACTIONS.RESET_TRAINING_SETTINGS_TO_INITIAL });
 
     dispatch({ type: ACTIONS.SET_SETTINGS_CHANGED_STATE, payload: false });
-    saveSettingsToDatabase();
-    getSettingsFromDatabase();
+
+    // PERSONAL DATA VALIDATION
+    const personalDataValues = [
+      state.settingsData.account.username,
+      state.settingsData.account.email,
+      state.settingsData.account.password
+    ];
+    const personalDataKeys = [
+      "username",
+      "email",
+      "password"
+    ];
+    let isValidatedSuccessfully = true;
+
+    personalDataValues.forEach(((personalDataValue, index) => {
+      console.log(isFieldTooShort(personalDataValue));
+      if (!isFieldEmpty(personalDataValue)) {
+        if (!isFieldTooShort(personalDataValue)) {
+          if (!isFieldTooLong(personalDataValue)) {
+            dispatch({ type: ACTIONS.SET_WARNING, payload: { field: personalDataKeys[index], warning: '' }});
+          }
+          else {
+            dispatch({ type: ACTIONS.SET_WARNING, payload: { field: personalDataKeys[index], warning: warnings.maxLengthFail }});
+            dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: personalDataKeys[index], value: "" }});
+            isValidatedSuccessfully = false;
+          }
+        }
+        else {
+          dispatch({ type: ACTIONS.SET_WARNING, payload: { field: personalDataKeys[index], warning: warnings.minLengthFail }});
+          dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: personalDataKeys[index], value: "" }});
+          isValidatedSuccessfully = false;
+        }
+      }
+      else {
+        dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: personalDataKeys[index], value: "" }});
+        dispatch({ type: ACTIONS.SET_WARNING, payload: { field: personalDataKeys[index], warning: warnings.emptyFail }});
+        isValidatedSuccessfully = false;
+      }
+
+      if (personalDataKeys[index] === "email") {
+        if (isEmailCorrect(personalDataValue)) {
+          dispatch({ type: ACTIONS.CLEAR_WARNING, payload: personalDataValue });
+        }
+        else {
+          dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: personalDataKeys[index], value: "" }});
+          dispatch({ type: ACTIONS.SET_WARNING, payload: { field: personalDataKeys[index], warning: warnings.emailFail }});
+          isValidatedSuccessfully = false;
+        }
+      }
+    }));
+
+    if (isValidatedSuccessfully)
+      saveSettingsToDatabase();
+    props.updateGauges();
     resetOptionsStates();
   }
 
@@ -355,6 +459,34 @@ export default function Settings(props) {
     e.preventDefault();
     getSettingsFromDatabase();
     resetOptionsStates();
+  }
+  const isFieldTooShort = (field) => {
+    if (field.length < 3)
+      return true;
+    else
+      return false;
+  }
+
+  const isFieldTooLong = (field) => {
+    if (field.length > 32)
+      return true;
+    else
+      return false;
+  }
+
+  const isFieldEmpty = (field) => {
+    if (field.length === 0)
+      return true;
+    else
+      return false;
+  }
+
+  const isEmailCorrect = (email) => {
+    const regEx = /^[\w.-]{3,}@{1}[\w.-]{1,}[.]{1}\w{1,}/i;
+    if (regEx.test(email))
+      return true;
+    else
+      return false;
   }
 
   const handleExerciseChoosing = (e) => {
@@ -377,33 +509,40 @@ export default function Settings(props) {
     const isNumber = /[0-9]/;
     const isZero = /^[0]{1}/;
     const isWord = /[a-z\s]/i;
+    console.log(e.target.id);
 
     e.preventDefault();
-  
+
     if (e.target.id === 'editMealName') {
       if (isWord.test(e.target.value[e.target.value.length - 1])) {
         dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: e.target.id, index: Number(e.target.attributes["data-key"].value), value: e.target.value }})
-        dispatch({ type: ACTIONS.CLEAR_WARNING, payload: e.target.id });
+        dispatch({ type: ACTIONS.SET_WARNING, payload: { field: e.target.id, warning: "" } });
       }
       else {
         dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: e.target.id, index: Number(e.target.attributes["data-key"].value), value: ""}})
-        dispatch({ type: ACTIONS.SET_WARNING, payload: e.target.id });
+        dispatch({ type: ACTIONS.SET_WARNING, payload: { field: e.target.id, warning: warnings.editMealName } });
       }
     }
     
     if (isNumber.test(e.target.value[e.target.value.length - 1])) {
       if (isZero.test(e.target.value)) {
         dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: e.target.id, value: 1 }});
-        dispatch({ type: ACTIONS.SET_WARNING, payload: e.target.id });
+        dispatch({ type: ACTIONS.SET_WARNING, payload: { field: e.target.id, warning: warnings.isZero } });
       }
-      else
+      else {
         dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: e.target.id, value: e.target.value }});
-        dispatch({ type: ACTIONS.CLEAR_WARNING, payload: e.target.id });
+        dispatch({ type: ACTIONS.SET_WARNING, payload: { field: e.target.id, warning: "" } });
+      }
     }
 
     else {
       dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: e.target.id, value: "" }});
-      dispatch({ type: ACTIONS.SET_WARNING, payload: e.target.id });
+      dispatch({ type: ACTIONS.SET_WARNING, payload: { field: e.target.id, warning: warnings.macros } });
+    }
+
+    if ((e.target.id === "username") || (e.target.id === "email") || (e.target.id === "password")) {
+      dispatch({ type: ACTIONS.CHANGE_SETTINGS_DATA, payload: { key: e.target.id, value: e.target.value }});
+      dispatch({ type: ACTIONS.SET_WARNING, payload: { field: e.target.id, warning: "" } });
     }
   }
 
@@ -426,6 +565,7 @@ export default function Settings(props) {
 
   return ReactDOM.createPortal (
     <>
+    <div className="window__closer" onClick={ handleSettingsCanceled }></div>
     <div className="window">
       <header className="window__header">
           
@@ -477,7 +617,49 @@ export default function Settings(props) {
             </button>
             
             <section className="window__main__section window__main__section--form">
-              <h3 className="window__main__section__title">Account</h3> 
+              <h3 className="window__main__section__title">Personal data</h3>
+
+              <div className="window__main__input-line">
+                <label className="window__main__input-line__label" htmlFor="username">Username</label>
+                <input
+                  className="window__main__input-line__input"  
+                  type="text" 
+                  id="username"
+                  value={ state.settingsData.account.username } 
+                  onChange={ handleSettingOnChange }
+                  placeholder={ state.warnings["username"] ? state.warnings["username"] : null }
+                  maxLength="32"
+                  required>
+                </input>
+              </div>
+
+              <div className="window__main__input-line">
+                <label className="window__main__input-line__label" htmlFor="email">E-mail</label>
+                <input
+                  className="window__main__input-line__input"  
+                  type="email" 
+                  id="email"
+                  value={ state.settingsData.account.email } 
+                  onChange={ handleSettingOnChange }
+                  placeholder={ state.warnings["email"] ? state.warnings["email"] : null }
+                  maxLength="32"
+                  required>
+                </input>
+              </div>
+
+              <div className="window__main__input-line">
+                <label className="window__main__input-line__label" htmlFor="password">Password</label>
+                <input
+                  className="window__main__input-line__input"  
+                  type="password" 
+                  id="password"
+                  value={ state.settingsData.account.password } 
+                  onChange={ handleSettingOnChange }
+                  placeholder={ state.warnings["password"] ? state.warnings["password"] : null }
+                  maxLength="32"
+                  required>
+                </input>
+              </div>
             </section>
 
             <section className="window__bottom">
@@ -543,8 +725,9 @@ export default function Settings(props) {
                   id="proteins"
                   value={ state.settingsData.nutrition.dailyDemand.proteins } 
                   onChange={ handleSettingOnChange }
-                  placeholder={ state.warning[1] === 'proteins' ? state.warning[0] : null }
-                  maxLength="4">
+                  placeholder={ state.warnings["proteins"] ? state.warnings["proteins"] : null }
+                  maxLength="4"
+                  required>
                 </input>
                 <span className="window__main__input-line__unit">g</span>
               </div>
@@ -557,8 +740,9 @@ export default function Settings(props) {
                   id="fats"
                   value={ state.settingsData.nutrition.dailyDemand.fats } 
                   onChange={ handleSettingOnChange }
-                  placeholder={ state.warning[1] === 'fats' ? state.warning[0] : null }
-                  maxLength="4">
+                  placeholder={ state.warnings["fats"] ? state.warnings["fats"] : null }
+                  maxLength="4"
+                  required>
                 </input>
                 <span className="window__main__input-line__unit">g</span>
               </div>
@@ -571,8 +755,9 @@ export default function Settings(props) {
                   id="carbs"
                   value={ state.settingsData.nutrition.dailyDemand.carbs } 
                   onChange={ handleSettingOnChange }
-                  placeholder={ state.warning[1] === 'carbs' ? state.warning[0] : null }
-                  maxLength="4">
+                  placeholder={ state.warnings["carbs"] ? state.warnings["carbs"] : null }
+                  maxLength="4"
+                  required>
                 </input>
                 <span className="window__main__input-line__unit">g</span>
               </div>
@@ -585,8 +770,9 @@ export default function Settings(props) {
                   id="kcal"
                   value={ state.settingsData.nutrition.dailyDemand.kcal } 
                   onChange={ handleSettingOnChange }
-                  placeholder={ state.warning[1] === 'kcal' ? state.warning[0] : null }
-                  maxLength="4">
+                  placeholder={ state.warnings["kcal"] ? state.warnings["kcal"] : null }
+                  maxLength="4"
+                  required>
                 </input>
                 <span className="window__main__input-line__unit">kcal</span>
               </div>
@@ -603,8 +789,9 @@ export default function Settings(props) {
                   id="setMealsNumber"
                   value={ state.settingsData.nutrition.numberOfMeals } 
                   onChange={ handleSettingOnChange }
-                  placeholder={ state.warning[1] === 'setMealsNumber' ? state.warning[0] : null }
-                  maxLength="1">
+                  placeholder={ state.warnings["setMealsNumber"] ? state.warnings["setMealsNumber"] : null }
+                  maxLength="1"
+                  required>
                 </input>
                 <span className="window__main__input-line__unit">meals</span>
               </div>
@@ -621,7 +808,7 @@ export default function Settings(props) {
                         id="editMealName"
                         value={ state.settingsData.nutrition.namesOfMeals[index] } 
                         onChange={ handleSettingOnChange }
-                        placeholder={ state.warning[1] === 'editMealName' ? state.warning[0] : null }
+                        placeholder={ state.warnings["editMealName"] ? state.warnings["editMealName"] : null }
                         required>
                       </input>
                     </div>

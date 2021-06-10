@@ -45,6 +45,8 @@ export default function About({ previousPage, closeWindow }) {
   // RETURN
 
   return ReactDOM.createPortal (
+    <>
+    <div className="window__closer" onClick={ handleBackToPreviousPage }></div> 
     <div className="window">
 
       <header className="window__header">
@@ -91,7 +93,8 @@ export default function About({ previousPage, closeWindow }) {
         <button className="window__bottom__primary-button" type="button" onClick={ handleBackToPreviousPage }>Back</button>
       </section>
 
-    </div>,
+    </div>
+    </>,
     document.getElementById('portal')
   )
 }

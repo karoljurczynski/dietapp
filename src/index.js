@@ -57,7 +57,8 @@ const ACTIONS = {
   CHANGE_HAMBURGER_STATE: 'change-hamburger-state',
   UPDATE_WINDOW_WIDTH: 'update-window-width',
   SET_NEW_SETTINGS: 'set-new-settings',
-  SET_USER_ID: 'set-user-id'
+  SET_USER_ID: 'set-user-id',
+  SET_USER_PERSONAL_DATA: 'set-user-personal-data'
 }
 
 const initialState = {
@@ -85,7 +86,9 @@ const initialState = {
 
   settingsData: {
     account: {
-
+      username: "",
+      email: "",
+      password: ""
     },
 
     nutrition: {
@@ -220,6 +223,10 @@ function App() {
         return { ...state, userId: action.payload }
       }
 
+      case ACTIONS.SET_USER_PERSONAL_DATA: {
+        return { ...state, settingsData: { ...state.settingsData, account: action.payload }};
+      }
+
       default: return console.error(`Unknown action type: ${action.type}`);
     }
   }
@@ -318,6 +325,7 @@ function App() {
     catch (e) {
       console.error(e);
     }
+    updateGauges();
   }
 
   // LOADS SETTINGS
@@ -385,10 +393,11 @@ function App() {
     
   }, [ state.hamburgerState ])
 
+  // RELOADS SETTINGS FROM DATABASE AFTER OPENING SETTINGS WINDOW
   useEffect(() => {
     getSettingsFromDatabase();
 
-  }, [ state.isSettingsWindowEnabled ])
+  }, [ state.isSettingsWindowEnabled ]);
 
   
   // FUNCTIONS
@@ -415,6 +424,11 @@ function App() {
 
   const setUserId = (newUserId) => {
     dispatch({ type: ACTIONS.SET_USER_ID, payload: newUserId });
+  }
+
+  const setUserPersonalData = (newUsername, newEmail, newPassword) => {
+    console.log(newUsername, newEmail, newPassword);
+    dispatch({ type: ACTIONS.SET_USER_PERSONAL_DATA, payload: { username: newUsername, email: newEmail, password: newPassword }});
   }
 
   const changePageTitle = (categoryTitle) => {
@@ -504,6 +518,7 @@ function App() {
           <Login 
             setUserStatus={ setUserStatus }
             setUserId={ setUserId }
+            setUserPersonalData={ setUserPersonalData }
             isLogout={ state.userStatus === "Logged" ? true : false }
             closeWindow={ closeLoginWindow }
           /> 
@@ -618,9 +633,20 @@ function App() {
 
           Object.values(state.settingsData.nutrition.namesOfMeals).map((meal, index) => {
             if (state.settingsData.nutrition.numberOfMeals > index)
-              return <Meal key={ index } userId={ state.userId } userStatus={ state.userStatus } isSettingsOpened={ state.isSettingsWindowEnabled } name={ meal } mealId={ index } dateIds={ state.dateIds } updateGauges={ updateMealSummary } loginShortcut={ loginShortcut } />
-            })
-
+              return (
+                <Meal 
+                  key={ index } 
+                  userId={ state.userId } 
+                  userStatus={ state.userStatus }
+                  pageTitle={ state.pageTitle } 
+                  isSettingsOpened={ state.isSettingsWindowEnabled } 
+                  name={ meal } 
+                  mealId={ index } 
+                  dateIds={ state.dateIds } 
+                  updateGauges={ updateMealSummary } 
+                  loginShortcut={ loginShortcut }>
+                </Meal>
+            )})
         }
 
         </section>

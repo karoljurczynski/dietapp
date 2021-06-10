@@ -64,6 +64,10 @@
 .window--forgotpassword {
   z-index: 100;
 }
+.window__closer {
+  width: 100%;
+  height: 100%;
+}
 .window__header {
   display: -webkit-box;
   display: -ms-flexbox;

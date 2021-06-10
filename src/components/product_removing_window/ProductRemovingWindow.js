@@ -138,6 +138,7 @@ export default function RemoveWindow(props) {
 
   return ReactDOM.createPortal (
     <>
+    <div className="window__closer" onClick={ props.handleRemoveWindow }></div> 
     <section className="window">
 
       <header className="window__header">

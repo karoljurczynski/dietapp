@@ -52,7 +52,9 @@ export default function AddWindow(props) {
 
   // RETURN
 
-  return ReactDOM.createPortal ( 
+  return ReactDOM.createPortal (
+    <>
+    <div className="window__closer" onClick={ props.handleAddWindow }></div> 
     <div className="window window--add">
       
       <header className="window__header">
@@ -142,7 +144,8 @@ export default function AddWindow(props) {
       
       }
 
-    </div>,
+    </div>
+    </>,
     document.getElementById('portal')
   )
 }

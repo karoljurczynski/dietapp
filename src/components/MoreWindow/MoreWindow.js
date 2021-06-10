@@ -44,6 +44,8 @@ export default function MoreWindow(props) {
   // RETURN
 
   return ReactDOM.createPortal (
+    <>
+    <div className="window__closer" onClick={ handleBackButton }></div> 
     <div className="window window--more">
 
       <header className="window__header">
@@ -88,7 +90,8 @@ export default function MoreWindow(props) {
         <button className="window__bottom__primary-button" type="button" onClick={ handleBackButton }>Back</button>
       </section>
 
-    </div>,
+    </div>
+    </>,
     document.getElementById('portal')
   )
 }

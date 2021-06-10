@@ -16,14 +16,14 @@ init("user_f86s58XiiAbqNCi2GgiUB");
 // VARIABLES
 
 const warnings = {
-  "loginFail": "Incorrect login or password!",
-  "passwordsFail": "Passwords are not the same!",
-  "emailFail": "Incorrect e-mail!",
-  "minLengthFail": "Field is too short!",
-  "maxLengthFail": "Field is too long!",
-  "emptyFail": "Field is empty!",
-  "usernameExist": "Username exists in database!",
-  "emailExist": "E-mail exists in database!",
+  loginFail: "Incorrect login or password!",
+  passwordsFail: "Passwords are not the same!",
+  emailFail: "Incorrect e-mail!",
+  minLengthFail: "Field is too short!",
+  maxLengthFail: "Field is too long!",
+  emptyFail: "Field is empty!",
+  usernameExist: "Username exists in database!",
+  emailExist: "E-mail exists in database!",
 }
 
 const initialState = {
@@ -61,7 +61,7 @@ const ACTIONS = {
 
 // COMPONENT
 
-export default function Login({ isLogout, setUserStatus, setUserId, closeWindow }) {
+export default function Login({ isLogout, setUserStatus, setUserId, setUserPersonalData, closeWindow }) {
 
   // HOOKS
 
@@ -351,6 +351,7 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
         if (user.data().username === state.formData.logInUsername) {
           if (user.data().password === state.formData.logInPassword) {
             isLoggedSuccessfully = true;
+            setUserPersonalData(user.data().username, user.data().email, user.data().password);
             setUserId(user.id);
             setUserStatus("Logged");
             closeWindow();
@@ -477,6 +478,7 @@ export default function Login({ isLogout, setUserStatus, setUserId, closeWindow 
 
   return ReactDOM.createPortal (
     <>
+    <div className="window__closer" onClick={ handleCancel }></div>
     { state.isPasswordForgotten 
     ? <div className="window window--forgotpassword">
 
