@@ -7,7 +7,7 @@
 import { React, useReducer, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
-import { Logo, Title, Hamburger, MenuItem, Quotation } from './components/left/left';
+import { Logo, Title, Hamburger, MenuItem, Quotation, Account } from './components/left/left';
 import DateChanger from './components/center/DateChanger';
 import Meal from './components/meal/Meal';
 import Gauge from './components/right/Gauge';
@@ -33,7 +33,7 @@ const countPercentOfEatenIngredient = (eatenAmount, maxAmount) => {
   if (Number.isNaN((Math.round(eatenAmount / maxAmount * 100))))
     return 0;
   else
-  return Math.round(eatenAmount / maxAmount * 100);
+    return Math.round(eatenAmount / maxAmount * 100);
 }
 
 const countAmountOfIngredientLeft = (eatenAmount, maxAmount) => {
@@ -47,6 +47,7 @@ const countAmountOfIngredientLeft = (eatenAmount, maxAmount) => {
 // VARIABLES
 
 const ACTIONS = {
+  SET_BOOLEAN_STATE: 'set-boolean-state',
   UPDATE_MEALS_INGREDIENTS_SUMMARY: 'update-meals-ingredients-summary',
   UPDATE_DAILY_INGREDIENTS_SUMMARY: 'update-daily-ingredients-summary',
   COUNT_GAUGES_DATA: 'count-gauges-data',
@@ -74,6 +75,7 @@ const initialState = {
   isRemoveWindowsEnabled: false,
   isMoreWindowsEnabled: false,
   hamburgerState: false,
+  accountState: false,
   windowWidth: window.innerWidth,
   userStatus: "Log in",
   userId: 0,
@@ -126,6 +128,10 @@ function App() {
 
   const reducer = (state, action) => {
     switch (action.type) {
+
+      case ACTIONS.SET_BOOLEAN_STATE: {
+        return { ...state, [action.payload.state]: action.payload.value }
+      }
 
       case ACTIONS.UPDATE_MEALS_INGREDIENTS_SUMMARY: {
         const newMealsIngredientsSummary = [...state.mealsIngredientsSummary];
@@ -276,19 +282,18 @@ function App() {
 
   // WINDOW WIDTH STUFF
   useEffect(() => {
-
     // WINDOW REAL HEIGHT COUNTING
     let vh = window.innerHeight * 0.01;
     const hamburger = document.querySelector(".left-section__hamburger");
-    
+
     document.documentElement.style.setProperty('--vh', `${vh}px`);
 
     window.addEventListener("resize", () => {
       dispatch({ type: ACTIONS.UPDATE_WINDOW_WIDTH });
       dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: false });
 
-      if (window.innerWidth < 769 && (state.isLoginWindowEnabled || state.isSettingsWindowEnabled || state.isAboutWindowEnabled))
-        hamburger.style.display = "block";
+      if (window.innerWidth < 769 || (state.isLoginWindowEnabled || state.isSettingsWindowEnabled || state.isAboutWindowEnabled))
+        hamburger.style.display = "flex";
       else
         hamburger.style.display = "none";
 
@@ -364,7 +369,6 @@ function App() {
   useEffect(() => {
     const wrapper = document.querySelector(".wrapper");
     const menu = document.querySelector(".left-section__menu-container");
-    const hamburger = document.querySelector(".left-section__hamburger");
     const hamburgerLines = document.querySelectorAll(".left-section__hamburger__line");
 
     if (state.windowWidth < 769) {
@@ -372,8 +376,6 @@ function App() {
         wrapper.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
         wrapper.style.pointerEvents = "none";
         menu.style.display = "flex";
-        menu.style.right = 0;
-        hamburger.style.right = 200 - 28 - 15 + "px";
         hamburgerLines[0].style.cssText ="left: 0px; background: #FFFFFF; width: 100%; transform: rotate(45deg); border-radius: 10px";
         hamburgerLines[1].style.cssText ="left: 10px; background: #FFFFFF; visibility: hidden";
         hamburgerLines[2].style.cssText ="left: 0px; background: #FFFFFF; width: 100%; transform: rotate(-45deg); border-radius: 10px";
@@ -381,8 +383,6 @@ function App() {
 
       else {
         menu.style.display = "none";
-        menu.style.right = "-200px";
-        hamburger.style.right = "10px"
         hamburgerLines[0].style.cssText ="left: 0px; background: #7500AF; width: 8px; transform: rotate(0deg); border-radius: 50%";
         hamburgerLines[1].style.cssText ="left: 10px; background: #7500AF; visibility: visible";
         hamburgerLines[2].style.cssText ="left: 20px; background: #7500AF; width: 8px; transform: rotate(0deg); border-radius: 50%";
@@ -394,7 +394,27 @@ function App() {
       }
     }
     
-  }, [ state.hamburgerState ])
+  }, [ state.hamburgerState ]);
+
+  // TRANSFORMS HAMBURGER AND MENU
+  useEffect(() => {
+    console.log(state.accountState);
+    const wrapper = document.querySelector(".wrapper");
+    const menu = document.querySelector(".left-section__account-container");
+
+    if (state.windowWidth < 769) {
+      if (state.accountState) {
+        wrapper.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
+        wrapper.style.pointerEvents = "none";
+        menu.style.display = "flex";
+      }
+
+      else {
+        menu.style.display = "none";
+      }
+    }
+    
+  }, [ state.accountState ]);
 
   // RELOADS SETTINGS FROM DATABASE AFTER OPENING SETTINGS WINDOW
   useEffect(() => {
@@ -430,7 +450,6 @@ function App() {
   }
 
   const setUserPersonalData = (newUsername, newEmail, newPassword) => {
-    console.log(newUsername, newEmail, newPassword);
     dispatch({ type: ACTIONS.SET_USER_PERSONAL_DATA, payload: { username: newUsername, email: newEmail, password: newPassword }});
   }
 
@@ -500,6 +519,14 @@ function App() {
       dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: true });
   }
 
+  const handleAccount = () => {
+    console.log(state.accountState);
+    if (state.accountState)
+      dispatch({ type: ACTIONS.SET_BOOLEAN_STATE, payload: { state: state.accountState, value: false } });
+    else
+      dispatch({ type: ACTIONS.SET_BOOLEAN_STATE, payload: { state: state.accountState, value: true } });
+  }
+
   const settingsShortcut = (e) => {
     e.preventDefault();
     handleMenu("Settings");
@@ -541,12 +568,19 @@ function App() {
 
     { state.isAboutWindowEnabled  &&
 
-          <About 
-            closeWindow={ closeAboutWindow }
-          />
+      <About 
+        closeWindow={ closeAboutWindow }
+      />
     }
 
-    <Hamburger handleHamburger={ handleHamburger } />
+    <Account
+      isLogged={ state.userStatus === "Logged" ? true : false }
+      handleAccount={ handleAccount }
+    />
+
+    <Hamburger 
+      handleHamburger={ handleHamburger } 
+    />
 
     { state.windowWidth < 769 &&
       <>
@@ -563,6 +597,17 @@ function App() {
           </div>
 
         </ul>
+      </>
+    }
+
+    { state.windowWidth < 769 &&
+      <>
+        <div className="left-section__account-container__closer" onClick={ state.accountState ? handleAccount : null }></div>
+        <aside className="left-section__account-container">
+          <div className="left-section__account-container__logo">
+            <img src={ logo } alt="Dietapp logo"></img>
+          </div>
+        </aside>
       </>
     }
 

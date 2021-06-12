@@ -1,7 +1,8 @@
 // IMPORTS
 
-import React from 'react';
+import { React, useState } from 'react';
 import logo from './styles/logo.png';
+import { FaUser } from 'react-icons/fa';
 
 
 // COMPONENTS
@@ -35,6 +36,24 @@ export function Quotation() {
     <>
       <span className="left-section__quotation-container__top">Be healthy,</span>
       <span className="left-section__quotation-container__bottom">be happy!</span>
+    </>
+  )
+}
+
+export function Account(props) {
+  const [isLogged, setIsLogged] = useState(props.isLogged);
+  const handleClick = (e) => {
+    e.preventDefault();
+    props.handleAccount();
+  }
+
+  return (
+    <>
+      <button 
+        className={ props.isLogged ? "left-section__account left-section__account--logged" : "left-section__account" }
+        onClick={ handleClick }>
+        <FaUser className="left-section__account__icon"/>
+      </button>
     </>
   )
 }

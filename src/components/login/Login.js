@@ -317,9 +317,16 @@ export default function Login({ isLogout, setUserStatus, setUserId, setUserPerso
       }
     });
 
-    if (isValidatedSuccessfully)
-      await logInUser();
+    if (isValidatedSuccessfully) {
+      if (!await logInUser()) {
+        dispatch({ type: ACTIONS.SET_WARNING, payload: {field: "logInUsername", warning: warnings["loginFail"]} });
+        dispatch({type: ACTIONS.CHANGE_USER_DATA, payload: { key: "logInUsername", value: "" }});
+        dispatch({ type: ACTIONS.SET_WARNING, payload: {field: "logInPassword", warning: warnings["loginFail"]} });
+        dispatch({type: ACTIONS.CHANGE_USER_DATA, payload: { key: "logInPassword", value: "" }});
+      }
+    }
   }
+      
 
   const handleSignUpUser = async () => {
     validateSignUpInputs();

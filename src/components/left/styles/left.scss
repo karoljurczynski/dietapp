@@ -4,19 +4,6 @@
 @use '../../../styles/config/config' as *;
 
 
-// KEYFRAMES
-
-@keyframes menuOpening {
-  from {
-    right: -200px;
-  }
-
-  to {
-    right: 0;
-  }
-}
-
-
 // STYLES
 
 .left-section {
@@ -85,6 +72,27 @@
     }
   }
 
+  &__account {
+    @include flexSetup(row, center, center);
+    position: absolute;
+    left: 10px;
+    top: 15px;
+    width: 30px;
+    height: 30px;
+    background: transparent;
+    color: $gray-color;
+    z-index: 1;
+    cursor: pointer;
+
+    &--logged {
+      color: $purple-color;
+    }
+
+    &__icon {
+      font-size: 1.3rem;
+    }
+  }
+
   &__hamburger {
     width: 28px;
     height: 28px;
@@ -99,6 +107,7 @@
     justify-content: space-between;
     cursor: pointer;
     transition: right 0.3s ease-out;
+    z-index: 1;
 
     &__line {
       position: absolute;
@@ -230,19 +239,18 @@
       }
     }
 
-    &__menu-container {
+    &__menu-container, &__account-container {
       display: none;
       height: 100%;
-      width: 200px;
+      width: 50%;
       position: absolute;
       justify-content: flex-start;
       top: 0;
-      right: -200px;
+      right: 0;
       z-index: 5;
       background-color: $purple-color2;
       padding: 15px;
       padding-top: 58px;
-      animation: menuOpening 0.3s ease-out forwards;
 
       &__closer {
         display: block;
