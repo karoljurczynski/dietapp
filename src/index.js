@@ -61,7 +61,8 @@ const ACTIONS = {
   UPDATE_WINDOW_WIDTH: 'update-window-width',
   SET_NEW_SETTINGS: 'set-new-settings',
   SET_USER_ID: 'set-user-id',
-  SET_USER_PERSONAL_DATA: 'set-user-personal-data'
+  SET_USER_PERSONAL_DATA: 'set-user-personal-data',
+  SET_USERNAME: 'set-username'
 }
 
 const initialState = {
@@ -79,6 +80,7 @@ const initialState = {
   windowWidth: window.innerWidth,
   userStatus: "Log in",
   userId: 0,
+  username: "",
   mealsIngredientsSummary: [],
   dailyIngredientsSummary: { kcal: 0, proteins: 0, fats: 0, carbs: 0 },
   gaugesData: {
@@ -173,7 +175,7 @@ function App() {
 
       case ACTIONS.COUNT_GAUGES_DATA: {
         const ingredient = action.payload.typeOfIngredient;
-
+        
         return {...state, gaugesData: {...state.gaugesData, 
           [ingredient]: { 
             eaten: state.dailyIngredientsSummary[ingredient], 
@@ -231,6 +233,10 @@ function App() {
         return { ...state, userId: action.payload }
       }
 
+      case ACTIONS.SET_USERNAME: {
+        return { ...state, username: action.payload }
+      }
+
       case ACTIONS.SET_USER_PERSONAL_DATA: {
         return { ...state, settingsData: { ...state.settingsData, account: action.payload }};
       }
@@ -250,6 +256,7 @@ function App() {
 
   // GET USER NAME AND STATUS FROM COOKIE
   useEffect(() => {
+
     // IF COOKIE EXIST THEN LOAD IT
     if (document.cookie) {
       const cookie = document.cookie.split(";");  // user=default; status=Log in
@@ -327,7 +334,23 @@ function App() {
           else
             saveSettingsToDatabase(user);
 
+          getUsername();
           updateGauges();
+        }
+      });
+    }
+    catch (e) {
+      console.error(e);
+    }
+  }
+
+  const getUsername = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "users"));
+      querySnapshot.forEach(user => {
+        if (user.id === state.userId) {
+          if (user.data().username)
+            dispatch({ type: ACTIONS.SET_USERNAME, payload: user.data().username });
         }
       });
     }
@@ -361,7 +384,10 @@ function App() {
   // BLURING AND DISABLING POINTER EVENTS ON BACKGROUND AFTER LOG IN WINDOW MOUNTING 
   useEffect(() => {
     if (state.hamburgerState)
-      dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: false });
+      dispatch({ type: ACTIONS.SET_BOOLEAN_STATE, payload: { state: "hamburgerState", value: false } });
+
+    if (state.accountState)
+      dispatch({ type: ACTIONS.SET_BOOLEAN_STATE, payload: { state: "accountState", value: false } });
 
   }, [ state.isLoginWindowEnabled, state.isSettingsWindowEnabled, state.isAboutWindowEnabled ]);
 
@@ -369,20 +395,26 @@ function App() {
   useEffect(() => {
     const wrapper = document.querySelector(".wrapper");
     const menu = document.querySelector(".left-section__menu-container");
+    const menuCloser = document.querySelector(".left-section__menu-container__closer");
+    const hamburger = document.querySelector(".left-section__hamburger");
     const hamburgerLines = document.querySelectorAll(".left-section__hamburger__line");
 
     if (state.windowWidth < 769) {
       if (state.hamburgerState) {
         wrapper.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
         wrapper.style.pointerEvents = "none";
+        hamburger.style.zIndex = "6";
         menu.style.display = "flex";
+        menuCloser.style.display = "block";
         hamburgerLines[0].style.cssText ="left: 0px; background: #FFFFFF; width: 100%; transform: rotate(45deg); border-radius: 10px";
         hamburgerLines[1].style.cssText ="left: 10px; background: #FFFFFF; visibility: hidden";
         hamburgerLines[2].style.cssText ="left: 0px; background: #FFFFFF; width: 100%; transform: rotate(-45deg); border-radius: 10px";
       }
 
       else {
+        hamburger.style.zIndex = "1";
         menu.style.display = "none";
+        menuCloser.style.display = "none";
         hamburgerLines[0].style.cssText ="left: 0px; background: #7500AF; width: 8px; transform: rotate(0deg); border-radius: 50%";
         hamburgerLines[1].style.cssText ="left: 10px; background: #7500AF; visibility: visible";
         hamburgerLines[2].style.cssText ="left: 20px; background: #7500AF; width: 8px; transform: rotate(0deg); border-radius: 50%";
@@ -398,19 +430,32 @@ function App() {
 
   // TRANSFORMS HAMBURGER AND MENU
   useEffect(() => {
-    console.log(state.accountState);
     const wrapper = document.querySelector(".wrapper");
-    const menu = document.querySelector(".left-section__account-container");
+    const accountIcon = document.querySelector(".left-section__account");
+    const accountCloser = document.querySelector(".left-section__account-container__closer");
+    const accountContainer = document.querySelector(".left-section__account-container");
+
 
     if (state.windowWidth < 769) {
       if (state.accountState) {
+        accountIcon.style.zIndex = "6";
+        accountIcon.style.color = "#FFFFFF";
+        accountContainer.style.display = "flex";
+        accountCloser.style.display = "block";
         wrapper.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
         wrapper.style.pointerEvents = "none";
-        menu.style.display = "flex";
       }
 
       else {
-        menu.style.display = "none";
+        accountIcon.style.zIndex = "1";
+        accountIcon.style.color = "#7500AF";
+        accountContainer.style.display = "none";
+        accountCloser.style.display = "none";
+
+        if (!state.isLoginWindowEnabled && !state.isSettingsWindowEnabled) {
+          wrapper.style.filter = "blur(0px) opacity(100%) grayscale(0%)";
+          wrapper.style.pointerEvents = "auto";
+        }
       }
     }
     
@@ -513,18 +558,21 @@ function App() {
   }
 
   const handleHamburger = () => {
-    if (state.hamburgerState)
-      dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: false });
-    else  
-      dispatch({ type: ACTIONS.CHANGE_HAMBURGER_STATE, payload: true });
+    if (state.hamburgerState) {
+      dispatch({ type: ACTIONS.SET_BOOLEAN_STATE, payload: { state: "hamburgerState", value: false } })
+    }
+    else {
+      dispatch({ type: ACTIONS.SET_BOOLEAN_STATE, payload: { state: "hamburgerState", value: true } })
+    }
   }
 
   const handleAccount = () => {
-    console.log(state.accountState);
-    if (state.accountState)
-      dispatch({ type: ACTIONS.SET_BOOLEAN_STATE, payload: { state: state.accountState, value: false } });
-    else
-      dispatch({ type: ACTIONS.SET_BOOLEAN_STATE, payload: { state: state.accountState, value: true } });
+    if (state.accountState) {
+      dispatch({ type: ACTIONS.SET_BOOLEAN_STATE, payload: { state: "accountState", value: false } })
+    }
+    else {
+      dispatch({ type: ACTIONS.SET_BOOLEAN_STATE, payload: { state: "accountState", value: true } })
+    }
   }
 
   const settingsShortcut = (e) => {
@@ -575,7 +623,7 @@ function App() {
 
     <Account
       isLogged={ state.userStatus === "Logged" ? true : false }
-      handleAccount={ handleAccount }
+      handleAccount={ state.userStatus === "Logged" ? handleAccount : loginShortcut }
     />
 
     <Hamburger 
@@ -604,6 +652,20 @@ function App() {
       <>
         <div className="left-section__account-container__closer" onClick={ state.accountState ? handleAccount : null }></div>
         <aside className="left-section__account-container">
+          <section className="left-section__account-container__user-info">
+            <img className="left-section__account-container__user-info__photo" src={ logo }></img>
+            <h3 className="left-section__account-container__user-info__username">{ state.username }</h3>
+          </section>
+
+          <ul className="left-section__account-container__list">
+            <li className="left-section__menu-container__list-item" onClick={ settingsShortcut }>
+              <a className="left-section__menu-container__list-item__content">Settings</a>
+            </li>
+            <li className="left-section__menu-container__list-item" onClick={ loginShortcut }>
+              <a className="left-section__menu-container__list-item__content">Log out</a>
+            </li>
+          </ul>
+
           <div className="left-section__account-container__logo">
             <img src={ logo } alt="Dietapp logo"></img>
           </div>

@@ -35,20 +35,24 @@ export default function RemoveWindow(props) {
 
   // BLURING AND DISABLING POINTER EVENTS ON BACKGROUND AFTER MOUNTING
   useEffect(() => {
-    const rootElement = document.querySelector("#root");
     const wrapper = document.querySelector(".wrapper");
+    const rootElement = document.querySelector("#root");
     const hamburger = document.querySelector(".left-section__hamburger");
+    const accountIcon = document.querySelector(".left-section__account");
     wrapper.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
     wrapper.style.pointerEvents = "none";
     rootElement.style.zIndex = 97;
     hamburger.style.display = "none";
-  
+    accountIcon.style.display = "none";
+    
     return (() => {
       wrapper.style.filter = "blur(0px) opacity(100%) grayscale(0%)";
       wrapper.style.pointerEvents = "auto";
       rootElement.style.zIndex = 99;
+      
       if (window.innerWidth < 769)
-        hamburger.style.display = "block";
+        hamburger.style.display = "flex";
+        accountIcon.style.display = "flex";
     })
 
   }, []);

@@ -102,10 +102,12 @@ export default function Login({ isLogout, setUserStatus, setUserId, setUserPerso
     const wrapper = document.querySelector(".wrapper");
     const rootElement = document.querySelector("#root");
     const hamburger = document.querySelector(".left-section__hamburger");
+    const accountIcon = document.querySelector(".left-section__account");
     wrapper.style.filter = "blur(5px) opacity(40%) grayscale(100%)";
     wrapper.style.pointerEvents = "none";
     rootElement.style.zIndex = 97;
     hamburger.style.display = "none";
+    accountIcon.style.display = "none";
     
     return (() => {
       wrapper.style.filter = "blur(0px) opacity(100%) grayscale(0%)";
@@ -113,6 +115,7 @@ export default function Login({ isLogout, setUserStatus, setUserId, setUserPerso
       rootElement.style.zIndex = 99;
       if (window.innerWidth < 769)
         hamburger.style.display = "flex";
+        accountIcon.style.display = "flex";
     })
 
   }, []);

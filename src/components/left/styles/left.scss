@@ -72,6 +72,23 @@
     }
   }
 
+  &__account-container {
+    &__user-info {
+      @include flexSetup(column, center, center);
+      width: 100%;
+
+      &__username {
+        margin-top: 15px;
+        color: $white-color;
+      }
+
+      &__photo {
+        width: auto;
+        height: 70px;
+      }
+    }
+  }
+
   &__account {
     @include flexSetup(row, center, center);
     position: absolute;
@@ -242,9 +259,10 @@
     &__menu-container, &__account-container {
       display: none;
       height: 100%;
-      width: 50%;
+      width: 200px;
       position: absolute;
       justify-content: flex-start;
+      align-items: center;
       top: 0;
       right: 0;
       z-index: 5;
@@ -253,8 +271,9 @@
       padding-top: 58px;
 
       &__closer {
-        display: block;
+        display: none;
         position: absolute;
+        z-index: 4;
         top: 0;
         left: 0;
         height: 100%;
@@ -273,6 +292,7 @@
       }
   
       &__list-item {
+        cursor: pointer;
         width: 80%;
         background: transparent;
         margin-bottom: 20px;
@@ -290,11 +310,25 @@
         }
       }
     }
+    
+    &__account-container {
+      flex-direction: column;
+      align-items: center;
+      left: 0;
+
+      &__list {
+        height: 100%;
+        width: 100%;
+        @include flexSetup(column, center, flex-start);
+        padding: 15px;
+        padding-top: 58px;
+      }
+    }
 
     &__hamburger { 
       display: flex;
       position: absolute;
-      z-index: 9;
+      z-index: 1;
     }
 
     &__quotation-container {

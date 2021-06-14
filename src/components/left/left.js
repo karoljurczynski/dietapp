@@ -44,14 +44,14 @@ export function Account(props) {
   const [isLogged, setIsLogged] = useState(props.isLogged);
   const handleClick = (e) => {
     e.preventDefault();
-    props.handleAccount();
+    props.handleAccount(e);
   }
 
   return (
     <>
       <button 
         className={ props.isLogged ? "left-section__account left-section__account--logged" : "left-section__account" }
-        onClick={ handleClick }>
+        onClick={ props.handleAccount }>
         <FaUser className="left-section__account__icon"/>
       </button>
     </>
